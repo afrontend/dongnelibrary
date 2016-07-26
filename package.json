@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "name": "dongnelibrary",
+  "version": "0.0.1",
+  "description": "Search a book at the library",
+  "main": "dongnelibrary.js",
+  "bin": {
+    "dongnelibrary": "./dongnelibrary_cli.js"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/afrontend/dongnelibrary.git"
+  },
+  "keywords": [
+    "book",
+    "library",
+    "도서관",
+    "화성시",
+    "오산시",
+    "성남시"
+  ],
+  "author": "<frontend.wordpress@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/afrontend/dongnelibrary/issues"
+  },
+  "homepage": "https://github.com/afrontend/dongnelibrary#readme",
+  "devDependencies": {
+    "mocha": "^2.5.3"
+  },
+  "tonicExampleFilename": "example.js",
+  "dependencies": {
+    "cli": "^0.11.2",
+    "jsdom": "^9.4.1",
+    "mocha": "^2.5.3",
+    "request": "^2.73.0",
+    "string": "^3.3.1",
+    "underscore": "^1.8.3"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  }
+}
