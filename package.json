@@ -1,7 +1,7 @@
 {
   "name": "dongnelibrary",
   "version": "0.0.2",
-  "description": "Search a book at the library",
+  "description": "도서관 책이 대출되었는지 확인한다.",
   "main": "dongnelibrary.js",
   "bin": {
     "dongnelibrary": "./dongnelibrary_cli.js"
