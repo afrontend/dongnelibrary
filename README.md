@@ -18,7 +18,6 @@ $ npm install dongnelibrary -g
 ```sh
 $ dongnelibrary
 $ dongnelibrary -t javascript -l 남양도서관
-$ dongnelibrary --help
 ```
 
 ### JavaScript Example (example.js)
@@ -28,7 +27,7 @@ require("dongnelibrary").search({
     libraryName: '남양도서관'
   }, function (books) {
     books.forEach(function (book) {
-        console.log(book.title);
+        console.log((book.exist?'책있음':'책없음') +' '+ book.title);
     });
 });
 ```
@@ -40,7 +39,6 @@ $ cd dongnelibrary
 $ npm install
 $ chmod a+x dongnelibrary_cli.js
 $ ./dongnelibrary_cli.js -t javascript -l 남양도서관
-$ ./dongnelibrary_cli.js --help
 ```
 
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
