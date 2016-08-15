@@ -51,4 +51,4 @@ $ ./dongnelibrary_cli.js -t javascript -l 남양도서관
 [hscitylib-url]: https://hscitylib.or.kr
 [osanlibrary-url]: http://www.osanlibrary.go.kr
 [snlib-url]: http://www.snlib.net
-[gweb-ui-url]: https://dongne.herokuapp.com
+[web-ui-url]: https://dongne.herokuapp.com
