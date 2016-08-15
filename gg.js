@@ -3,18 +3,15 @@ var req = require('request');
 var _ = require('underscore');
 var fs = require('fs');
 var jquery = require('./dongnelibrary_util.js').getJqueryString();
+var global = {};
 
 var libraryList = [
-  {code: 'MA', name: '성남시중앙도서관'},
-  {code: 'MB', name: '분당도서관'},
-  {code: 'MG', name: '구미도서관'},
-  {code: 'MJ', name: '중원도서관'},
-  {code: 'MM', name: '무지개도서관'},
-  {code: 'MP', name: '판교도서관'},
-  {code: 'MS', name: '수정도서관'},
-  {code: 'MU', name: '운중도서관'},
-  {code: 'CK', name: '중원어린이도서관'},
-  {code: 'PK', name: '판교어린이도서관'}
+  {code: 'MA', name: '경기도립중앙도서관'},
+  {code: 'MB', name: '경기도립평택도서관'},
+  {code: 'MC', name: '경기도립광주도서관'},
+  {code: 'MD', name: '경기도립여주도서관'},
+  {code: 'ME', name: '경기도립포천도서관'},
+  {code: 'MF', name: '경기도립김포도서관'}
 ];
 
 function getLibraryNames() {
@@ -33,34 +30,54 @@ function getLibraryCode(libraryName) {
 }
 
 function exist(str) {
-  return !(str === '대출중');
+  return !(str.indexOf('대출중') >= 0)
 }
 
-function getBookIds(str) {
-  var bookIdPattern = /javascript:viewSearchDetail\((\d+)\)/g,
+function getOffset(str) {
+  var offsetPattern = /javascript:detailview\('(\d+)/g,
       matches,
-      bookIdList = [];
+      offsetList = [];
 
-  while (matches = bookIdPattern.exec(str)) {
-    bookIdList.push(matches[1]);
+  while (matches = offsetPattern.exec(str)) {
+    offsetList.push(matches[1]);
   }
 
-  return bookIdList;
+  return offsetList;
 }
 
-function appendBookId(booklist, str) {
-  var bookIdList = getBookIds(str);
+function appendOffset(booklist, str) {
+  var offsetList = getOffset(str);
   return _.map(booklist, function(item, key){
-      item.bookId = bookIdList[key];
+      item.offset = offsetList[key];
       return item;
   });
 }
 
 function makeJsdomCallback(libraryName, body, opt, callback) {
   return function (errors, window) {
-    var booklist = [];
-    var $ = window.$;
-    var $a = $('#textViewList > li');
+    var maxoffsetPattern = /^(\d+).*/,
+        matches,
+        maxoffset = 0,
+        maxoffsetStr = '',
+        booklist = [],
+        $ = window.$;
+
+    maxoffsetStr = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
+
+    matches = maxoffsetPattern.exec(maxoffsetStr);
+    if(matches) {
+      maxoffset = matches[1];
+    }
+
+    if (maxoffset) {
+      opt.maxoffset = maxoffset;
+    }
+
+    if (global.debug) {
+      console.log('maxoffset: ' + maxoffset);
+    }
+
+    var $a = $('body > form:nth-child(1) > form > table > tbody > tr > td > table > tbody > tr');
     var checkPoint = 0;
     var checkPointLimit = 0;
 
@@ -68,18 +85,23 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
         var $value = $(value);
         booklist.push({
             libraryName: libraryName,
-            title: $value.find('p > a').text().trim(),
+            title: $value.find('a').text().trim(),
+            maxoffset: maxoffset,
             exist: false
         });
     });
 
+    booklist.shift();
+    booklist.shift();
+
     checkPointLimit = booklist.length;
 
-    appendBookId(booklist, body);
+    appendOffset(booklist, body);
 
     _.each(booklist, function(book, key) {
         var o = _.clone(opt);
-        o.bookId = book.bookId;
+        o.offset = book.offset;
+        o.maxoffset = book.maxoffset;
         var index = key;
 
         searchDetail(o, function (exist) {
@@ -103,7 +125,12 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
 function search(opt, callback) {
   var booklist = [];
   var title = 'javascript';
-  var libraryName = '판교도서관';
+  var libraryName = '경기도립중앙도서관';
+  var startpage = 1;
+
+  if(opt.debug) {
+    global.debug = true;
+  }
 
   if(opt.title) {
     title = opt.title;
@@ -113,22 +140,39 @@ function search(opt, callback) {
     libraryName = opt.libraryName;
   }
 
+  if(opt.startpage) {
+    startpage = opt.startpage;
+  }
+
   req.post({
-      url: 'http://search.snlib.net/search/resultSearchList',
-      headers: {
-        "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-      },
+      url: 'http://www.gglib.or.kr:8081/kolas3_02/BookSearch/search_result.do',
       timeout: 20000,
       form: {
-        curPage: 1,
-        viewStatus: 'text',
-        searchKey: 2,
-        searchKeyword: title,
-        searchLibrary: getLibraryCode(libraryName)
-      }
+         jongbook:'',
+         value2:'',
+         value3:'',
+         buhovalue1:'',
+         buhovalue2:'',
+         buhovalue3:'',
+         buhovalue4:'',
+         field1:'IAL',
+         value1: title,
+         sort:'RK DESC',
+         msa:'',
+         formclass:'',
+         textlang:'',
+         simplelang:'',
+         startyear:'',
+         endyear:'',
+         limitpage:10,
+         local:'',
+         startpage: startpage,
+         mode:0,
+         mgc: getLibraryCode(libraryName)
+       }
     }, function (error, res, body) {
-      if(opt.debug === true) {
-        console.log('body: ' + body);
+      if(global.debug === true) {
+        console.log(body);
       }
       if (!error && res.statusCode === 200) {
         jsdom.env({
@@ -159,12 +203,21 @@ function search(opt, callback) {
 
 function searchDetail(opt, callback) {
   var booklist = [];
-  var bookId = '2923889';
+  var offset = 1;
+  var maxoffset = 356;
   var title = 'javascript';
-  var libraryName = '판교도서관';
+  var libraryName = '경기도립중앙도서관';
 
-  if(opt.bookId) {
-    bookId = opt.bookId;
+  if (global.debug) {
+    console.log('opt: ' + JSON.stringify(opt, null, 2));
+  }
+
+  if(opt.offset) {
+    offset = opt.offset;
+  }
+
+  if(opt.maxoffset) {
+    maxoffset = opt.maxoffset;
   }
 
   if(opt.title) {
@@ -176,27 +229,28 @@ function searchDetail(opt, callback) {
   }
 
   req.post({
-      url: 'http://search.snlib.net/search/viewSearchDetail',
-      headers: {
-        "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-      },
+      url: 'http://www.gglib.or.kr:8081/kolas3_01/BookSearch/detailview_result.do',
       timeout: 20000,
       form: {
-        searchKey: 2,
-        searchLibrary: getLibraryCode(libraryName),
-        searchKeyword: title,
-        curPage: 2,
-        viewStatus: 'text',
-        bookId: bookId
+         sort: 'RK DESC',
+         beforequery: 'IAL:'+title.toUpperCase()+'* AND MGC:' + getLibraryCode(libraryName),
+         msa: 'M',
+         offset: offset,
+         maxoffset: maxoffset,
+         jongbook: '',
+         historycount: 0,
+         book_code: ''
       }
     }, function (error, res, body) {
+      if(global.debug === true) {
+        console.log(body);
+      }
       if (!error && res.statusCode === 200) {
         jsdom.env({
             html: body,
             src: [jquery],
             done: function (errors, window) {
-              var $a = window.$('#frm > div:nth-child(15) > div > table > tbody > tr > td:nth-child(4)');
-
+              var $a = window.$('table:nth-child(2) > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td.view2_01');
               if(callback) {
                 if(exist(($a.text() + "").trim())) {
                   callback(true);
@@ -230,18 +284,3 @@ module.exports = {
   search: search,
   getLibraryNames: getLibraryNames
 };
-
-function print(book) {
-  console.log(book.libraryName + (book.exist?' ✓  ':'    ') + book.title + ' ');
-}
-
-search({
-    title: 'javascript',
-    libraryName: '판교도서관',
-    debug: true
-  }, function (error, books) {
-    _.each(books, function (book) {
-        console.log(JSON.stringify(book));
-    });
-  }
-);

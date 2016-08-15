@@ -1,7 +1,8 @@
+var gg = require('./gg');
 var hscity = require('./hscity');
-var daum = require('./daum');
 var osan = require('./osan');
 var snlib = require('./snlib');
+var daum = require('./daum');
 var _ = require('underscore');
 
 var dummyLibraryFunction = {
@@ -13,6 +14,13 @@ var dummyLibraryFunction = {
 
 var libraryList = [
 ];
+
+_.each(gg.getLibraryNames(), function (name) {
+    libraryList.push({
+        name: name,
+        fn: gg
+    })
+});
 
 _.each(hscity.getLibraryNames(), function (name) {
     libraryList.push({
