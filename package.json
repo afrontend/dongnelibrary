@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "도서관 책이 대출되었는지 확인한다.",
   "main": "dongnelibrary.js",
   "bin": {
@@ -15,12 +15,10 @@
   },
   "keywords": [
     "book",
-    "library",
-    "도서관",
-    "경기도",
-    "화성시",
-    "오산시",
-    "성남시"
+    "경기도립도서관",
+    "화성시립도서관",
+    "오산시도서관",
+    "성남시도서관"
   ],
   "author": "<frontend.wordpress@gmail.com>",
   "license": "MIT",
