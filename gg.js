@@ -252,6 +252,7 @@ function searchDetail(opt, callback) {
             done: function (errors, window) {
               var $a = window.$('table:nth-child(2) > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td.view2_01');
               if(callback) {
+                //console.log('$a.text(): ' + $a.text());
                 if(exist(($a.text() + "").trim())) {
                   callback(true);
                 } else {

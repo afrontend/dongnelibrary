@@ -15,13 +15,6 @@ var dummyLibraryFunction = {
 var libraryList = [
 ];
 
-_.each(gg.getLibraryNames(), function (name) {
-    libraryList.push({
-        name: name,
-        fn: gg
-    })
-});
-
 _.each(hscity.getLibraryNames(), function (name) {
     libraryList.push({
         name: name,
@@ -40,6 +33,13 @@ _.each(snlib.getLibraryNames(), function (name) {
     libraryList.push({
         name: name,
         fn: snlib
+    })
+});
+
+_.each(gg.getLibraryNames(), function (name) {
+    libraryList.push({
+        name: name,
+        fn: gg
     })
 });
 
