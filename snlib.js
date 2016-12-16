@@ -114,7 +114,7 @@ function search(opt, callback) {
   }
 
   req.post({
-      url: 'http://search.snlib.net/search/resultSearchList',
+      url: 'http://search.snlib.go.kr/search/resultSearchList',
       headers: {
         "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
       },
@@ -174,7 +174,7 @@ function searchDetail(opt, callback) {
   }
 
   req.post({
-      url: 'http://search.snlib.net/search/viewSearchDetail',
+      url: 'http://search.snlib.go.kr/search/viewSearchDetail',
       headers: {
         "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
       },
