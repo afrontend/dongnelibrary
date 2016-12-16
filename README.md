@@ -20,6 +20,7 @@ $ npm install dongnelibrary -g
 $ dongnelibrary
 $ dongnelibrary -t javascript -l 남양도서관
 ```
+[![asciicast](https://asciinema.org/a/57utmd420fbwdaoifsxfsnpjv.png)](https://asciinema.org/a/57utmd420fbwdaoifsxfsnpjv)
 
 ### JavaScript Example (example.js)
 ```javascript
