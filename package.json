@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "도서관 책이 대출되었는지 확인한다.",
   "main": "dongnelibrary.js",
   "bin": {
