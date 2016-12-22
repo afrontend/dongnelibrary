@@ -10,27 +10,23 @@
 * [성남시도서관][snlib-url] (중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 중원어린이, 판교어린이)
 * [경기도립도서관][gg-url] (중앙, 평택, 광주, 여주, 포천, 김포)
 
-### 설치
+### 설치하고 사용하기
 ```sh
 $ npm install dongnelibrary -g
-```
-
-### 사용 예
-```sh
 $ dongnelibrary
 $ dongnelibrary -t javascript -l 남양도서관
 ```
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-### JavaScript Example (example.js)
+### JavaScript Example
 ```javascript
 require("dongnelibrary").search({
     title: 'javascript',
     libraryName: '남양도서관'
   }, function (books) {
     books.forEach(function (book) {
-        console.log((book.exist?'책있음':'책없음') +' '+ book.title);
+        console.log((book.exist?'책있음':'책없음') + ' ' + book.title);
     });
 });
 ```
