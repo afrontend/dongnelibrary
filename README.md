@@ -10,16 +10,17 @@
 * [성남시도서관][snlib-url] (중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 중원어린이, 판교어린이)
 * [경기도립도서관][gg-url] (중앙, 평택, 광주, 여주, 포천, 김포)
 
-### 설치하고 사용하기
+### npm을 사용하여 설치하고 사용하기 (with npm)
 ```sh
 $ npm install dongnelibrary -g
 $ dongnelibrary
 $ dongnelibrary -t javascript -l 남양도서관
+$ dongnelibrary -t javascript -l 남양도서관 -j
 ```
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-### [JavaScript Example][sample-url]
+### [Example][sample-url]
 ```javascript
 require("dongnelibrary").search({
     title: 'javascript',
@@ -31,13 +32,14 @@ require("dongnelibrary").search({
 });
 ```
 
-### Git를 사용한 설치
+### Git를 사용하여 설치하고 사용하기
 ```sh
 $ git clone https://github.com/afrontend/dongnelibrary
 $ cd dongnelibrary
 $ npm install
 $ chmod a+x dongnelibrary_cli.js
 $ ./dongnelibrary_cli.js -t javascript -l 남양도서관
+$ ./dongnelibrary_cli.js -t javascript -l 남양도서관 -j
 ```
 
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg

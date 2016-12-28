@@ -3,8 +3,9 @@ var dongnelibrary = require('./dongnelibrary');
 var cli = require('cli');
 var _ = require('underscore');
 var options = cli.parse({
-    title: [ 't', 'book title', 'string', 'javascript' ],
-    libraryName: [ 'l', 'library name', 'string', '남양도서관' ]
+    title: [ 't', ' A book title', 'string', 'javascript' ],
+    libraryName: [ 'l', ' A library name', 'string', '남양도서관' ],
+    json: [ 'j', ' JSON format', 'bool', false ]
 });
 
 function print(book) {
@@ -43,15 +44,21 @@ function printLibraryNames(libraryName) {
 options.libraryName = complete(options.libraryName);
 
 if(options.libraryName) {
-  printLibraryNames(options.libraryName);
+  if(!options.json) {
+    printLibraryNames(options.libraryName);
+  }
 }
 
 dongnelibrary.search({
     title: options.title,
     libraryName: options.libraryName
   }, function (books) {
-    _.each(books, function (book) {
-        print(book);
-    });
+    if(options.json) {
+      console.log(JSON.stringify(books, null, 2));
+    } else {
+      _.each(books, function (book) {
+          print(book);
+      });
+    }
   }
 );
