@@ -19,7 +19,7 @@ $ dongnelibrary -t javascript -l 남양도서관
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-### JavaScript Example
+### [JavaScript Example][sample-url]
 ```javascript
 require("dongnelibrary").search({
     title: 'javascript',
@@ -50,3 +50,4 @@ $ ./dongnelibrary_cli.js -t javascript -l 남양도서관
 [osanlibrary-url]: http://www.osanlibrary.go.kr
 [snlib-url]: http://www.snlib.net
 [web-ui-url]: https://dongne.herokuapp.com
+[sample-url]: https://tonicdev.com/afrontend/dongnelibrary
