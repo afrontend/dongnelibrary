@@ -2,9 +2,15 @@
 [![Travis Build][travis-build-image]][travis-build-url]
 
 ## DongneLibrary
-도서관 책이 대출되었는지 확인하는 Command Line 프로그램이다. 아래 도서관들을 검색할 수 있다. [웹 서비스][web-ui-url]도 사용할 수 있다. 웹 서비스는 현재 무료 서버에서 동작함으로 로딩 시간이 15초 정도 걸릴 수 있다.
+도서관 책이 대출되었는지 확인하는 노드 모듈이다. 명령어로도 사용할 수 있으며 자바스크립트 코드에서도 사용할 수 있다. 현재 아래 도서관들을 검색할 수 있다. [웹 서비스][web-ui-url]도 사용할 수 있으나 현재 무료 서버에서 동작함으로 로딩 시간이 15초 정도 걸릴 수 있다.
 
-### npm을 사용하여 설치하고 사용하기
+### 검색 가능 도서관
+* [화성시립도서관][hscitylib-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남)
+* [오산시도서관][osanlibrary-url] (오산중앙, 청학, 햇살마루, 양산, 초평, 꿈두레)
+* [성남시도서관][snlib-url] (중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 중원어린이, 판교어린이)
+* [경기도립도서관][gg-url] (중앙, 평택, 광주, 여주, 포천, 김포)
+
+### 설치하고 사용하기 (npm)
 
     $ npm install dongnelibrary -g
     $ dongnelibrary
@@ -13,7 +19,7 @@
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-### [Example][sample-url]
+### [자바스크립트 코드에서 사요하기][sample-url]
 ```javascript
 require("dongnelibrary").search({
     title: 'javascript',
@@ -25,7 +31,7 @@ require("dongnelibrary").search({
 });
 ```
 
-### Git를 사용한 설치와 사용법 및 테스트
+### 설치하고 사용하고 테스트하기 (Git)
 
     $ git clone https://github.com/afrontend/dongnelibrary
     $ cd dongnelibrary
@@ -34,12 +40,6 @@ require("dongnelibrary").search({
     $ ./dongnelibrary_cli.js -t javascript -l 남양도서관
     $ ./dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     $ npm test
-
-### 검색 가능 도서관
-* [화성시립도서관][hscitylib-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남)
-* [오산시도서관][osanlibrary-url] (오산중앙, 청학, 햇살마루, 양산, 초평, 꿈두레)
-* [성남시도서관][snlib-url] (중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 중원어린이, 판교어린이)
-* [경기도립도서관][gg-url] (중앙, 평택, 광주, 여주, 포천, 김포)
 
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
 [npm-url]: https://npmjs.org/package/dongnelibrary
