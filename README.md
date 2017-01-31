@@ -19,7 +19,7 @@
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-### [자바스크립트 코드에서 사요하기][sample-url]
+### [자바스크립트 코드에서 사용하기][sample-url]
 ```javascript
 require("dongnelibrary").search({
     title: 'javascript',
