@@ -102,6 +102,7 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
 function search(opt, callback) {
   var title = 'javascript';
   var libraryName = '판교도서관';
+  var startpage = 1;
 
   if(opt.title) {
     title = opt.title;
@@ -111,6 +112,10 @@ function search(opt, callback) {
     libraryName = opt.libraryName;
   }
 
+  if(opt.startpage) {
+    startpage = opt.startpage;
+  }
+
   req.post({
       url: 'http://search.snlib.go.kr/search/resultSearchList',
       headers: {
@@ -118,7 +123,7 @@ function search(opt, callback) {
       },
       timeout: 20000,
       form: {
-        curPage: 1,
+        curPage: startpage,
         viewStatus: 'text',
         searchKey: 2,
         searchKeyword: title,
