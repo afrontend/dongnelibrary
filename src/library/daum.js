@@ -1,7 +1,7 @@
 var url = require('url');
 var req = require('request');
 var _ = require('underscore');
-var util = require('./dongnelibrary_util.js');
+var util = require('../dongnelibrary_util.js');
 
 var APIKEY = process.env.DAUM_APIKEY || '';
 

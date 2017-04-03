@@ -1,4 +1,4 @@
-var osan = require('../osan');
+var osan = require('../src/library/osan');
 describe('osan (20s)', function () {
     this.timeout(20000);
     it('search book', function (done) {

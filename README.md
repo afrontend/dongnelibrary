@@ -36,9 +36,9 @@ require("dongnelibrary").search({
     $ git clone https://github.com/afrontend/dongnelibrary
     $ cd dongnelibrary
     $ npm install
-    $ chmod a+x dongnelibrary_cli.js
-    $ ./dongnelibrary_cli.js -t javascript -l 남양도서관
-    $ ./dongnelibrary_cli.js -t javascript -l 남양도서관 -j
+    $ chmod a+x src/dongnelibrary_cli.js
+    $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관
+    $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     $ npm test
 
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg

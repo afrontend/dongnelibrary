@@ -1,4 +1,4 @@
-var gg = require('../gg');
+var gg = require('../src/library/gg');
 describe('gg (20s)', function () {
     this.timeout(20000);
     it('search book', function (done) {

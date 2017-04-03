@@ -1,7 +1,7 @@
 var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
-var jquery = require('./dongnelibrary_util').getJqueryString();
+var jquery = require('../dongnelibrary_util').getJqueryString();
 
 var libraryList = [
   {code: 'MA', name: '오산중앙도서관'},

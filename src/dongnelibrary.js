@@ -1,7 +1,7 @@
-var gg = require('./gg');
-var hscity = require('./hscity');
-var osan = require('./osan');
-var snlib = require('./snlib');
+var gg = require('./library/gg');
+var hscity = require('./library/hscity');
+var osan = require('./library/osan');
+var snlib = require('./library/snlib');
 var _ = require('underscore');
 
 var dummyLibraryFunction = {

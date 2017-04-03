@@ -1,4 +1,4 @@
-var hscity = require('../hscity');
+var hscity = require('../src/library/hscity');
 describe('hscity (20s)', function () {
     this.timeout(20000);
     it('search book', function (done) {

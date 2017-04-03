@@ -2,9 +2,9 @@
   "name": "dongnelibrary",
   "version": "0.0.6",
   "description": "도서관 책이 대출되었는지 확인한다.",
-  "main": "dongnelibrary.js",
+  "main": "src/dongnelibrary.js",
   "bin": {
-    "dongnelibrary": "./dongnelibrary_cli.js"
+    "dongnelibrary": "./src/dongnelibrary_cli.js"
   },
   "scripts": {
     "test": "mocha"
@@ -30,7 +30,7 @@
   "devDependencies": {
     "mocha": "^2.5.3"
   },
-  "tonicExampleFilename": "example.js",
+  "tonicExampleFilename": "src/example.js",
   "dependencies": {
     "cli": "^0.11.2",
     "jsdom": "^9.4.1",

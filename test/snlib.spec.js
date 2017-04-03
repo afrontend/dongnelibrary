@@ -1,4 +1,4 @@
-var snlib = require('../snlib');
+var snlib = require('../src/library/snlib');
 describe('snlib (20s)', function () {
     this.timeout(20000);
     it('search book', function (done) {

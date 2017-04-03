@@ -1,7 +1,7 @@
 var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
-var jquery = require('./dongnelibrary_util.js').getJqueryString();
+var jquery = require('../dongnelibrary_util.js').getJqueryString();
 
 var libraryList = [
   {code: 'MA', name: '성남시중앙도서관'},
