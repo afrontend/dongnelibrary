@@ -2,7 +2,6 @@ var gg = require('./gg');
 var hscity = require('./hscity');
 var osan = require('./osan');
 var snlib = require('./snlib');
-var daum = require('./daum');
 var _ = require('underscore');
 
 var dummyLibraryFunction = {

@@ -1,7 +1,6 @@
 var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
-var fs = require('fs');
 var jquery = require('./dongnelibrary_util.js').getJqueryString();
 
 var libraryList = [
@@ -101,7 +100,6 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
 }
 
 function search(opt, callback) {
-  var booklist = [];
   var title = 'javascript';
   var libraryName = '판교도서관';
 
@@ -156,7 +154,6 @@ function search(opt, callback) {
 }
 
 function searchDetail(opt, callback) {
-  var booklist = [];
   var bookId = '2923889';
   var title = 'javascript';
   var libraryName = '판교도서관';
@@ -207,15 +204,6 @@ function searchDetail(opt, callback) {
             }
         });
       } else {
-        var msg = 'Error';
-        if(error) {
-          msg = error;
-        }
-
-        if(res && res.statusCode) {
-          msg = msg + " HTTP return code ("+res.statusCode+")";
-        }
-
         if(callback) {
           callback(false);
         }

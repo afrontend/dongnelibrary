@@ -1,7 +1,6 @@
 var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
-var fs = require('fs');
 var jquery = require('./dongnelibrary_util').getJqueryString();
 
 var libraryList = [
@@ -42,8 +41,8 @@ function makeJsdomCallback(libraryName, callback) {
           var $value = $(value);
           booklist.push({
               libraryName: libraryName,
-              title: $(value).find('td:nth-child(2) > a').text().trim(),
-              exist: exist($(value).find('td:nth-child(8)').text().trim())
+              title: $value.find('td:nth-child(2) > a').text().trim(),
+              exist: exist($value.find('td:nth-child(8)').text().trim())
           });
         }
     });

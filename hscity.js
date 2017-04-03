@@ -1,7 +1,6 @@
 var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
-var fs = require('fs');
 var jquery = require('./dongnelibrary_util').getJqueryString();
 
 var libraryList = [
