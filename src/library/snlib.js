@@ -58,10 +58,12 @@ function appendBookId(booklist, str) {
 function makeJsdomCallback(libraryName, body, opt, callback) {
   return function (errors, window) {
     var booklist = [];
-    var $ = window.$;
-    var $a = $('#textViewList > li');
     var checkPoint = 0;
     var checkPointLimit = 0;
+    var $ = window.$;
+    var $a = $('#textViewList > li');
+    var $total = $('body > p > strong:nth-child(3)');
+    var totalBookCount = $total.text();
 
     _.each($a, function (value) {
         var $value = $(value);
@@ -88,6 +90,7 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
               if(callback) {
                 callback({
                     code: 0,
+                    totalBookCount: totalBookCount,
                     msg: "No Error"
                   }, booklist);
               }
@@ -102,7 +105,7 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
 function search(opt, callback) {
   var title = 'javascript';
   var libraryName = '판교도서관';
-  var startpage = 1;
+  var startPage = 1;
 
   if(opt.title) {
     title = opt.title;
@@ -112,8 +115,8 @@ function search(opt, callback) {
     libraryName = opt.libraryName;
   }
 
-  if(opt.startpage) {
-    startpage = opt.startpage;
+  if(opt.startPage) {
+    startPage = opt.startPage;
   }
 
   req.post({
@@ -123,7 +126,7 @@ function search(opt, callback) {
       },
       timeout: 20000,
       form: {
-        curPage: startpage,
+        curPage: startPage,
         viewStatus: 'text',
         searchKey: 2,
         searchKeyword: title,
@@ -150,6 +153,7 @@ function search(opt, callback) {
         if(callback) {
           callback({
               code: 1,
+              totalBookCount: 0,
               msg: msg
             }, []);
         }

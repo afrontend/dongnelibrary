@@ -57,11 +57,11 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
     var maxoffsetPattern = /^(\d+).*/,
         matches,
         maxoffset = 0,
-        maxoffsetStr = '',
         booklist = [],
-        $ = window.$;
-
-    maxoffsetStr = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
+        $ = window.$,
+        maxoffsetStr = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim(),
+        $total = $('body > form:nth-child(8) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)'),
+        totalBookCount = $total.text();
 
     matches = maxoffsetPattern.exec(maxoffsetStr);
     if(matches) {
@@ -110,6 +110,7 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
               if(callback) {
                 callback({
                     code: 0,
+                    totalBookCount: totalBookCount,
                     msg: "No Error"
                   }, booklist);
               }
@@ -122,10 +123,9 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
 }
 
 function search(opt, callback) {
-  var booklist = [];
   var title = 'javascript';
   var libraryName = '경기도립중앙도서관';
-  var startpage = 1;
+  var startPage = 1;
 
   if(opt.debug) {
     global.debug = true;
@@ -139,8 +139,8 @@ function search(opt, callback) {
     libraryName = opt.libraryName;
   }
 
-  if(opt.startpage) {
-    startpage = opt.startpage;
+  if(opt.startPage) {
+    startPage = opt.startPage;
   }
 
   req.post({
@@ -165,7 +165,7 @@ function search(opt, callback) {
          endyear:'',
          limitpage:10,
          local:'',
-         startpage: startpage,
+         startpage: startPage,
          mode:0,
          mgc: getLibraryCode(libraryName)
        }
@@ -201,7 +201,6 @@ function search(opt, callback) {
 }
 
 function searchDetail(opt, callback) {
-  var booklist = [];
   var offset = 1;
   var maxoffset = 356;
   var title = 'javascript';
@@ -263,15 +262,6 @@ function searchDetail(opt, callback) {
             }
         });
       } else {
-        var msg = 'Error';
-        if(error) {
-          msg = error;
-        }
-
-        if(res && res.statusCode) {
-          msg = msg + " HTTP return code ("+res.statusCode+")";
-        }
-
         if(callback) {
           callback(false);
         }
