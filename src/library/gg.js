@@ -54,19 +54,13 @@ function appendOffset(booklist, str) {
 
 function makeJsdomCallback(libraryName, body, opt, callback) {
   return function (errors, window) {
-    var maxoffsetPattern = /^(\d+).*/,
+    var booklist = [],
+        maxoffsetPattern = /^(\d+).*/,
         matches,
-        maxoffset = 0,
-        booklist = [],
         $ = window.$,
-        maxoffsetStr = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim(),
-        $total = $('body > form:nth-child(8) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)'),
-        totalBookCount = $total.text();
+        maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
 
-    matches = maxoffsetPattern.exec(maxoffsetStr);
-    if(matches) {
-      maxoffset = matches[1];
-    }
+    maxoffset = parseInt(maxoffset);
 
     if (maxoffset) {
       opt.maxoffset = maxoffset;
@@ -110,7 +104,7 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
               if(callback) {
                 callback({
                     code: 0,
-                    totalBookCount: totalBookCount,
+                    totalBookCount: maxoffset,
                     msg: "No Error"
                   }, booklist);
               }

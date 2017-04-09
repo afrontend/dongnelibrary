@@ -57,13 +57,14 @@ function appendBookId(booklist, str) {
 
 function makeJsdomCallback(libraryName, body, opt, callback) {
   return function (errors, window) {
-    var booklist = [];
-    var checkPoint = 0;
-    var checkPointLimit = 0;
-    var $ = window.$;
-    var $a = $('#textViewList > li');
-    var $total = $('body > p > strong:nth-child(3)');
-    var totalBookCount = $total.text();
+    var booklist = [],
+        checkPoint = 0,
+        checkPointLimit = 0,
+        $ = window.$,
+        $a = $('#textViewList > li'),
+        totalBookCount = $('body > p > strong:nth-child(3)').text();
+
+    console.log('totalBookCount: ' + totalBookCount);
 
     _.each($a, function (value) {
         var $value = $(value);
