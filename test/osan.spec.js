@@ -10,7 +10,7 @@ describe('osan (20s)', function () {
       if(result.code === 0) {
         if(booklist.length > 0) {
           util.printBookList(booklist);
-          util.printTotalBookCount(result.totalBookCount);
+          util.printTotalBookCount(result);
           done();
         } else {
           console.log('booklist.length: ' + booklist.length);

@@ -6,12 +6,12 @@ describe('snlib (20s)', function () {
   it('search book', function (done) {
     snlib.search({
       title: 'javascript',
-      startPage: 1
+      startPage: 5
     }, function (result, booklist) {
       if(result.code === 0) {
         if(booklist.length > 0) {
           util.printBookList(booklist);
-          util.printTotalBookCount(result.totalBookCount);
+          util.printTotalBookCount(result);
           done();
         } else {
           console.log('booklist.length: ' + booklist.length);

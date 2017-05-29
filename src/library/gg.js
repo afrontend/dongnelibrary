@@ -104,6 +104,7 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
               if(callback) {
                 callback({
                     code: 0,
+                    startPage: opt.startPage,
                     totalBookCount: maxoffset,
                     msg: "No Error"
                   }, booklist);
@@ -186,6 +187,7 @@ function search(opt, callback) {
         if(callback) {
           callback({
               code: 1,
+              startPage: startPage,
               msg: msg
             }, []);
         }
