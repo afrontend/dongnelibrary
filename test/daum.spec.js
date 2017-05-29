@@ -5,15 +5,15 @@
  *    it('search book', function(done) {
  *        daum.search({
  *            title: 'javascript'
- *          }, function (error, booklist) {
- *            if(error.code === 0) {
+ *          }, function (result, booklist) {
+ *            if(result.code === 0) {
  *              if(booklist.length > 0) {
  *                done();
  *              } else {
  *                console.log('booklist.length: ' + booklist.length);
  *              }
  *            } else {
- *              console.log(error.msg);
+ *              console.log(result.msg);
  *            }
  *        });
  *    });

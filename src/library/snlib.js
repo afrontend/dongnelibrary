@@ -64,8 +64,6 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
         $a = $('#textViewList > li'),
         totalBookCount = $('body > p > strong:nth-child(3)').text();
 
-    console.log('totalBookCount: ' + totalBookCount);
-
     _.each($a, function (value) {
         var $value = $(value);
         booklist.push({
