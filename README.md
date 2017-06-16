@@ -47,6 +47,9 @@ require("dongnelibrary").search({
 
 ### 명령어가 불편하다면 [웹 서비스][web-ui-url]를 사용할 수 있다.
 
+### 이 서버가 느리다면 로컬에 설치하여 사용할 수 있다.
+https://github.com/afrontend/dongnelibraryspa
+
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [travis-build-image]: https://travis-ci.org/afrontend/dongnelibrary.svg?branch=master
@@ -58,3 +61,5 @@ require("dongnelibrary").search({
 [snlib-url]: http://www.snlib.net
 [web-ui-url]: https://dongne.herokuapp.com
 [sample-url]: https://tonicdev.com/afrontend/dongnelibrary
+[dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa
+
