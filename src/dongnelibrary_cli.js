@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-var dongnelibrary = require('./dongnelibrary');
+var dl = require('./dongnelibrary');
 var cli = require('cli');
 var _ = require('underscore');
 var options = cli.parse({
-    title: [ 't', ' A book title', 'string', 'javascript' ],
-    libraryName: [ 'l', ' A library name', 'string', '남양도서관' ],
-    json: [ 'j', ' JSON format', 'bool', false ]
+    title:       [ 't', ' A book title'  , 'string', 'javascript' ],
+    libraryName: [ 'l', ' A library name', 'string', '' ],
+    json:        [ 'j', ' JSON format'   , 'bool'  , false ]
 });
 
 function print(book) {
@@ -13,7 +13,7 @@ function print(book) {
 }
 
 function complete(str) {
-  var names = dongnelibrary.getLibraryNames()
+  var names = dl.getLibraryNames()
 
   var found =  _.find(names, function (name) {
       return name === str;
@@ -35,30 +35,43 @@ function complete(str) {
 }
 
 function printLibraryNames(libraryName) {
-  _.each(dongnelibrary.getLibraryNames(), function (name) {
+  _.each(dl.getLibraryNames(), function (name) {
       console.log(((name === libraryName)?'❯ ':'  ') + name + ' ');
   });
   console.log("Searching...("+options.title+")" );
 }
 
-options.libraryName = complete(options.libraryName);
+function search(title, libraryName, jsonFlag) {
+  dl.search({
+      title: title,
+      libraryName: libraryName
+    }, function (books) {
+      if(jsonFlag) {
+        console.log(JSON.stringify(books, null, 2));
+      } else {
+        _.each(books, function (book) {
+          print(book);
+        });
+      }
+    }
+  );
+}
 
-if(options.libraryName) {
-  if(!options.json) {
-    printLibraryNames(options.libraryName);
+function activate() {
+  if(options.libraryName && options.libraryName.length > 0) {
+    options.libraryName = complete(options.libraryName);
+    if(options.libraryName) {
+      if(!options.json) {
+        printLibraryNames(options.libraryName);
+      }
+    }
+    search(options.title, options.libraryName, options.json);
+  } else {
+    var libs = dl.getLibraryNames();
+    _.each(libs, function (libraryName) {
+      search(options.title, libraryName, options.json);
+    });
   }
 }
 
-dongnelibrary.search({
-    title: options.title,
-    libraryName: options.libraryName
-  }, function (books) {
-    if(options.json) {
-      console.log(JSON.stringify(books, null, 2));
-    } else {
-      _.each(books, function (book) {
-          print(book);
-      });
-    }
-  }
-);
+activate();

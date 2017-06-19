@@ -91,7 +91,7 @@ function search(opt, callback) {
       libraryName: libraryName
     }, function (error, booklist) {
       if(error.code !== 0) {
-        console.log("error: " + error.msg);
+        console.log(libraryName + " '" + title + "', error: " + error.msg);
       }
       var books = _.map(booklist, function (book) {
           return {
