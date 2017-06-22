@@ -57,6 +57,28 @@ function getLibraryFunction(libraryName) {
   return dummyLibraryFunction;
 }
 
+function completeLibraryName(str) {
+  var names = getLibraryNames()
+
+  var found =  _.find(names, function (name) {
+      return name === str;
+  });
+
+  if (found) {
+    return found;
+  }
+
+  found =  _.find(names, function (name) {
+      return (name.indexOf(str) >= 0);
+  });
+
+  if (found) {
+    return found;
+  } else {
+    return '';
+  }
+}
+
 function isValidLibraryName(libraryName) {
   var found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
@@ -77,12 +99,14 @@ function search(opt, getBook) {
 
   var lib = dummyLibraryFunction;
   var title = opt.title;
-  var libraryName = opt.libraryName;
+  var libraryName = completeLibraryName(opt.libraryName);
 
   if (isValidLibraryName(libraryName)) {
     lib = getLibraryFunction(libraryName);
   } else {
-    console.log('invalid Library Name ' + libraryName);
+    if (getBook) {
+      getBook({msg: 'invalid Library Name ' + libraryName});
+    }
     return;
   }
 
@@ -104,6 +128,8 @@ function search(opt, getBook) {
       books = _.sortBy(books, function (book) { return !book.exist; });
       if (getBook) {
         getBook(null, {
+          title: title,
+          libraryName: libraryName,
           totalBookCount: data.totalBookCount,
           startPage: data.startPage,
           booklist: books

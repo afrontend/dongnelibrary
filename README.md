@@ -30,35 +30,40 @@ dongne () {
 ```
 
     $ dongne -l 여주도서관 -t 자바
+    $ dongne -l 여주 -t 자바
 
-## 2. npm 사용 예
+## 2. Npm 사용 예
 
     $ npm install dongnelibrary -g
     $ dongnelibrary
     $ dongnelibrary -t javascript -l 남양도서관
-    $ dongnelibrary -t javascript -l 남양도서관 -j
+    $ dongnelibrary -t javascript -l 남양 -j
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-## 3. [자바스크립트 코드에서 사용하기][sample-url]
+## 3. [코드에서 사용하기][sample-url]
+
+    $ npm install dongnelibrary
+
 ```javascript
 require("dongnelibrary").search({
     title: 'javascript',
-    libraryName: '남양도서관'
-  }, function (books) {
-    books.forEach(function (book) {
-        console.log((book.exist?'책있음':'책없음') + ' ' + book.title);
+    libraryName: '여주'
+  }, function (err, book) {
+    console.log(book.libraryName + ' "' + book.title + '"');
+    book.booklist.forEach(function (book) {
+        console.log((book.exist?' ✓  ':' ✖  ') +' '+ book.title);
     });
 });
 ```
 
-## 4. Git 사용하여 설치하고 사용하고 테스트하기
+## 4. Git 사용하여 다운로드
 
     $ git clone https://github.com/afrontend/dongnelibrary
     $ cd dongnelibrary
     $ npm install
     $ chmod a+x src/dongnelibrary_cli.js
-    $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관
+    $ ./src/dongnelibrary_cli.js -t javascript -l 남양
     $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     $ npm test
 
@@ -73,6 +78,6 @@ require("dongnelibrary").search({
 [osanlibrary-url]: http://www.osanlibrary.go.kr
 [snlib-url]: http://www.snlib.net
 [web-ui-url]: https://dongne.herokuapp.com
-[sample-url]: https://tonicdev.com/afrontend/dongnelibrary
+[sample-url]: https://npm.runkit.com/dongnelibrary
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa
 
