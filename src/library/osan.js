@@ -67,10 +67,18 @@ function search(opt, getBook) {
 
   if (opt.title) {
     title = opt.title;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a book name'});
+    }
   }
 
   if (opt.libraryName) {
     libraryName = opt.libraryName;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a library name'});
+    }
   }
 
   req.post({
@@ -83,6 +91,9 @@ function search(opt, getBook) {
         value1: title
       }
     }, function (err, res, body) {
+      if (global.debug === true) {
+        console.log(body);
+      }
       if (err) {
         var msg = '';
 

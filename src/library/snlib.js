@@ -106,8 +106,8 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 }
 
 function search(opt, getBook) {
-  var title = 'javascript';
-  var libraryName = '판교도서관';
+  var title = '';
+  var libraryName = '';
   var startPage = 1;
 
   if (opt.debug) {
@@ -116,10 +116,18 @@ function search(opt, getBook) {
 
   if (opt.title) {
     title = opt.title;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a book name'});
+    }
   }
 
   if (opt.libraryName) {
     libraryName = opt.libraryName;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a library name'});
+    }
   }
 
   if (opt.startPage) {
