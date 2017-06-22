@@ -133,6 +133,7 @@ function search(opt, getBook) {
     if (getBook) {
       getBook({msg: 'Need a book name'});
     }
+    return;
   }
 
   if (opt.libraryName) {
@@ -141,6 +142,7 @@ function search(opt, getBook) {
     if (getBook) {
       getBook({msg: 'Need a library name'});
     }
+    return;
   }
 
   if (opt.startPage) {
@@ -228,6 +230,7 @@ function searchDetail(opt, checkExistence) {
     if (checkExistence) {
       checkExistence({msg: 'Need a book name'});
     }
+    return;
   }
 
   if (opt.libraryName) {
@@ -236,6 +239,7 @@ function searchDetail(opt, checkExistence) {
     if (checkExistence) {
       checkExistence({msg: 'Need a library name'});
     }
+    return;
   }
 
   req.post({

@@ -71,6 +71,7 @@ function search(opt, getBook) {
     if (getBook) {
       getBook({msg: 'Need a book name'});
     }
+    return;
   }
 
   if (opt.libraryName) {
@@ -79,6 +80,7 @@ function search(opt, getBook) {
     if (getBook) {
       getBook({msg: 'Need a library name'});
     }
+    return;
   }
 
   req.post({
