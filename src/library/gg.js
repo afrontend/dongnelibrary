@@ -22,7 +22,7 @@ function getLibraryCode(libraryName) {
     return lib.name === libraryName;
   });
 
-  if(found) {
+  if (found) {
     return found.code;
   }
   return '';
@@ -52,13 +52,14 @@ function appendOffset(booklist, str) {
   });
 }
 
-function makeJsdomCallback(libraryName, body, opt, callback) {
+function makeJsdomCallback(libraryName, body, opt, getBook) {
   return function (errors, window) {
     var booklist = [],
-        maxoffsetPattern = /^(\d+).*/,
-        matches,
-        $ = window.$,
-        maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
+        checkPoint = 0,
+        checkPointLimit = 0,
+        $ = window.$;
+
+    var maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
 
     maxoffset = parseInt(maxoffset);
 
@@ -71,8 +72,6 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
     }
 
     var $a = $('body > form:nth-child(1) > form > table > tbody > tr > td > table > tbody > tr');
-    var checkPoint = 0;
-    var checkPointLimit = 0;
 
     _.each($a, function (value) {
         var $value = $(value);
@@ -97,19 +96,21 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
         o.maxoffset = book.maxoffset;
         var index = key;
 
-        searchDetail(o, function (exist) {
-            booklist[index].exist = exist;
-            checkPoint = checkPoint + 1;
-            if(checkPoint === checkPointLimit) {
-              if(callback) {
-                callback({
-                    code: 0,
-                    startPage: opt.startPage,
-                    totalBookCount: maxoffset,
-                    msg: "No Error"
-                  }, booklist);
-              }
+        searchDetail(o, function (err, exist) {
+          checkPoint = checkPoint + 1;
+          if (err) {
+            exist = false;
+          }
+          booklist[index].exist = exist;
+          if (checkPoint === checkPointLimit) {
+            if (getBook) {
+              getBook(null, {
+                startPage: opt.startPage,
+                totalBookCount: maxoffset,
+                booklist: booklist
+              });
             }
+          }
         });
     });
 
@@ -117,24 +118,32 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
   }
 }
 
-function search(opt, callback) {
-  var title = 'javascript';
-  var libraryName = '경기도립중앙도서관';
+function search(opt, getBook) {
+  var title = '';
+  var libraryName = '';
   var startPage = 1;
 
-  if(opt.debug) {
+  if (opt.debug) {
     global.debug = true;
   }
 
-  if(opt.title) {
+  if (opt.title) {
     title = opt.title;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a book name'});
+    }
   }
 
-  if(opt.libraryName) {
+  if (opt.libraryName) {
     libraryName = opt.libraryName;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a library name'});
+    }
   }
 
-  if(opt.startPage) {
+  if (opt.startPage) {
     startPage = opt.startPage;
   }
 
@@ -164,62 +173,69 @@ function search(opt, callback) {
          mode: 0,
          mgc: getLibraryCode(libraryName)
        }
-    }, function (error, res, body) {
-      if(global.debug === true) {
+    }, function (err, res, body) {
+      if (global.debug === true) {
         console.log(body);
       }
-      if (!error && res.statusCode === 200) {
+      if (err) {
+        var msg = '';
+
+        if (err) {
+          msg = err;
+        }
+
+        if (res && res.statusCode) {
+          msg = msg + " " + res.statusCode;
+        }
+
+        if (getBook) {
+          getBook({
+            msg: msg
+          });
+        }
+      } else {
         jsdom.env({
             html: body,
             src: [jquery],
-            done: makeJsdomCallback(libraryName, body, _.clone(opt), callback)
+            done: makeJsdomCallback(libraryName, body, _.clone(opt), getBook)
         });
-      } else {
-        var msg = 'Error';
-        if(error) {
-          msg = error;
-        }
-
-        if(res && res.statusCode) {
-          msg = msg + " HTTP return code ("+res.statusCode+")";
-        }
-
-        if(callback) {
-          callback({
-              code: 1,
-              startPage: startPage,
-              msg: msg
-            }, []);
-        }
       }
     }
   );
 }
 
-function searchDetail(opt, callback) {
+function searchDetail(opt, checkExistence) {
   var offset = 1;
   var maxoffset = 356;
-  var title = 'javascript';
-  var libraryName = '경기도립중앙도서관';
+  var title = '';
+  var libraryName = '';
 
   if (global.debug) {
     console.log('opt: ' + JSON.stringify(opt, null, 2));
   }
 
-  if(opt.offset) {
+  if (opt.offset) {
     offset = opt.offset;
   }
 
-  if(opt.maxoffset) {
+  if (opt.maxoffset) {
     maxoffset = opt.maxoffset;
   }
 
-  if(opt.title) {
+  if (opt.title) {
     title = opt.title;
+  } else {
+    if (checkExistence) {
+      checkExistence({msg: 'Need a book name'});
+    }
   }
 
-  if(opt.libraryName) {
+  if (opt.libraryName) {
     libraryName = opt.libraryName;
+  } else {
+    if (checkExistence) {
+      checkExistence({msg: 'Need a library name'});
+    }
   }
 
   req.post({
@@ -235,32 +251,34 @@ function searchDetail(opt, callback) {
          historycount: 0,
          book_code: ''
       }
-    }, function (error, res, body) {
-      if(global.debug === true) {
+    }, function (err, res, body) {
+      if (global.debug === true) {
         console.log(body);
       }
-      if (!error && res.statusCode === 200) {
+      if (err) {
+        if (checkExistence) {
+          checkExistence({msg: err});
+        }
+      } else {
         jsdom.env({
             html: body,
             src: [jquery],
             done: function (errors, window) {
               var $a = window.$('table:nth-child(2) > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td.view2_01');
-              if(callback) {
-                //console.log('$a.text(): ' + $a.text());
-                if(exist(($a.text() + "").trim())) {
-                  callback(true);
+              if (checkExistence) {
+                if (global.debug === true) {
+                  console.log('$a.text(): ' + $a.text());
+                }
+                if (exist(($a.text() + "").trim())) {
+                  checkExistence(null, true);
                 } else {
-                  callback(false);
+                  checkExistence(null, false);
                 }
               }
 
               window.close();
             }
         });
-      } else {
-        if(callback) {
-          callback(false);
-        }
       }
     }
   );

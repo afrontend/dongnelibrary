@@ -51,7 +51,7 @@ function getLibraryFunction(libraryName) {
     return lib.name === libraryName;
   });
 
-  if(found) {
+  if (found) {
     return found.fn;
   }
   return dummyLibraryFunction;
@@ -62,15 +62,15 @@ function isValidLibraryName(libraryName) {
     return lib.name === libraryName;
   });
 
-  if(found) {
+  if (found) {
     return true;
   } else {
     return false;
   }
 }
 
-function search(opt, callback) {
-  if(!opt || !callback) {
+function search(opt, getBook) {
+  if (!opt || !getBook) {
     console.log('invalid search options');
     return;
   }
@@ -79,7 +79,7 @@ function search(opt, callback) {
   var title = opt.title;
   var libraryName = opt.libraryName;
 
-  if(isValidLibraryName(libraryName)) {
+  if (isValidLibraryName(libraryName)) {
     lib = getLibraryFunction(libraryName);
   } else {
     console.log('invalid Library Name ' + libraryName);
@@ -89,11 +89,12 @@ function search(opt, callback) {
   lib.search({
       title: title,
       libraryName: libraryName
-    }, function (error, booklist) {
-      if(error.code !== 0) {
-        console.log(libraryName + " '" + title + "', error: " + error.msg);
+    }, function (err, data) {
+      if (err) {
+        console.log(libraryName + " '" + title + "', err: " + err.msg);
+        getBook(err);
       }
-      var books = _.map(booklist, function (book) {
+      var books = _.map(data.booklist, function (book) {
           return {
             libraryName: book.libraryName,
             title: book.title,
@@ -101,8 +102,12 @@ function search(opt, callback) {
           };
       });
       books = _.sortBy(books, function (book) { return !book.exist; });
-      if(callback) {
-        callback(books);
+      if (getBook) {
+        getBook(null, {
+          totalBookCount: data.totalBookCount,
+          startPage: data.startPage,
+          booklist: books
+        });
       }
     }
   );

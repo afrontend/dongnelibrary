@@ -15,11 +15,11 @@ function printBookList(booklist) {
   console.log(JSON.stringify(booklist, null, 2));
 }
 
-function printTotalBookCount(result) {
-  if(result.totalBookCount) {
-    console.log("TotalCount: " + result.totalBookCount);
-    if(result.startPage) {
-      console.log("CurrentPage: " + result.startPage);
+function printTotalBookCount(book) {
+  if (book.totalBookCount) {
+    console.log("TotalCount: " + book.totalBookCount);
+    if (book.startPage) {
+      console.log("CurrentPage: " + book.startPage);
     }
   } else {
     console.log("TotalCount is not defined.");

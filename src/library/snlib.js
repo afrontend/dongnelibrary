@@ -2,6 +2,7 @@ var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
 var jquery = require('../dongnelibrary_util.js').getJqueryString();
+var global = {};
 
 var libraryList = [
   {code: 'MA', name: '성남시중앙도서관'},
@@ -25,7 +26,7 @@ function getLibraryCode(libraryName) {
     return lib.name === libraryName;
   });
 
-  if(found) {
+  if (found) {
     return found.code;
   }
   return '';
@@ -55,7 +56,7 @@ function appendBookId(booklist, str) {
   });
 }
 
-function makeJsdomCallback(libraryName, body, opt, callback) {
+function makeJsdomCallback(libraryName, body, opt, getBook) {
   return function (errors, window) {
     var booklist = [],
         checkPoint = 0,
@@ -82,19 +83,21 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
         o.bookId = book.bookId;
         var index = key;
 
-        searchDetail(o, function (exist) {
-            booklist[index].exist = exist;
-            checkPoint = checkPoint + 1;
-            if(checkPoint === checkPointLimit) {
-              if(callback) {
-                callback({
-                    code: 0,
-                    startPage: opt.startPage,
-                    totalBookCount: totalBookCount,
-                    msg: "No Error"
-                  }, booklist);
-              }
+        searchDetail(o, function (err, exist) {
+          checkPoint = checkPoint + 1;
+          if (err) {
+            exist = false;
+          }
+          booklist[index].exist = exist;
+          if (checkPoint === checkPointLimit) {
+            if (getBook) {
+              getBook(null, {
+                startPage: opt.startPage,
+                totalBookCount: totalBookCount,
+                booklist: booklist
+              });
             }
+          }
         });
     });
 
@@ -102,20 +105,24 @@ function makeJsdomCallback(libraryName, body, opt, callback) {
   }
 }
 
-function search(opt, callback) {
+function search(opt, getBook) {
   var title = 'javascript';
   var libraryName = '판교도서관';
   var startPage = 1;
 
-  if(opt.title) {
+  if (opt.debug) {
+    global.debug = true;
+  }
+
+  if (opt.title) {
     title = opt.title;
   }
 
-  if(opt.libraryName) {
+  if (opt.libraryName) {
     libraryName = opt.libraryName;
   }
 
-  if(opt.startPage) {
+  if (opt.startPage) {
     startPage = opt.startPage;
   }
 
@@ -132,60 +139,72 @@ function search(opt, callback) {
         searchKeyword: title,
         searchLibrary: getLibraryCode(libraryName)
       }
-    }, function (error, res, body) {
-      //console.log('body: ' + body);
-      if (!error && res.statusCode === 200) {
+    }, function (err, res, body) {
+      if (global.debug === true) {
+        console.log(body);
+      }
+      if (err) {
+        var msg = '';
+
+        if (err) {
+          msg = err;
+        }
+
+        if (res && res.statusCode) {
+          msg = msg + " " + res.statusCode;
+        }
+
+        if (getBook) {
+          getBook({
+            msg: msg
+          });
+        }
+      } else {
         jsdom.env({
             html: body,
             src: [jquery],
-            done: makeJsdomCallback(libraryName, body, _.clone(opt), callback)
+            done: makeJsdomCallback(libraryName, body, _.clone(opt), getBook)
         });
-      } else {
-        var msg = 'Error';
-        if(error) {
-          msg = error;
-        }
-
-        if(res && res.statusCode) {
-          msg = msg + " HTTP return code ("+res.statusCode+")";
-        }
-
-        if(callback) {
-          callback({
-              code: 1,
-              startPage: startPage,
-              totalBookCount: 0,
-              msg: msg
-            }, []);
-        }
       }
     }
   );
 }
 
-function searchDetail(opt, callback) {
-  var bookId = '2923889';
-  var title = 'javascript';
-  var libraryName = '판교도서관';
+function searchDetail(opt, checkExistence) {
+  var bookId = '';
+  var title = '';
+  var libraryName = '';
 
-  if(opt.bookId) {
+  if (global.debug) {
+    console.log('opt: ' + JSON.stringify(opt, null, 2));
+  }
+
+  if (opt.bookId) {
     bookId = opt.bookId;
   }
 
-  if(opt.title) {
+  if (opt.title) {
     title = opt.title;
+  } else {
+    if (checkExistence) {
+      checkExistence({msg: 'Need a book name'});
+    }
   }
 
-  if(opt.libraryName) {
+  if (opt.libraryName) {
     libraryName = opt.libraryName;
+  } else {
+    if (checkExistence) {
+      checkExistence({msg: 'Need a library name'});
+    }
   }
 
   req.post({
       url: 'http://search.snlib.go.kr/search/viewSearchDetail',
+      timeout: 20000,
       headers: {
         "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
       },
-      timeout: 20000,
       form: {
         searchKey: 2,
         searchLibrary: getLibraryCode(libraryName),
@@ -194,29 +213,34 @@ function searchDetail(opt, callback) {
         viewStatus: 'text',
         bookId: bookId
       }
-    }, function (error, res, body) {
-      if (!error && res.statusCode === 200) {
+    }, function (err, res, body) {
+      if (global.debug === true) {
+        console.log(body);
+      }
+      if (err) {
+        if (checkExistence) {
+          checkExistence({msg: err});
+        }
+      } else {
         jsdom.env({
             html: body,
             src: [jquery],
             done: function (errors, window) {
               var $a = window.$('#frm > div:nth-child(15) > div > table > tbody > tr > td:nth-child(4)');
-
-              if(callback) {
-                if(exist(($a.text() + "").trim())) {
-                  callback(true);
+              if (checkExistence) {
+                if (global.debug === true) {
+                  console.log('$a.text(): ' + $a.text());
+                }
+                if (exist(($a.text() + "").trim())) {
+                  checkExistence(null, true);
                 } else {
-                  callback(false);
+                  checkExistence(null, false);
                 }
               }
 
               window.close();
             }
         });
-      } else {
-        if(callback) {
-          callback(false);
-        }
       }
     }
   );

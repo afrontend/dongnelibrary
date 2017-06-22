@@ -6,18 +6,19 @@ describe('gg (20s)', function () {
   it('search book', function (done) {
     gg.search({
       title: 'javascript',
+      libraryName: '경기도립중앙도서관',
       startPage: 2
-    }, function (result, booklist) {
-      if(result.code === 0) {
-        if(booklist.length > 0) {
-          util.printBookList(booklist);
-          util.printTotalBookCount(result);
+    }, function (err, book) {
+      if(err) {
+        console.log(err);
+      } else {
+        if(book.booklist.length > 0) {
+          util.printBookList(book.booklist);
+          util.printTotalBookCount(book);
           done();
         } else {
-          console.log('booklist.length: ' + booklist.length);
+          console.log('book.booklist.length: ' + book.booklist.length);
         }
-      } else {
-        console.log(result.msg);
       }
     });
   });

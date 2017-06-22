@@ -8,8 +8,23 @@ var options = cli.parse({
     json:        [ 'j', ' JSON format'   , 'bool'  , false ]
 });
 
+function cutTail(str, tail) {
+  var result = '';
+  var index = str.indexOf("도서관");
+  if (index === -1) {
+    result = str;
+  } else {
+    result = str.substring(0, index);
+  }
+  return result;
+}
+
 function print(book) {
-  console.log(book.libraryName + (book.exist?' ✓  ':'    ') + book.title + ' ');
+  _.each(book.booklist, function (book) {
+    console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
+  });
+  console.log("startPage: " + book.startPage);
+  console.log("totalBookCount: " + book.totalBookCount);
 }
 
 function complete(str) {
@@ -19,7 +34,7 @@ function complete(str) {
       return name === str;
   });
 
-  if(found) {
+  if (found) {
     return found;
   }
 
@@ -27,7 +42,7 @@ function complete(str) {
       return (name.indexOf(str) >= 0);
   });
 
-  if(found) {
+  if (found) {
     return found;
   } else {
     return '';
@@ -45,23 +60,26 @@ function search(title, libraryName, jsonFlag) {
   dl.search({
       title: title,
       libraryName: libraryName
-    }, function (books) {
-      if(jsonFlag) {
-        console.log(JSON.stringify(books, null, 2));
+    }, function (err, book) {
+      if (err) {
+        err.msg = err.msg || "Unknown Error";
+        console.log(libraryName + ", " + title + ": " + err.msg);
       } else {
-        _.each(books, function (book) {
+        if (jsonFlag) {
+          console.log(JSON.stringify(book.booklist, null, 2));
+        } else {
           print(book);
-        });
+        }
       }
     }
   );
 }
 
 function activate() {
-  if(options.libraryName && options.libraryName.length > 0) {
+  if (options.libraryName && options.libraryName.length > 0) {
     options.libraryName = complete(options.libraryName);
-    if(options.libraryName) {
-      if(!options.json) {
+    if (options.libraryName) {
+      if (!options.json) {
         printLibraryNames(options.libraryName);
       }
     }

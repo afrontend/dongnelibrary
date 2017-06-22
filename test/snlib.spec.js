@@ -6,18 +6,19 @@ describe('snlib (20s)', function () {
   it('search book', function (done) {
     snlib.search({
       title: 'javascript',
+      libraryName: '판교도서관',
       startPage: 5
-    }, function (result, booklist) {
-      if(result.code === 0) {
-        if(booklist.length > 0) {
-          util.printBookList(booklist);
-          util.printTotalBookCount(result);
+    }, function (err, book) {
+      if(err) {
+        console.log(err.msg);
+      } else {
+        if(book.booklist.length > 0) {
+          util.printBookList(book.booklist);
+          util.printTotalBookCount(book);
           done();
         } else {
-          console.log('booklist.length: ' + booklist.length);
+          console.log('book.booklist.length: ' + book.booklist.length);
         }
-      } else {
-        console.log(result.msg);
       }
     });
   });

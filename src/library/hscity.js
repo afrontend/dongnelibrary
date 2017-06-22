@@ -2,6 +2,7 @@ var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
 var jquery = require('../dongnelibrary_util').getJqueryString();
+var global = {};
 
 var libraryList = [
   {code: 'MA', name: '남양도서관'},
@@ -27,7 +28,7 @@ function getLibraryCode(libraryName) {
     return lib.name === libraryName;
   });
 
-  if(found) {
+  if (found) {
     return found.code;
   }
   return '';
@@ -37,7 +38,7 @@ function exist(str) {
   return !(str === '관외대출자료');
 }
 
-function makeJsdomCallback(libraryName, callback) {
+function makeJsdomCallback(libraryName, getBook) {
   return function(errors, window) {
     var booklist = [];
     var $ = window.$;
@@ -50,34 +51,46 @@ function makeJsdomCallback(libraryName, callback) {
             exist: exist($value.find('td:nth-child(8)').text().trim())
         });
     });
-    if(callback) {
-      callback({
-          code: 0,
-          msg: "No Error"
-        }, booklist);
+    if (getBook) {
+      getBook(null, {
+        totalBookCount: booklist.length,
+        booklist: booklist
+      });
     }
     window.close();
   }
 }
 
-function search(opt, callback) {
-  var title = 'javascript';
-  var libraryName = '남양도서관';
+function search(opt, getBook) {
+  var title = '';
+  var libraryName = '';
 
-  if(opt.title) {
-    title = opt.title;
+  if (opt.debug) {
+    global.debug = true;
   }
 
-  if(opt.libraryName) {
+  if (opt.title) {
+    title = opt.title;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a book name'});
+    }
+  }
+
+  if (opt.libraryName) {
     libraryName = opt.libraryName;
+  } else {
+    if (getBook) {
+      getBook({msg: 'Need a library name'});
+    }
   }
 
   req.post({
       url: 'http://www.hscitylib.or.kr/UnitySearch/unity_library_result.do',
+      timeout: 20000,
       headers: {
         "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
       },
-      timeout: 20000,
       form: {
         beforequery: "IAL:" + title + "*",
         sort: 'RK DESC',
@@ -88,29 +101,32 @@ function search(opt, callback) {
         limitpage: "100",
         mode: '0'
       }
-    }, function (error, res, body) {
-      if (!error && res.statusCode === 200) {
+    }, function (err, res, body) {
+      if (global.debug === true) {
+        console.log(body);
+      }
+      if (err) {
+        var msg = '';
+
+        if (err) {
+          msg = err;
+        }
+
+        if (res && res.statusCode) {
+          msg = msg + " " + res.statusCode;
+        }
+
+        if (getBook) {
+          getBook({
+            msg: msg
+          });
+        }
+      } else {
          jsdom.env({
              html: body,
              src: [jquery],
-             done: makeJsdomCallback(libraryName, callback)
+             done: makeJsdomCallback(libraryName, getBook)
          });
-      } else {
-        var msg = 'Error';
-        if(error) {
-          msg = error;
-        }
-
-        if(res && res.statusCode) {
-          msg = msg + " HTTP return code ("+res.statusCode+")";
-        }
-
-        if(callback) {
-          callback({
-              code: 1,
-              msg: msg
-            }, []);
-        }
       }
     }
   );
