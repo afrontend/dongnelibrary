@@ -20,13 +20,16 @@ function cutTail(str, tail) {
 }
 
 function print(book) {
+  var msg = '';
+  var shortLibraryName = cutTail(book.libraryName, '도서관');
   _.each(book.booklist, function (book) {
-    console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
+    console.log(shortLibraryName + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
   });
+  msg += shortLibraryName + " 모두 " + book.totalBookCount + ' 건';
   if (book.startPage) {
-    console.log("startPage: " + book.startPage);
+    msg += " (" + book.startPage + " 페이지)";
   }
-  console.log("totalBookCount: " + book.totalBookCount);
+  console.log(msg);
 }
 
 function complete(str) {
