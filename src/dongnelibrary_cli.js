@@ -23,7 +23,9 @@ function print(book) {
   _.each(book.booklist, function (book) {
     console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
   });
-  console.log("startPage: " + book.startPage);
+  if (book.startPage) {
+    console.log("startPage: " + book.startPage);
+  }
   console.log("totalBookCount: " + book.totalBookCount);
 }
 
