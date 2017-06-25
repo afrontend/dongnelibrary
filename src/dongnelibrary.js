@@ -125,7 +125,13 @@ function search(opt, getBook) {
       if (err) {
         console.log(libraryName + " '" + title + "', err: " + err.msg);
         getBook(err);
+        return
       }
+      if(!data || !data.booklist) {
+        getBook({msg: 'invalid Data response'});
+        return;
+      }
+
       var books = _.map(data.booklist, function (book) {
           return {
             libraryName: book.libraryName,
