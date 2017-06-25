@@ -96,7 +96,7 @@ function search(opt, getBook) {
       if (global.debug === true) {
         console.log(body);
       }
-      if (err) {
+      if (err || (res && res.statusCode !== 200)) {
         var msg = '';
 
         if (err) {
@@ -108,9 +108,7 @@ function search(opt, getBook) {
         }
 
         if (getBook) {
-          getBook({
-            msg: msg
-          });
+          getBook({msg: msg});
         }
       } else {
         jsdom.env({

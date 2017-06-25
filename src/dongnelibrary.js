@@ -2,6 +2,7 @@ var gg = require('./library/gg');
 var hscity = require('./library/hscity');
 var osan = require('./library/osan');
 var snlib = require('./library/snlib');
+var suwon = require('./library/suwon');
 var _ = require('underscore');
 
 var dummyLibraryFunction = {
@@ -15,31 +16,38 @@ var libraryList = [
 ];
 
 _.each(hscity.getLibraryNames(), function (name) {
-    libraryList.push({
-        name: name,
-        fn: hscity
-    })
+  libraryList.push({
+    name: name,
+    fn: hscity
+  })
 });
 
 _.each(osan.getLibraryNames(), function (name) {
-    libraryList.push({
-        name: name,
-        fn: osan
-    })
+  libraryList.push({
+    name: name,
+    fn: osan
+  })
 });
 
 _.each(snlib.getLibraryNames(), function (name) {
-    libraryList.push({
-        name: name,
-        fn: snlib
-    })
+  libraryList.push({
+    name: name,
+    fn: snlib
+  })
 });
 
 _.each(gg.getLibraryNames(), function (name) {
-    libraryList.push({
-        name: name,
-        fn: gg
-    })
+  libraryList.push({
+    name: name,
+    fn: gg
+  })
+});
+
+_.each(suwon.getLibraryNames(), function (name) {
+  libraryList.push({
+    name: name,
+    fn: suwon
+  })
 });
 
 function getLibraryNames() {
