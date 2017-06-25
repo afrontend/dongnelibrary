@@ -77,7 +77,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
       var $value = $(value);
       booklist.push({
         libraryName: libraryName,
-        title: $value.find('p.author').text().trim(),
+        title: $value.find('h4.title').text().trim(),
         detailLink: $value.find('h4.title a').attr('href'),
         exist: false
       });
