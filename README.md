@@ -10,7 +10,7 @@
 * [성남시도서관][snlib-url] (중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 중원어린이, 판교어린이)
 * [수원시도서관][suwon-url] (선경, 중앙, 영통, 슬기샘, 바른샘, 지혜샘, 서수원, 북수원, 태장마루, 한아름, 반달어린이, 사랑샘, 희망샘, 대추골, 한림, 창룡, 버드내, 광교홍재, 호매실, 일월, 화서다산)
 * [오산시도서관][osan-url] (오산중앙, 청학, 햇살마루, 양산, 초평, 꿈두레)
-* [화성시립도서관][hscitylib-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남)
+* [화성시립도서관][hscity-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남)
 
 검색할 때 도서관이름을 생략하면 모든 도서관을 검색한다.
 명령어가 불편하다면 [웹 서비스][web-ui-url]를 사용할 수 있으며
@@ -74,7 +74,7 @@ require("dongnelibrary").search({
 [travis-build-url]: https://travis-ci.org/afrontend/dongnelibrary
 [daum-url]: http://book.daum.net
 [gg-url]: http://www.gglib.or.kr
-[hscitylib-url]: https://hscitylib.or.kr
+[hscity-url]: https://hscitylib.or.kr
 [osan-url]: http://www.osanlibrary.go.kr
 [snlib-url]: http://www.snlib.net
 [suwon-url]: http://www.suwonlib.go.kr/
