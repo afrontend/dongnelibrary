@@ -14,11 +14,11 @@ describe('suwon (20s)', function () {
         if(book.booklist.length > 0) {
           util.printBookList(book.booklist);
           util.printTotalBookCount(book);
-          done();
         } else {
           console.log('book.booklist.length: ' + book.booklist.length);
         }
       }
+      done();
     });
   });
 });
