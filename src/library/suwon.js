@@ -67,21 +67,28 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
     var booklist = [],
       checkPoint = 0,
       checkPointLimit = 0,
-      $ = window.$;
+      $ = window.$,
+      $a = $('#A-LibMPageSearchList').children(),
+      totalBookCount = getTotalCount($('#A-LibMPageSearchInfo').text().trim());
 
-    var totalBookCount = getTotalCount($('#A-LibMPageSearchInfo').text().trim());
-
-    var $a = $('#A-LibMPageSearchList').children();
-
-    _.each($a, function (value) {
-      var $value = $(value);
-      booklist.push({
-        libraryName: libraryName,
-        title: $value.find('h4.title').text().trim(),
-        detailLink: $value.find('h4.title a').attr('href'),
-        exist: false
+    if (totalBookCount === '0') {
+      getBook(null, {
+        startPage: opt.startPage,
+        totalBookCount: +totalBookCount,
+        booklist: booklist
       });
-    });
+      return;
+    } else {
+      _.each($a, function (value) {
+        var $value = $(value);
+        booklist.push({
+          libraryName: libraryName,
+          title: $value.find('h4.title').text().trim(),
+          detailLink: $value.find('h4.title a').attr('href'),
+          exist: false
+        });
+      });
+    }
 
     checkPointLimit = booklist.length;
 

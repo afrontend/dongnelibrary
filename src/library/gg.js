@@ -61,10 +61,19 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 
     var maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
 
-    maxoffset = parseInt(maxoffset);
+    if (maxoffset === '검색결과 없음') {
+      getBook(null, {
+        startPage: opt.startPage,
+        totalBookCount: 0,
+        booklist: booklist
+      });
+      return;
+    } else {
+      maxoffset = parseInt(maxoffset);
 
-    if (maxoffset) {
-      opt.maxoffset = maxoffset;
+      if (maxoffset) {
+        opt.maxoffset = maxoffset;
+      }
     }
 
     if (global.debug) {
