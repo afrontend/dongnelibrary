@@ -65,14 +65,23 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
         $a = $('#textViewList > li'),
         totalBookCount = $('body > p > strong:nth-child(3)').text();
 
-    _.each($a, function (value) {
+    if (totalBookCount === '0') {
+      getBook(null, {
+        startPage: opt.startPage,
+        totalBookCount: +totalBookCount,
+        booklist: booklist
+      });
+      return;
+    } else {
+      _.each($a, function (value) {
         var $value = $(value);
         booklist.push({
-            libraryName: libraryName,
-            title: $value.find('p > a').text().trim(),
-            exist: false
+          libraryName: libraryName,
+          title: $value.find('p > a').text().trim(),
+          exist: false
         });
-    });
+      });
+    }
 
     checkPointLimit = booklist.length;
 
