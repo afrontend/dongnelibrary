@@ -19,13 +19,14 @@ function cutTail(str, tail) {
   return result;
 }
 
-function print(book) {
-  var msg = '';
-  var shortLibraryName = cutTail(book.libraryName, '도서관');
+function printBooks(book) {
   _.each(book.booklist, function (book) {
-    console.log(shortLibraryName + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
+    console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
   });
-  msg += shortLibraryName + " 모두 " + book.totalBookCount + ' 건';
+}
+
+function printTail(book) {
+  var msg = cutTail(book.libraryName, '도서관') + " 모두 " + book.totalBookCount + ' 건';
   if (book.startPage) {
     msg += " (" + book.startPage + " 페이지)";
   }
@@ -61,19 +62,19 @@ function printLibraryNames(libraryName) {
   console.log("Searching...("+options.title+")" );
 }
 
-function search(title, libraryName, jsonFlag) {
+function search(title, libraryName, callback) {
   dl.search({
       title: title,
       libraryName: libraryName
     }, function (err, book) {
       if (err) {
         err.msg = err.msg || "Unknown Error";
-        console.log(libraryName + ", " + title + ": " + err.msg);
+        if (callback) {
+          callback(err);
+        }
       } else {
-        if (jsonFlag) {
-          console.log(JSON.stringify(book.booklist, null, 2));
-        } else {
-          print(book);
+        if (callback) {
+          callback(null, book);
         }
       }
     }
@@ -88,11 +89,32 @@ function activate() {
         printLibraryNames(options.libraryName);
       }
     }
-    search(options.title, options.libraryName, options.json);
+    search(options.title, options.libraryName, function (err, book) {
+      if (err) {
+        console.log(libraryName + ", " + title + ": " + err.msg);
+      } else {
+        if (options.json) {
+          console.log(JSON.stringify(book.booklist, null, 2));
+        } else {
+          printBooks(book);
+          printTail(book);
+        }
+      }
+    });
   } else {
     var libs = dl.getLibraryNames();
     _.each(libs, function (libraryName) {
-      search(options.title, libraryName, options.json);
+      search(options.title, libraryName, function (err, book) {
+        if (err) {
+          console.log(libraryName + ", " + title + ": " + err.msg);
+        } else {
+          if (options.json) {
+            console.log(JSON.stringify(book.booklist, null, 2));
+          } else {
+            printBooks(book);
+          }
+        }
+      });
     });
   }
 }
