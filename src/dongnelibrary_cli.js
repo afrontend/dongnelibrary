@@ -102,9 +102,15 @@ function activate() {
       }
     });
   } else {
+    var checkPoint = 0,
+      checkPointLimit = 0,
+      bookCount = 0;
+
     var libs = dl.getLibraryNames();
+    checkPointLimit = libs.length;
     _.each(libs, function (libraryName) {
       search(options.title, libraryName, function (err, book) {
+        checkPoint = checkPoint + 1;
         if (err) {
           console.log(libraryName + ", " + title + ": " + err.msg);
         } else {
@@ -112,7 +118,11 @@ function activate() {
             console.log(JSON.stringify(book.booklist, null, 2));
           } else {
             printBooks(book);
+            bookCount += book.booklist.length;
           }
+        }
+        if (checkPoint === checkPointLimit) {
+          console.log("모든 도서관에서 " + bookCount + "권 검색됨.");
         }
       });
     });
