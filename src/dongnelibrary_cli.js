@@ -1,12 +1,21 @@
 #!/usr/bin/env node
 var dl = require('./dongnelibrary');
-var cli = require('cli');
+var program = require('commander');
 var _ = require('underscore');
-var options = cli.parse({
-    title:       [ 't', ' A book title'  , 'string', 'javascript' ],
-    libraryName: [ 'l', ' A library name', 'string', '' ],
-    json:        [ 'j', ' JSON format'   , 'bool'  , false ]
-});
+ 
+program
+  .version('0.1.7')
+  .option('-t, --title [value]', 'Add title')
+  .option('-l, --library-name [value]', 'Add library name')
+  .option('-j, --json-format', 'JSON format')
+  .parse(process.argv);
+ 
+//console.log('you ordered a pizza with:');
+//if (program.peppers) console.log('  - peppers');
+//if (program.pineapple) console.log('  - pineapple');
+//if (program.bbqSauce) console.log('  - bbq');
+//console.log('  - %s cheese', program.cheese);
+
 
 function cutTail(str, tail) {
   var result = '';
@@ -59,7 +68,7 @@ function printLibraryNames(libraryName) {
   _.each(dl.getLibraryNames(), function (name) {
       console.log(((name === libraryName)?'❯ ':'  ') + name + ' ');
   });
-  console.log("Searching...("+options.title+")" );
+  console.log("Searching...("+program.title+")" );
 }
 
 function search(title, libraryName, callback) {
@@ -82,18 +91,18 @@ function search(title, libraryName, callback) {
 }
 
 function activate() {
-  if (options.libraryName && options.libraryName.length > 0) {
-    options.libraryName = complete(options.libraryName);
-    if (options.libraryName) {
-      if (!options.json) {
-        printLibraryNames(options.libraryName);
+  if (program.libraryName && program.libraryName.length > 0) {
+    program.libraryName = complete(program.libraryName);
+    if (program.libraryName) {
+      if (!program.jsonFormat) {
+        printLibraryNames(program.libraryName);
       }
     }
-    search(options.title, options.libraryName, function (err, book) {
+    search(program.title || 'javascript', program.libraryName, function (err, book) {
       if (err) {
-        console.log(libraryName + ", " + title + ": " + err.msg);
+        console.log(libraryName + ", " + program.title + ": " + err.msg);
       } else {
-        if (options.json) {
+        if (program.jsonFormat) {
           console.log(JSON.stringify(book.booklist, null, 2));
         } else {
           printBooks(book);
@@ -109,12 +118,12 @@ function activate() {
     var libs = dl.getLibraryNames();
     checkPointLimit = libs.length;
     _.each(libs, function (libraryName) {
-      search(options.title, libraryName, function (err, book) {
+      search(program.title || 'javascript', libraryName, function (err, book) {
         checkPoint = checkPoint + 1;
         if (err) {
-          console.log(libraryName + ", " + title + ": " + err.msg);
+          console.log(libraryName + ", " + program.title + ": " + err.msg);
         } else {
-          if (options.json) {
+          if (program.jsonFormat) {
             console.log(JSON.stringify(book.booklist, null, 2));
           } else {
             printBooks(book);

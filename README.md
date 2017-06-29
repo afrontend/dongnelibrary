@@ -17,7 +17,7 @@
 아래 링크를 참조하여 검색 서버를 로컬에 설치할 수도 있다.
 https://github.com/afrontend/dongnelibraryspa
 
-## 1. Docker 사용 예
+## 1. Docker
 
     $ docker pull frontendwordpress/dongnelibrary
     $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
@@ -33,7 +33,7 @@ dongne () {
     $ dongne -l 여주도서관 -t 자바
     $ dongne -l 여주 -t 자바
 
-## 2. Npm 사용 예
+## 2. Npm
 
     $ npm install dongnelibrary -g
     $ dongnelibrary
@@ -42,7 +42,7 @@ dongne () {
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
 
-## 3. [코드에서 사용하기][sample-url]
+## 3. [JavaScript][sample-url]
 
     $ npm install dongnelibrary
 
@@ -58,7 +58,7 @@ require("dongnelibrary").search({
 });
 ```
 
-## 4. Git 사용하여 다운로드
+## 4. Git
 
     $ git clone https://github.com/afrontend/dongnelibrary
     $ cd dongnelibrary
