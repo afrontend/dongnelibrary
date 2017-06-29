@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "도서관 책이 대출되었는지 확인한다.",
   "main": "src/dongnelibrary.js",
   "bin": {
@@ -33,6 +33,7 @@
   },
   "tonicExampleFilename": "src/example.js",
   "dependencies": {
+    "colors": "^1.1.2",
     "jsdom": "^9.4.1",
     "mocha": "^2.5.3",
     "request": "^2.73.0",

@@ -2,9 +2,10 @@
 var dl = require('./dongnelibrary');
 var program = require('commander');
 var _ = require('underscore');
+var colors = require('colors');
 
 program
-  .version('0.1.7')
+  .version('0.1.8')
   .option('-t, --title [value]'       , 'Add title')
   .option('-l, --library-name [value]', 'Add library name')
   .option('-j, --json-format'         , 'JSON format')
@@ -32,7 +33,7 @@ function printTail(book) {
   if (book.startPage) {
     msg += " (" + book.startPage + " 페이지)";
   }
-  console.log(msg);
+  console.log(colors.blue(msg));
 }
 
 function complete(str) {
@@ -93,7 +94,7 @@ function activate() {
     }
     search(program.title || 'javascript', program.libraryName, function (err, book) {
       if (err) {
-        console.log(libraryName + ", " + program.title + ": " + err.msg);
+        console.log(program.libraryName + ", " + program.title + ": " + err.msg);
       } else {
         if (program.jsonFormat) {
           console.log(JSON.stringify(book.booklist, null, 2));
@@ -114,7 +115,7 @@ function activate() {
       search(program.title || 'javascript', libraryName, function (err, book) {
         checkPoint = checkPoint + 1;
         if (err) {
-          console.log(libraryName + ", " + program.title + ": " + err.msg);
+          console.log(program.libraryName + ", " + program.title + ": " + err.msg);
         } else {
           if (program.jsonFormat) {
             console.log(JSON.stringify(book.booklist, null, 2));
