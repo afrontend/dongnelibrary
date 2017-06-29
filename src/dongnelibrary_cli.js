@@ -12,7 +12,7 @@ program
 
 function cutTail(str, tail) {
   var result = '';
-  var index = str.indexOf("도서관");
+  var index = str.indexOf(tail);
   if (index === -1) {
     result = str;
   } else {
