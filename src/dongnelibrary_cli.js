@@ -2,20 +2,13 @@
 var dl = require('./dongnelibrary');
 var program = require('commander');
 var _ = require('underscore');
- 
+
 program
   .version('0.1.7')
-  .option('-t, --title [value]', 'Add title')
+  .option('-t, --title [value]'       , 'Add title')
   .option('-l, --library-name [value]', 'Add library name')
-  .option('-j, --json-format', 'JSON format')
+  .option('-j, --json-format'         , 'JSON format')
   .parse(process.argv);
- 
-//console.log('you ordered a pizza with:');
-//if (program.peppers) console.log('  - peppers');
-//if (program.pineapple) console.log('  - pineapple');
-//if (program.bbqSauce) console.log('  - bbq');
-//console.log('  - %s cheese', program.cheese);
-
 
 function cutTail(str, tail) {
   var result = '';
