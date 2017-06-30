@@ -22,9 +22,12 @@ function cutTail(str, tail) {
   return result;
 }
 
+var okMark = '✓ ';
+var notokMark = '✖ ';
+
 function printBooks(book) {
   _.each(book.booklist, function (book) {
-    console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ✓  ':' ✖  ') + book.title + ' ');
+    console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ' + okMark + ' ':' ' + colors.red(notokMark) + ' ') + book.title + ' ');
   });
 }
 
@@ -125,7 +128,8 @@ function activate() {
           }
         }
         if (checkPoint === checkPointLimit) {
-          console.log("모든 도서관에서 " + bookCount + "권 검색됨.");
+          var msg = "모든 도서관에서 " + bookCount + "권 검색됨.";
+          console.log(colors.blue(msg));
         }
       });
     });
