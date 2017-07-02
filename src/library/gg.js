@@ -2,6 +2,7 @@ var jsdom = require('jsdom');
 var req = require('request');
 var _ = require('underscore');
 var jquery = require('../dongnelibrary_util.js').getJqueryString();
+var async = require('async');
 var global = {};
 
 var libraryList = [
@@ -55,8 +56,6 @@ function appendOffset(booklist, str) {
 function makeJsdomCallback(libraryName, body, opt, getBook) {
   return function (errors, window) {
     var booklist = [],
-        checkPoint = 0,
-        checkPointLimit = 0,
         $ = window.$;
 
     var maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
@@ -95,32 +94,40 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
     booklist.shift();
     booklist.shift();
 
-    checkPointLimit = booklist.length;
-
     appendOffset(booklist, body);
 
-    _.each(booklist, function(book, key) {
-        var o = _.clone(opt);
-        o.offset = book.offset;
-        o.maxoffset = book.maxoffset;
-        var index = key;
+    var tasks = [];
 
+    _.each(booklist, function(book, key) {
+      var o = _.clone(opt);
+      o.offset = book.offset;
+      o.maxoffset = book.maxoffset;
+      tasks.push(function (callback) {
         searchDetail(o, function (err, exist) {
-          checkPoint = checkPoint + 1;
           if (err) {
             exist = false;
           }
-          booklist[index].exist = exist;
-          if (checkPoint === checkPointLimit) {
-            if (getBook) {
-              getBook(null, {
-                startPage: opt.startPage,
-                totalBookCount: maxoffset,
-                booklist: booklist
-              });
-            }
-          }
+          callback(null, exist);
         });
+      });
+    });
+
+    async.parallel(tasks, function (err, results) {
+      if (err) {
+        getBook({msg: 'Error, Can\'t access detail information'});
+        return;
+      }
+      if (getBook) {
+        booklist = _.map(booklist, function (item, key) {
+          item.exist = results[key];
+          return item;
+        });
+        getBook(null, {
+          startPage: opt.startPage,
+          totalBookCount: maxoffset,
+          booklist: booklist
+        });
+      }
     });
 
     window.close();
