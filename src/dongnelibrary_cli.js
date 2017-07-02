@@ -3,6 +3,7 @@ var dl = require('./dongnelibrary');
 var program = require('commander');
 var _ = require('underscore');
 var colors = require('colors');
+var async = require('async');
 
 program
   .version('0.1.8')
@@ -88,6 +89,16 @@ function search(title, libraryName, callback) {
   );
 }
 
+function getBookCount(results) {
+  return _.reduce(results, function (memo, book) {
+    var localSum = 0;
+    if(book && book.booklist && book.booklist.length) {
+      localSum = book.booklist.length;
+    }
+    return memo + localSum ;
+  }, 0);
+}
+
 function activate() {
   if (program.allLibrary) {
     var libs = dl.getLibraryNames();
@@ -123,31 +134,34 @@ function activate() {
       }
     });
   } else {
-    var checkPoint = 0,
-      checkPointLimit = 0,
-      bookCount = 0;
-
+    var tasks = [];
     var libs = dl.getLibraryNames();
-    checkPointLimit = libs.length;
     _.each(libs, function (libraryName) {
-      search(program.title || 'javascript', libraryName, function (err, book) {
-        checkPoint = checkPoint + 1;
-        if (err) {
-          console.log(program.libraryName + ", " + program.title + ": " + err.msg);
-        } else {
-          if (program.jsonFormat) {
-            console.log(JSON.stringify(book.booklist, null, 2));
+      tasks.push(function (callback) {
+        search(program.title || 'javascript', libraryName, function (err, book) {
+          if (err) {
+            console.log(program.libraryName + ", " + program.title + ": " + err.msg);
+            callback(null, {});
           } else {
-            printBooks(book);
-            bookCount += book.booklist.length;
+            if (program.jsonFormat) {
+              console.log(JSON.stringify(book.booklist, null, 2));
+            } else {
+              printBooks(book);
+            }
+            callback(null, book);
           }
-        }
-        if (checkPoint === checkPointLimit) {
-          var msg = "모든 도서관에서 " + bookCount + "권 검색됨.";
-          console.log(colors.green(msg));
-        }
+        });
       });
     });
+
+    async.parallel(tasks, function (err, results) {
+      if (err) {
+        getBook({msg: 'Error, Can\'t access detail information'});
+      } else {
+        var msg = "모든 도서관에서 " + getBookCount(results)+ "권 검색됨.";
+        console.log(colors.green(msg));
+      }
+    })
   }
 }
 
