@@ -6,9 +6,10 @@ var colors = require('colors');
 
 program
   .version('0.1.8')
-  .option('-t, --title [value]'       , 'Add title')
-  .option('-l, --library-name [value]', 'Add library name')
+  .option('-a, --all-library'         , 'Show all library')
   .option('-j, --json-format'         , 'JSON format')
+  .option('-l, --library-name [value]', 'Add library name')
+  .option('-t, --title [value]'       , 'Add title')
   .parse(process.argv);
 
 function cutTail(str, tail) {
@@ -36,7 +37,7 @@ function printTail(book) {
   if (book.startPage) {
     msg += " (" + book.startPage + " 페이지)";
   }
-  console.log(colors.blue(msg));
+  console.log(colors.green(msg));
 }
 
 function complete(str) {
@@ -88,6 +89,20 @@ function search(title, libraryName, callback) {
 }
 
 function activate() {
+  if (program.allLibrary) {
+    var libs = dl.getLibraryNames();
+    if (program.jsonFormat) {
+      console.log(JSON.stringify(libs, null, 2));
+    } else {
+      libs.forEach(function (name) {
+        console.log(name);
+      });
+      var msg = "모두 " + libs.length + ' 개의 도서관';
+      console.log(colors.green(msg));
+    }
+    return;
+  }
+
   if (program.libraryName && program.libraryName.length > 0) {
     program.libraryName = complete(program.libraryName);
     if (program.libraryName) {
@@ -129,7 +144,7 @@ function activate() {
         }
         if (checkPoint === checkPointLimit) {
           var msg = "모든 도서관에서 " + bookCount + "권 검색됨.";
-          console.log(colors.blue(msg));
+          console.log(colors.green(msg));
         }
       });
     });
