@@ -41,6 +41,19 @@ function printTail(book) {
   console.log(colors.green(msg));
 }
 
+function printAllLibraryName() {
+  var libs = dl.getLibraryNames();
+  if (program.jsonFormat) {
+    console.log(JSON.stringify(libs, null, 2));
+  } else {
+    libs.forEach(function (name) {
+      console.log(name);
+    });
+    var msg = "모두 " + libs.length + ' 개의 도서관';
+    console.log(colors.green(msg));
+  }
+}
+
 function complete(str) {
   var names = dl.getLibraryNames()
 
@@ -96,16 +109,7 @@ function activate() {
   program.title = program.title || 'javascript';
 
   if (program.allLibrary) {
-    var libs = dl.getLibraryNames();
-    if (program.jsonFormat) {
-      console.log(JSON.stringify(libs, null, 2));
-    } else {
-      libs.forEach(function (name) {
-        console.log(name);
-      });
-      var msg = "모두 " + libs.length + ' 개의 도서관';
-      console.log(colors.green(msg));
-    }
+    printAllLibraryName();
     return;
   }
 
