@@ -116,13 +116,11 @@ function activate() {
   if (program.libraryName && program.libraryName.length > 0) {
     var libraryFullName = getFullLibraryName(program.libraryName);
     if (libraryFullName === '') {
-      var msg ='\'' + program.libraryName + '\' 도서관을 찾을 수 없습니다.';
-      console.log(colors.green(msg));
+      console.log(colors.green("'" + program.libraryName + "' 도서관을 찾을 수 없습니다."));
       return;
     } else {
       if (!program.jsonFormat) {
-        console.log('❯ ' + libraryFullName + ' ');
-        console.log("Searching...("+program.title+")" );
+        console.log("❯  " + program.title);
       }
     }
     search(program.title, program.libraryName, function (err, book) {
@@ -162,8 +160,7 @@ function activate() {
       if (err) {
         getBook({msg: 'Error, Can\'t access detail information'});
       } else {
-        var msg = "모든 도서관에서 " + getBookCount(results)+ "권 검색됨.";
-        console.log(colors.green(msg));
+        console.log(colors.green("모든 도서관에서 " + getBookCount(results)+ "권 검색됨."));
       }
     })
   }
