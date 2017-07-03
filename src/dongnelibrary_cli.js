@@ -54,7 +54,7 @@ function printAllLibraryName() {
   }
 }
 
-function complete(str) {
+function getFullLibraryName(str) {
   var names = dl.getLibraryNames()
 
   var found =  _.find(names, function (name) {
@@ -114,7 +114,7 @@ function activate() {
   }
 
   if (program.libraryName && program.libraryName.length > 0) {
-    var libraryFullName = complete(program.libraryName);
+    var libraryFullName = getFullLibraryName(program.libraryName);
     if (libraryFullName === '') {
       var msg ='\'' + program.libraryName + '\' 도서관을 찾을 수 없습니다.';
       console.log(colors.green(msg));
