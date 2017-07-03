@@ -6,11 +6,11 @@ var colors = require('colors');
 var async = require('async');
 
 program
-  .version('0.1.8')
-  .option('-a, --all-library'         , 'Show all library')
-  .option('-j, --json-format'         , 'JSON format')
-  .option('-l, --library-name [value]', 'Add library name')
-  .option('-t, --title [value]'       , 'Add title')
+  .version('0.1.9')
+  .option('-a, --all-library'                 , 'Show all library')
+  .option('-j, --json-format'                 , 'JSON format')
+  .option('-l, --library-name [value1,value2]', 'Add library name')
+  .option('-t, --title [value]'               , 'Add title')
   .parse(process.argv);
 
 function cutTail(str, tail) {
@@ -105,6 +105,21 @@ function getBookCount(results) {
   }, 0);
 }
 
+function getSeveralLibrary(libs) {
+  if (!libs) return [];
+  var a = _.filter(libs.split(','), function (lib) {
+    if (lib && lib.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  return _.map(a, function (lib) {
+    return lib.trim();
+  });
+}
+
 function activate(option) {
   if(!(option.title && option.title.length > 0)) {
     option.title = 'javascript';
@@ -115,57 +130,51 @@ function activate(option) {
     return;
   }
 
+  var tasks = [];
+  var libs = [];
+
   if (option.libraryName && option.libraryName.length > 0) {
-    var libraryFullName = getFullLibraryName(option.libraryName);
-    if (libraryFullName === '') {
-      console.log(colors.green("'" + option.libraryName + "' 도서관을 찾을 수 없습니다."));
-      return;
-    } else {
-      if (!option.jsonFormat) {
-        console.log("❯  " + option.title);
-      }
-    }
-    search(option.title, option.libraryName, function (err, book) {
-      if (err) {
-        console.log(option.libraryName + ", " + option.title + ": " + err.msg);
+    libs = _.filter(getSeveralLibrary(option.libraryName), function (shortLibraryName) {
+      if (getFullLibraryName(shortLibraryName) === '') {
+        console.log(colors.green("'" + shortLibraryName + "' 도서관은 찾을 수 없습니다."));
+        return false;
       } else {
-        if (option.jsonFormat) {
-          console.log(JSON.stringify(book.booklist, null, 2));
-        } else {
-          printBooks(book);
-          printTail(book);
-        }
+        return true;
       }
-    });
-  } else {
-    var tasks = [];
-    var libs = dl.getLibraryNames();
-    _.each(libs, function (libraryName) {
-      tasks.push(function (callback) {
-        search(option.title, libraryName, function (err, book) {
-          if (err) {
-            console.log(option.libraryName + ", " + option.title + ": " + err.msg);
-            callback(null, {});
-          } else {
-            if (option.jsonFormat) {
-              console.log(JSON.stringify(book.booklist, null, 2));
-            } else {
-              printBooks(book);
-            }
-            callback(null, book);
-          }
-        });
-      });
     });
 
-    async.parallel(tasks, function (err, results) {
-      if (err) {
-        getBook({msg: 'Error, Can\'t access detail information'});
-      } else {
-        console.log(colors.green("모든 도서관에서 " + getBookCount(results)+ "권 검색됨."));
-      }
-    })
+    libs = _.map(libs, function (shortLibraryName) {
+      return getFullLibraryName(shortLibraryName);
+    });
+  } else {
+    libs = dl.getLibraryNames();
   }
+
+  _.each(libs, function (libraryName) {
+    tasks.push(function (callback) {
+      search(option.title, libraryName, function (err, book) {
+        if (err) {
+          console.log(option.libraryName + ", " + option.title + ": " + err.msg);
+          callback(null, {});
+        } else {
+          if (option.jsonFormat) {
+            console.log(JSON.stringify(book.booklist, null, 2));
+          } else {
+            printBooks(book);
+          }
+          callback(null, book);
+        }
+      });
+    });
+  });
+
+  async.parallel(tasks, function (err, results) {
+    if (err) {
+      getBook({msg: 'Error, Can\'t access detail information'});
+    } else {
+      console.log(colors.green(results.length + '개의 도서관에서 ' + getBookCount(results) + '권 검색됨.'));
+    }
+  })
 }
 
 activate(program);

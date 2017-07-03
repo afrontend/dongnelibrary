@@ -20,6 +20,8 @@ https://github.com/afrontend/dongnelibraryspa
 ## 1. Docker
 
     $ docker pull frontendwordpress/dongnelibrary
+    $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
+    $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
     $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
 
 아래 함수를 `~/.bashrc` 파일에 추가하여 간편하게 사용할 수 있다.
@@ -37,7 +39,9 @@ dongne () {
 
     $ npm install dongnelibrary -g
     $ dongnelibrary
+    $ dongnelibrary -a
     $ dongnelibrary -t javascript -l 남양도서관
+    $ dongnelibrary -t javascript -l 남양,판교
     $ dongnelibrary -t javascript -l 남양 -j
 
 [![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
@@ -65,6 +69,7 @@ require("dongnelibrary").search({
     $ npm install
     $ chmod a+x src/dongnelibrary_cli.js
     $ ./src/dongnelibrary_cli.js -t javascript -l 남양
+    $ ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
     $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     $ npm test
 
