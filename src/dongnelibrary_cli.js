@@ -63,13 +63,6 @@ function complete(str) {
   }
 }
 
-function printLibraryNames(libraryName) {
-  _.each(dl.getLibraryNames(), function (name) {
-      console.log(((name === libraryName)?'❯ ':'  ') + name + ' ');
-  });
-  console.log("Searching...("+program.title+")" );
-}
-
 function search(title, libraryName, callback) {
   dl.search({
       title: title,
@@ -100,6 +93,8 @@ function getBookCount(results) {
 }
 
 function activate() {
+  program.title = program.title || 'javascript';
+
   if (program.allLibrary) {
     var libs = dl.getLibraryNames();
     if (program.jsonFormat) {
@@ -115,13 +110,18 @@ function activate() {
   }
 
   if (program.libraryName && program.libraryName.length > 0) {
-    program.libraryName = complete(program.libraryName);
-    if (program.libraryName) {
+    var libraryFullName = complete(program.libraryName);
+    if (libraryFullName === '') {
+      var msg ='\'' + program.libraryName + '\' 도서관을 찾을 수 없습니다.';
+      console.log(colors.green(msg));
+      return;
+    } else {
       if (!program.jsonFormat) {
-        printLibraryNames(program.libraryName);
+        console.log('❯ ' + libraryFullName + ' ');
+        console.log("Searching...("+program.title+")" );
       }
     }
-    search(program.title || 'javascript', program.libraryName, function (err, book) {
+    search(program.title, program.libraryName, function (err, book) {
       if (err) {
         console.log(program.libraryName + ", " + program.title + ": " + err.msg);
       } else {
@@ -138,7 +138,7 @@ function activate() {
     var libs = dl.getLibraryNames();
     _.each(libs, function (libraryName) {
       tasks.push(function (callback) {
-        search(program.title || 'javascript', libraryName, function (err, book) {
+        search(program.title, libraryName, function (err, book) {
           if (err) {
             console.log(program.libraryName + ", " + program.title + ": " + err.msg);
             callback(null, {});
