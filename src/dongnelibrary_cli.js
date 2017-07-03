@@ -41,9 +41,9 @@ function printTail(book) {
   console.log(colors.green(msg));
 }
 
-function printAllLibraryName() {
+function printAllLibraryName(option) {
   var libs = dl.getLibraryNames();
-  if (program.jsonFormat) {
+  if (option.jsonFormat) {
     console.log(JSON.stringify(libs, null, 2));
   } else {
     libs.forEach(function (name) {
@@ -105,29 +105,31 @@ function getBookCount(results) {
   }, 0);
 }
 
-function activate() {
-  program.title = program.title || 'javascript';
+function activate(option) {
+  if(!(option.title && option.title.length > 0)) {
+    option.title = 'javascript';
+  }
 
-  if (program.allLibrary) {
-    printAllLibraryName();
+  if (option.allLibrary) {
+    printAllLibraryName(option);
     return;
   }
 
-  if (program.libraryName && program.libraryName.length > 0) {
-    var libraryFullName = getFullLibraryName(program.libraryName);
+  if (option.libraryName && option.libraryName.length > 0) {
+    var libraryFullName = getFullLibraryName(option.libraryName);
     if (libraryFullName === '') {
-      console.log(colors.green("'" + program.libraryName + "' 도서관을 찾을 수 없습니다."));
+      console.log(colors.green("'" + option.libraryName + "' 도서관을 찾을 수 없습니다."));
       return;
     } else {
-      if (!program.jsonFormat) {
-        console.log("❯  " + program.title);
+      if (!option.jsonFormat) {
+        console.log("❯  " + option.title);
       }
     }
-    search(program.title, program.libraryName, function (err, book) {
+    search(option.title, option.libraryName, function (err, book) {
       if (err) {
-        console.log(program.libraryName + ", " + program.title + ": " + err.msg);
+        console.log(option.libraryName + ", " + option.title + ": " + err.msg);
       } else {
-        if (program.jsonFormat) {
+        if (option.jsonFormat) {
           console.log(JSON.stringify(book.booklist, null, 2));
         } else {
           printBooks(book);
@@ -140,12 +142,12 @@ function activate() {
     var libs = dl.getLibraryNames();
     _.each(libs, function (libraryName) {
       tasks.push(function (callback) {
-        search(program.title, libraryName, function (err, book) {
+        search(option.title, libraryName, function (err, book) {
           if (err) {
-            console.log(program.libraryName + ", " + program.title + ": " + err.msg);
+            console.log(option.libraryName + ", " + option.title + ": " + err.msg);
             callback(null, {});
           } else {
-            if (program.jsonFormat) {
+            if (option.jsonFormat) {
               console.log(JSON.stringify(book.booklist, null, 2));
             } else {
               printBooks(book);
@@ -166,4 +168,4 @@ function activate() {
   }
 }
 
-activate();
+activate(program);
