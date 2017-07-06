@@ -6,7 +6,7 @@ var colors = require('colors');
 var async = require('async');
 
 program
-  .version('0.1.9')
+  .version('0.1.10')
   .option('-a, --all-library'                 , 'Show all library')
   .option('-j, --json-format'                 , 'JSON format')
   .option('-l, --library-name [value1,value2]', 'Add library name')
