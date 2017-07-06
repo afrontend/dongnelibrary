@@ -16,6 +16,7 @@
   "keywords": [
     "book",
     "public library",
+    "도서 검색",
     "경기도립도서관",
     "화성시립도서관",
     "오산시도서관",
@@ -35,6 +36,7 @@
   "dependencies": {
     "async": "^2.5.0",
     "colors": "^1.1.2",
+    "commander": "^2.11.0",
     "jsdom": "^9.4.1",
     "mocha": "^2.5.3",
     "request": "^2.73.0",

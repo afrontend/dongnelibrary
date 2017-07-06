@@ -33,8 +33,8 @@ dongne () {
 }
 ```
 
+    $ dongne -l 여주,판교 -t 자바
     $ dongne -l 여주도서관 -t 자바
-    $ dongne -l 여주 -t 자바
 
 ## 2. Npm
 
