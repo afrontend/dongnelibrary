@@ -45,7 +45,7 @@ dongne () {
     $ dongnelibrary -t javascript -l 남양,판교
     $ dongnelibrary -t javascript -l 남양 -j
 
-[![asciicast](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i.png)](https://asciinema.org/a/199fasi2lwe2a4dlf1zcg8y1i)
+[![asciicast](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF.png)](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF)
 
 ## 3. [JavaScript][sample-url]
 
