@@ -6,7 +6,7 @@ var snlib = require('../src/library/snlib');
 var suwon = require('../src/library/suwon');
 
 describe('Should sure you can access the library.', function () {
-  describe('gg (20s)', function () {
+  describe('경기도 도서관 (제한시간 20초)', function () {
     this.timeout(20000);
     it('search book', function (done) {
       gg.search({
@@ -29,7 +29,7 @@ describe('Should sure you can access the library.', function () {
     });
   });
 
-  describe('hscity (20s)', function () {
+  describe('화성시 도서관 (제한시간 20초)', function () {
     this.timeout(20000);
     it('search book', function (done) {
       hscity.search({
@@ -51,7 +51,7 @@ describe('Should sure you can access the library.', function () {
     });
   });
 
-  describe('osan (20s)', function () {
+  describe('오산시 도서관 (제한시간 20초)', function () {
     this.timeout(20000);
     it('search book', function (done) {
       osan.search({
@@ -73,7 +73,7 @@ describe('Should sure you can access the library.', function () {
     });
   });
 
-  describe('snlib (20s)', function () {
+  describe('성남시 도서관 (제한시간 20초)', function () {
     this.timeout(20000);
     it('search book', function (done) {
       snlib.search({
@@ -96,7 +96,7 @@ describe('Should sure you can access the library.', function () {
     });
   });
 
-  describe('suwon (20s)', function () {
+  describe('수원시 도서관 (제한시간 20초)', function () {
     this.timeout(20000);
     it('search book', function (done) {
       suwon.search({
