@@ -5,6 +5,9 @@ var snlib = require('./library/snlib');
 var suwon = require('./library/suwon');
 var _ = require('underscore');
 
+var libraryList = [
+];
+
 var dummyLibraryFunction = {
   search: function () {
   },
@@ -12,43 +15,24 @@ var dummyLibraryFunction = {
   }
 }
 
-var libraryList = [
-];
+function makeLibraryList() {
+  var library = [];
 
-_.each(hscity.getLibraryNames(), function (name) {
-  libraryList.push({
-    name: name,
-    fn: hscity
-  })
-});
+  library.push(gg);
+  library.push(hscity);
+  library.push(osan);
+  library.push(snlib);
+  library.push(suwon);
 
-_.each(osan.getLibraryNames(), function (name) {
-  libraryList.push({
-    name: name,
-    fn: osan
+  _.each(library, function (library) {
+    _.each(library.getLibraryNames(), function (name) {
+      libraryList.push({
+        name: name,
+        fn: library
+      })
+    });
   })
-});
-
-_.each(snlib.getLibraryNames(), function (name) {
-  libraryList.push({
-    name: name,
-    fn: snlib
-  })
-});
-
-_.each(gg.getLibraryNames(), function (name) {
-  libraryList.push({
-    name: name,
-    fn: gg
-  })
-});
-
-_.each(suwon.getLibraryNames(), function (name) {
-  libraryList.push({
-    name: name,
-    fn: suwon
-  })
-});
+}
 
 function getLibraryNames() {
   return _.pluck(libraryList, 'name');
@@ -152,6 +136,12 @@ function search(opt, getBook) {
     }
   );
 }
+
+function activate() {
+  makeLibraryList();
+}
+
+activate();
 
 module.exports = {
   search: search,
