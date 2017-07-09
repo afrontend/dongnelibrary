@@ -26,10 +26,30 @@ function printTotalBookCount(book) {
   }
 }
 
+/**
+ * Convert comma separated strings to Array
+ * @param {string} libs - "str1,str2,str3"
+ */
+function getArrayFromCommaSeparatedStrings(libs) {
+  if (!libs) return [];
+  var a = libs.split(',').filter(function (lib) {
+    if (lib && lib.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  return a.map(function (lib) {
+    return lib.trim();
+  });
+}
+
 module.exports = {
   stripTags: stripTags,
   getJqueryString: getJqueryString,
   printBookList: printBookList,
-  printTotalBookCount: printTotalBookCount
+  printTotalBookCount: printTotalBookCount,
+  getArrayFromCommaSeparatedStrings: getArrayFromCommaSeparatedStrings
 };
 

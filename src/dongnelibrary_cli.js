@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var dl = require('./dongnelibrary');
+var util = require('./dongnelibrary_util');
 var program = require('commander');
 var _ = require('underscore');
 var colors = require('colors');
@@ -105,21 +106,6 @@ function getBookCount(results) {
   }, 0);
 }
 
-function getSeveralLibrary(libs) {
-  if (!libs) return [];
-  var a = _.filter(libs.split(','), function (lib) {
-    if (lib && lib.length > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  return _.map(a, function (lib) {
-    return lib.trim();
-  });
-}
-
 function activate(option) {
   if(!(option.title && option.title.length > 0)) {
     option.title = 'javascript';
@@ -134,7 +120,7 @@ function activate(option) {
   var libs = [];
 
   if (option.libraryName && option.libraryName.length > 0) {
-    libs = _.filter(getSeveralLibrary(option.libraryName), function (shortLibraryName) {
+    libs = _.filter(util.getArrayFromCommaSeparatedStrings(option.libraryName), function (shortLibraryName) {
       if (getFullLibraryName(shortLibraryName) === '') {
         console.log(colors.green("'" + shortLibraryName + "' 도서관은 찾을 수 없습니다."));
         return false;
