@@ -9,10 +9,12 @@ var libraryList = [
 ];
 
 var dummyLibraryFunction = {
-  search: function () {
+  search: function (opt, getBook) {
+    if (getBook) {
+      getBook({msg: 'Unknown library name'});
+    }
   },
-  exist: function () {
-  }
+  name: 'Unknown'
 }
 
 function makeLibraryList() {
@@ -28,7 +30,7 @@ function makeLibraryList() {
     _.each(library.getLibraryNames(), function (name) {
       libraryList.push({
         name: name,
-        fn: library
+        search: library.search
       })
     });
   })
@@ -44,7 +46,7 @@ function getLibraryFunction(libraryName) {
   });
 
   if (found) {
-    return found.fn;
+    return found;
   }
   return dummyLibraryFunction;
 }
@@ -83,58 +85,68 @@ function isValidLibraryName(libraryName) {
   }
 }
 
+function getLibArray(libraryName) {
+  var libs = [];
+  var libArray = [];
+
+  if (Array.isArray(libraryName)) {
+    libs = libraryName;
+  } else {
+    libs.push(libraryName);
+  }
+  _.each(libs, function (name) {
+    var fullName = completeLibraryName(name);
+    if (isValidLibraryName(fullName)) {
+      libArray.push(getLibraryFunction(fullName));
+    }
+  });
+
+  return libArray;
+}
+
 function search(opt, getBook) {
   if (!opt || !getBook) {
     console.log('invalid search options');
     return;
   }
 
-  var lib = dummyLibraryFunction;
   var title = opt.title;
-  var libraryName = completeLibraryName(opt.libraryName);
 
-  if (isValidLibraryName(libraryName)) {
-    lib = getLibraryFunction(libraryName);
-  } else {
-    if (getBook) {
-      getBook({msg: 'invalid Library Name ' + libraryName});
-    }
-    return;
-  }
+  _.each(getLibArray(opt.libraryName), function (lib) {
+    lib.search({
+        title: title,
+        libraryName: lib.name
+      }, function (err, data) {
+        if (err) {
+          console.log(lib.name + " '" + title + "', err: " + err.msg);
+          getBook(err);
+          return
+        }
+        if(!data || !data.booklist) {
+          getBook({msg: 'invalid Data response'});
+          return;
+        }
 
-  lib.search({
-      title: title,
-      libraryName: libraryName
-    }, function (err, data) {
-      if (err) {
-        console.log(libraryName + " '" + title + "', err: " + err.msg);
-        getBook(err);
-        return
-      }
-      if(!data || !data.booklist) {
-        getBook({msg: 'invalid Data response'});
-        return;
-      }
-
-      var books = _.map(data.booklist, function (book) {
-          return {
-            libraryName: book.libraryName,
-            title: book.title,
-            exist: book.exist
-          };
-      });
-      books = _.sortBy(books, function (book) { return !book.exist; });
-      if (getBook) {
-        getBook(null, {
-          title: title,
-          libraryName: libraryName,
-          totalBookCount: data.totalBookCount,
-          startPage: data.startPage,
-          booklist: books
+        var books = _.map(data.booklist, function (book) {
+            return {
+              libraryName: book.libraryName,
+              title: book.title,
+              exist: book.exist
+            };
         });
+        books = _.sortBy(books, function (book) { return !book.exist; });
+        if (getBook) {
+          getBook(null, {
+            title: title,
+            libraryName: lib.name,
+            totalBookCount: data.totalBookCount,
+            startPage: data.startPage,
+            booklist: books
+          });
+        }
       }
-    }
-  );
+    );
+  })
 }
 
 function activate() {
