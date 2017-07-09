@@ -120,7 +120,7 @@ function activate(option) {
   var libs = [];
 
   if (option.libraryName && option.libraryName.length > 0) {
-    libs = _.filter(util.getArrayFromCommaSeparatedStrings(option.libraryName), function (shortLibraryName) {
+    libs = _.filter(util.getArrayFromCommaSeparatedString(option.libraryName), function (shortLibraryName) {
       if (getFullLibraryName(shortLibraryName) === '') {
         console.log(colors.green("'" + shortLibraryName + "' 도서관은 찾을 수 없습니다."));
         return false;

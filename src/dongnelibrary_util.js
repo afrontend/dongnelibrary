@@ -30,7 +30,7 @@ function printTotalBookCount(book) {
  * Convert comma separated strings to Array
  * @param {string} libs - "str1,str2,str3"
  */
-function getArrayFromCommaSeparatedStrings(libs) {
+function getArrayFromCommaSeparatedString(libs) {
   if (!libs) return [];
   var a = libs.split(',').filter(function (lib) {
     if (lib && lib.length > 0) {
@@ -50,6 +50,7 @@ module.exports = {
   getJqueryString: getJqueryString,
   printBookList: printBookList,
   printTotalBookCount: printTotalBookCount,
-  getArrayFromCommaSeparatedStrings: getArrayFromCommaSeparatedStrings
+  getArrayFromCommaSeparatedString: getArrayFromCommaSeparatedString
 };
+
 
