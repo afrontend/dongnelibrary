@@ -52,9 +52,10 @@ dongne () {
     $ npm install dongnelibrary
 
 ```javascript
-require("dongnelibrary").search({
+var dl = require('dongnelibrary');
+dl.search({
     title: 'javascript',
-    libraryName: '여주'
+    libraryName: ['여주','판교']
   }, function (err, book) {
     console.log(book.libraryName + ' "' + book.title + '"');
     book.booklist.forEach(function (book) {
