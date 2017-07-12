@@ -11,8 +11,9 @@
 * [수원시도서관][suwon-url] (선경, 중앙, 영통, 슬기샘, 바른샘, 지혜샘, 서수원, 북수원, 태장마루, 한아름, 반달어린이, 사랑샘, 희망샘, 대추골, 한림, 창룡, 버드내, 광교홍재, 호매실, 일월, 화서다산)
 * [오산시도서관][osan-url] (오산중앙, 청학, 햇살마루, 양산, 초평, 꿈두레)
 * [화성시립도서관][hscity-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남)
+* [군포시도서관][gunpo-url](산본, 당동, 대야, 어린이, 이동, 중앙, 부곡, 당정문화, 동화나무어린이, 금정작은, 재궁꿈나무, 궁내동작은, 노루목작은, 버드나무에부는바람작은, 꿈쟁이, 우리마을, 북카페사랑아이엔지, 산본역, 하늘정원작은, 꿈이지, 꿈드림작은, 여담작은)
 
-검색할 때 도서관 이름을 생략하면 모든 도서관을 검색한다.
+검색할 때 도서관 이름을 생략하면 모든 도서관을 검색하며
 도서관 이름을 , (콤마) 로 이어붙이면 여러 도서관을 동시에 검색한다.
 명령어가 불편하다면 [웹 서비스][web-ui-url]를 사용할 수 있으며
 아래 링크를 참조하여 검색 서버를 로컬에 설치할 수도 있다.
@@ -75,17 +76,19 @@ dl.search({
     $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     $ npm test
 
+[dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa
+[hscity-url]: https://hscitylib.or.kr
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [travis-build-image]: https://travis-ci.org/afrontend/dongnelibrary.svg?branch=master
 [travis-build-url]: https://travis-ci.org/afrontend/dongnelibrary
+[web-ui-url]: https://dongne.herokuapp.com
+
 [daum-url]: http://book.daum.net
 [gg-url]: http://www.gglib.or.kr
-[hscity-url]: https://hscitylib.or.kr
+[gunpo-url]: http://www.gunpolib.go.kr
 [osan-url]: http://www.osanlibrary.go.kr
-[snlib-url]: http://www.snlib.net
-[suwon-url]: http://www.suwonlib.go.kr/
-[web-ui-url]: https://dongne.herokuapp.com
 [sample-url]: https://npm.runkit.com/dongnelibrary
-[dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa
+[snlib-url]: http://www.snlib.net
+[suwon-url]: http://www.suwonlib.go.kr
 
