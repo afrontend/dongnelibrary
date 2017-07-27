@@ -5,6 +5,7 @@ var program = require('commander');
 var _ = require('underscore');
 var colors = require('colors');
 var async = require('async');
+var global = {};
 
 program
   .version('0.1.13')
@@ -12,6 +13,7 @@ program
   .option('-j, --json-format'                 , 'JSON format')
   .option('-l, --library-name [value1,value2]', 'Add library name')
   .option('-t, --title [value]'               , 'Add title')
+  .option('-d, --debug'                       , 'Show debug log')
   .parse(process.argv);
 
 function cutTail(str, tail) {
@@ -80,7 +82,8 @@ function getFullLibraryName(str) {
 function search(title, libraryName, callback) {
   dl.search({
       title: title,
-      libraryName: libraryName
+      libraryName: libraryName,
+      debug: global.debug
     }, function (err, book) {
       if (err) {
         err.msg = err.msg || "Unknown Error";
@@ -107,6 +110,8 @@ function getBookCount(results) {
 }
 
 function activate(option) {
+  global.debug = option.debug;
+
   if(!(option.title && option.title.length > 0)) {
     option.title = 'javascript';
   }

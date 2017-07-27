@@ -117,7 +117,8 @@ function search(opt, getBook) {
   _.each(getLibArray(opt.libraryName), function (lib) {
     lib.search({
         title: title,
-        libraryName: lib.name
+        libraryName: lib.name,
+        debug: opt.debug
       }, function (err, data) {
         if (err) {
           console.log(lib.name + " '" + title + "', err: " + err.msg);
