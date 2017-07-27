@@ -1,4 +1,5 @@
 var dl = require('../src/dongnelibrary');
+var assert = require('assert');
 
 describe('Should sure you can search the library.', function () {
   describe('Should can accept one library name.', function () {
@@ -12,6 +13,7 @@ describe('Should sure you can search the library.', function () {
         book.booklist.forEach(function (book) {
           console.log((book.exist?' ✓ ':'  ') +' '+ book.title);
         });
+        assert.notEqual(book.booklist.length, 0);
         done();
       });
     });
@@ -31,6 +33,7 @@ describe('Should sure you can search the library.', function () {
         book.booklist.forEach(function (book) {
           console.log((book.exist?' ✓ ':'  ') +' '+ book.title);
         });
+        assert.notEqual(book.booklist.length, 0);
         if (libCheckPoint === libNameArray.length) {
           done();
         }
