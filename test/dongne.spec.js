@@ -22,21 +22,20 @@ describe('Should sure you can search the library.', function () {
   describe('Should can use several library name as comma separated string', function () {
     this.timeout(20000);
     var libNameArray = ['여주', '성남', '판교'];
-    var libCheckPoint = 0;
     it('-l ' + libNameArray.join(','), function (done) {
       dl.search({
         title: 'javascript',
         libraryName:libNameArray
       }, function (err, book) {
-        libCheckPoint++;
         console.log(book.libraryName + ' "' + book.title + '"');
         book.booklist.forEach(function (book) {
           console.log((book.exist?' ✓ ':'  ') +' '+ book.title);
         });
         assert.notEqual(book.booklist.length, 0);
-        if (libCheckPoint === libNameArray.length) {
-          done();
-        }
+      }, function (err, books) {
+        console.log(books.length + ' 개의 도서관을 검색했습니다.');
+        console.log('books: ' + JSON.stringify(books, null, 2));
+        done();
       });
     });
   });

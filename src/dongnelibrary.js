@@ -5,6 +5,7 @@ var hscity = require('./library/hscity');
 var osan = require('./library/osan');
 var snlib = require('./library/snlib');
 var suwon = require('./library/suwon');
+var async = require('async');
 
 var libraryList = [
 ];
@@ -106,23 +107,28 @@ function getLibArray(libraryName) {
   return libArray;
 }
 
-function search(opt, getBook) {
-  if (!opt || !getBook) {
+function search(opt, getBook, getAllBooks) {
+  if (!opt || (!getBook && !getAllBooks)) {
     console.log('invalid search options');
     return;
   }
 
   var title = opt.title;
 
+  var tasks = [];
+
   _.each(getLibArray(opt.libraryName), function (lib) {
-    lib.search({
+    tasks.push(function (callback) {
+      lib.search({
         title: title,
         libraryName: lib.name,
         debug: opt.debug
       }, function (err, data) {
         if (err) {
-          console.log(lib.name + " '" + title + "', err: " + err.msg);
-          getBook(err);
+          if(getBook) {
+            getBook(err);
+          }
+          callback(err);
           return
         }
         if(!data || !data.booklist) {
@@ -131,25 +137,44 @@ function search(opt, getBook) {
         }
 
         var books = _.map(data.booklist, function (book) {
-            return {
-              libraryName: book.libraryName,
-              title: book.title,
-              exist: book.exist
-            };
+          return {
+            libraryName: book.libraryName,
+            title: book.title,
+            exist: book.exist
+          };
         });
+
         books = _.sortBy(books, function (book) { return !book.exist; });
+
+        var bookObj = {
+          title: title,
+          libraryName: lib.name,
+          totalBookCount: data.totalBookCount,
+          startPage: data.startPage,
+          booklist: books
+        }
         if (getBook) {
-          getBook(null, {
-            title: title,
-            libraryName: lib.name,
-            totalBookCount: data.totalBookCount,
-            startPage: data.startPage,
-            booklist: books
-          });
+          getBook(null, bookObj);
+        }
+
+        if(callback) {
+          callback(null, bookObj)
         }
       }
-    );
+      );
+    })
   })
+
+  async.parallel(tasks, function (err, results) {
+    if(getAllBooks) {
+      if(err) {
+        getAllBooks(err);
+      } else {
+        getAllBooks(null, results);
+      }
+    }
+  })
+
 }
 
 function activate() {
