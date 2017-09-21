@@ -2,7 +2,7 @@
 [![Travis Build][travis-build-image]][travis-build-url]
 
 # DongneLibrary
-도서관 책이 대출되었는지 확인하는 노드 모듈이다. 도서관 이름을 생략하면 모든 도서관을 검색한다.
+도서관 책을 빌릴 수 있는지 확인하는 노드 모듈이다. 도서관 이름을 생략하면 모든 도서관을 검색한다.
 
 ## 1. Npm
 
