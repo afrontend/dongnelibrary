@@ -4,6 +4,8 @@
 # DongneLibrary
 도서관 책을 빌릴 수 있는지 확인하는 노드 모듈이다. 도서관 이름을 생략하면 모든 도서관을 검색한다.
 
+https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
+
 ## 1. Npm
 
 *Install*
