@@ -9,11 +9,11 @@ https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
 
 ## 1. Npm
 
-*Installation*
+Installation
 
     npm install dongnelibrary -g
 
-*Usage*
+Usage
 
     dongnelibrary
     dongnelibrary -a
@@ -25,11 +25,11 @@ https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
 
 ## 2. Docker
 
-*Installation*
+Installation
 
     docker pull frontendwordpress/dongnelibrary
 
-*Usage*
+Usage
 
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
@@ -48,11 +48,11 @@ dongne () {
 
 ## 3. JavaScript
 
-*Installation*
+Installation
 
     npm install dongnelibrary
 
-*Usage*
+Usage
 
 ```javascript
 var dl = require('dongnelibrary');
@@ -71,23 +71,21 @@ dl.search({
 
 ## 4. Git
 
-*Installation*
+Installation
 
     git clone https://github.com/afrontend/dongnelibrary
     cd dongnelibrary
     npm install
     chmod a+x src/dongnelibrary_cli.js
 
-*Usage*
+Usage
 
     ./src/dongnelibrary_cli.js -t javascript -l 남양
     ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
     ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     npm test
 
-----
-
-**현재 아래 도서관들을 검색할 수 있다.**
+## 검색 가능한 도서관
 
 * [경기도립도서관][gg-url] (중앙, 평택, 광주, 여주, 포천, 김포)
 * [성남시도서관][snlib-url] (중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 중원어린이, 판교어린이)
@@ -96,7 +94,11 @@ dl.search({
 * [화성시립도서관][hscity-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남)
 * [군포시도서관][gunpo-url] (산본, 당동, 대야, 어린이, 이동, 중앙, 부곡, 당정문화, 동화나무어린이, 금정작은, 재궁꿈나무, 궁내동작은, 노루목작은, 버드나무에부는바람작은, 꿈쟁이, 우리마을, 북카페사랑아이엔지, 산본역, 하늘정원작은, 꿈이지, 꿈드림작은, 여담작은)
 
-[온라인에서][sample-url] 바로 테스트 할 수 있으며 명령어가 불편하다면 [웹 서비스][web-ui-url]를 사용할 수 있다. 웹 서비스가 느리다면 검색 서버를 [로컬에 설치][dongnelibraryspa] 할 수 있다.
+## 마무리
+
+[온라인에서][sample-url] 테스트 할 수 있으며 명령어가 불편하다면 [웹 서비스][web-ui-url]를 사용할 수 있다.
+웹 서비스가 느리다면 검색 서버를 [로컬에 설치][dongnelibraryspa] 할 수 있다.
+[Web API 서비스][web-api]도 지원한다.
 
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
 [hscity-url]: https://hscitylib.or.kr
@@ -104,7 +106,8 @@ dl.search({
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [travis-build-image]: https://travis-ci.org/afrontend/dongnelibrary.svg?branch=master
 [travis-build-url]: https://travis-ci.org/afrontend/dongnelibrary
-[web-ui-url]: https://dongne.herokuapp.com "무료 서버라서 느리게 로딩될 수 있어요"
+[web-ui-url]: https://dongne.herokuapp.com "무료 서버라서 10초 정도 느리게 로딩될 수 있어요"
+[web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
 
 [daum-url]: http://book.daum.net
 [gg-url]: http://www.gglib.or.kr
