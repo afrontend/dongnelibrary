@@ -8,7 +8,7 @@ https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
 
 ## 1. Npm
 
-*Install*
+*Installation*
 
     $ npm install dongnelibrary -g
 
@@ -24,7 +24,7 @@ https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
 
 ## 2. Docker
 
-*Install*
+*Installation*
 
     $ docker pull frontendwordpress/dongnelibrary
 
@@ -47,7 +47,7 @@ dongne () {
 
 ## 3. JavaScript
 
-*Install*
+*Installation*
 
     $ npm install dongnelibrary
 
@@ -70,7 +70,7 @@ dl.search({
 
 ## 4. Git
 
-*Install*
+*Installation*
 
     $ git clone https://github.com/afrontend/dongnelibrary
     $ cd dongnelibrary
