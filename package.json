@@ -1,7 +1,7 @@
 {
   "name": "dongnelibrary",
   "version": "0.1.14",
-  "description": "도서관 책이 대출되었는지 확인한다.",
+  "description": "책을 빌릴 수 있는지 확인한다.",
   "main": "src/dongnelibrary.js",
   "bin": {
     "dongnelibrary": "./src/dongnelibrary_cli.js"
