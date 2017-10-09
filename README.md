@@ -2,6 +2,7 @@
 [![Travis Build][travis-build-image]][travis-build-url]
 
 # DongneLibrary
+
 도서관 책을 빌릴 수 있는지 확인하는 노드 모듈이다. 도서관 이름을 생략하면 모든 도서관을 검색한다.
 
 https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
@@ -10,15 +11,15 @@ https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
 
 *Installation*
 
-    $ npm install dongnelibrary -g
+    npm install dongnelibrary -g
 
 *Usage*
 
-    $ dongnelibrary
-    $ dongnelibrary -a
-    $ dongnelibrary -t javascript -l 남양도서관
-    $ dongnelibrary -t javascript -l 남양,판교
-    $ dongnelibrary -t javascript -l 남양 -j
+    dongnelibrary
+    dongnelibrary -a
+    dongnelibrary -t javascript -l 남양도서관
+    dongnelibrary -t javascript -l 남양,판교
+    dongnelibrary -t javascript -l 남양 -j
 
 [![asciicast](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF.png)](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF)
 
@@ -26,13 +27,13 @@ https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/
 
 *Installation*
 
-    $ docker pull frontendwordpress/dongnelibrary
+    docker pull frontendwordpress/dongnelibrary
 
 *Usage*
 
-    $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
-    $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
-    $ docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
 
 아래 함수를 `~/.bashrc` 파일에 추가하여 간편하게 사용할 수 있다.
 
@@ -42,14 +43,14 @@ dongne () {
 }
 ```
 
-    $ dongne -l 여주,판교 -t 자바
-    $ dongne -l 여주도서관 -t 자바
+    dongne -l 여주,판교 -t 자바
+    dongne -l 여주도서관 -t 자바
 
 ## 3. JavaScript
 
 *Installation*
 
-    $ npm install dongnelibrary
+    npm install dongnelibrary
 
 *Usage*
 
@@ -72,17 +73,17 @@ dl.search({
 
 *Installation*
 
-    $ git clone https://github.com/afrontend/dongnelibrary
-    $ cd dongnelibrary
-    $ npm install
-    $ chmod a+x src/dongnelibrary_cli.js
+    git clone https://github.com/afrontend/dongnelibrary
+    cd dongnelibrary
+    npm install
+    chmod a+x src/dongnelibrary_cli.js
 
 *Usage*
 
-    $ ./src/dongnelibrary_cli.js -t javascript -l 남양
-    $ ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
-    $ ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
-    $ npm test
+    ./src/dongnelibrary_cli.js -t javascript -l 남양
+    ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
+    ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
+    npm test
 
 ----
 
@@ -112,4 +113,3 @@ dl.search({
 [sample-url]: https://npm.runkit.com/dongnelibrary
 [snlib-url]: http://www.snlib.net
 [suwon-url]: http://www.suwonlib.go.kr
-
