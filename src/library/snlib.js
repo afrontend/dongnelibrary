@@ -6,15 +6,17 @@ var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
 var global = {};
 
 var libraryList = [
+  {code: 'CK', name: '중원어린이도서관'},
   {code: 'MA', name: '성남시중앙도서관'},
   {code: 'MB', name: '분당도서관'},
   {code: 'MG', name: '구미도서관'},
+  {code: 'MH', name: '해오름도서관'},
   {code: 'MJ', name: '중원도서관'},
   {code: 'MM', name: '무지개도서관'},
   {code: 'MP', name: '판교도서관'},
   {code: 'MS', name: '수정도서관'},
   {code: 'MU', name: '운중도서관'},
-  {code: 'CK', name: '중원어린이도서관'},
+  {code: 'MV', name: '서현도서관'},
   {code: 'PK', name: '판교어린이도서관'}
 ];
 
