@@ -1,9 +1,8 @@
-var S = require('string');
 var fs = require('fs');
 var _ = require('lodash');
 
 function stripTags(str) {
-  return S(str).decodeHTMLEntities().stripTags().replaceAll(/[,()]/,"").s;
+  return str.replace(/<\/?[^>]+(>|$)/g, "");
 }
 
 var jquery = fs.readFileSync(__dirname + '/jquery.min.js').toString();
