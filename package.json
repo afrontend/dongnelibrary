@@ -1,5 +1,8 @@
 {
   "name": "dongnelibrary",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "version": "0.1.14",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "main": "src/dongnelibrary.js",
@@ -44,8 +47,5 @@
     "request": "^2.73.0",
     "string": "^3.3.1",
     "underscore": "^1.8.3"
-  },
-  "engines": {
-    "node": ">=4.0.0"
   }
 }
