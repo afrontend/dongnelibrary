@@ -33,90 +33,33 @@ function getLibraryCode(libraryName) {
   return '';
 }
 
-function exist(str) {
-  return !(str === '대출중');
+function isRented(str) {
+  return !!str.indexOf('대출가능');
 }
 
-function getBookIds(str) {
-  var bookIdPattern = /javascript:viewSearchDetail\((\d+)\)/g,
-      matches,
-      bookIdList = [];
+function makeJsdomCallback(libraryName, getBook) {
+  return function(errors, window) {
+    var booklist = [];
+    var $ = window.$;
+    var totalBookCount = parseInt($('#searchForm > p > strong.themeFC').text().trim(), 10);
+    var $a = $('#searchForm > ul > li');
+    console.log($a.length);
+    _.each($a, function (value) {
+      var $value = $(value);
+      console.log($value.text());
+      booklist.push({
+        libraryName: libraryName,
+        title: $value.find('dl > dt > a').text().trim(),
+        exist: !isRented($value.find('.bookStateBar .emp8').text().trim())
+      });
+    });
 
-  while (matches = bookIdPattern.exec(str)) {
-    bookIdList.push(matches[1]);
-  }
-
-  return bookIdList;
-}
-
-function appendBookId(booklist, str) {
-  var bookIdList = getBookIds(str);
-  return _.map(booklist, function(item, key){
-      item.bookId = bookIdList[key];
-      return item;
-  });
-}
-
-function makeJsdomCallback(libraryName, body, opt, getBook) {
-  return function (errors, window) {
-    var booklist = [],
-        $ = window.$,
-        $a = $('#textViewList > li'),
-        totalBookCount = $('body > p > strong:nth-child(3)').text();
-
-    if (totalBookCount === '0') {
+    if (getBook) {
       getBook(null, {
-        startPage: opt.startPage,
-        totalBookCount: +totalBookCount,
+        totalBookCount: totalBookCount || booklist.length,
         booklist: booklist
       });
-      return;
-    } else {
-      _.each($a, function (value) {
-        var $value = $(value);
-        booklist.push({
-          libraryName: libraryName,
-          title: $value.find('p > a').text().trim(),
-          exist: false
-        });
-      });
     }
-
-    appendBookId(booklist, body);
-
-    var tasks = [];
-
-    _.each(booklist, function(book, key) {
-      var o = _.clone(opt);
-      o.bookId = book.bookId;
-      tasks.push(function (callback) {
-        searchDetail(o, function (err, exist) {
-          if (err) {
-            exist = false;
-          }
-          callback(null, exist);
-        });
-      })
-    });
-
-    async.parallel(tasks, function (err, results) {
-      if (err) {
-        getBook({msg: 'Error, Can\'t access detail information'});
-        return;
-      }
-      if (getBook) {
-        booklist = _.map(booklist, function (item, key) {
-          item.exist = results[key];
-          return item;
-        });
-        getBook(null, {
-          startPage: opt.startPage,
-          totalBookCount: totalBookCount,
-          booklist: booklist
-        });
-      }
-    });
-
     window.close();
   }
 }
@@ -152,123 +95,52 @@ function search(opt, getBook) {
     startPage = opt.startPage;
   }
 
-  req.post({
-      url: 'http://search.snlib.go.kr/search/resultSearchList',
-      headers: {
-        "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-      },
-      timeout: 20000,
-      form: {
-        curPage: startPage,
-        viewStatus: 'text',
-        searchKey: 2,
-        searchKeyword: title,
-        searchLibrary: getLibraryCode(libraryName)
-      }
-    }, function (err, res, body) {
-      if (global.debug === true) {
-        console.log(body);
-      }
-      if (err || (res && res.statusCode !== 200)) {
-        var msg = '';
-
-        if (err) {
-          msg = err;
-        }
-
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
-
-        if (getBook) {
-          getBook({msg: msg});
-        }
-      } else {
-        jsdom.env({
-            html: body,
-            src: [jquery],
-            done: makeJsdomCallback(libraryName, body, _.clone(opt), getBook)
-        });
-      }
+  req.get({
+    url: 'https://www.snlib.go.kr/uj/menu/10641/program/30009/plusSearchResultList.do',
+    timeout: 20000,
+    headers: {
+      "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
+    },
+    qs : {
+      searchType: 'SIMPLE',
+      searchCategory: 'BOOK',
+      currentPageNo: 1,
+      viewStatus: 'IMAGE',
+      preSearchKey: 'ALL',
+      preSearchKeyword: title,
+      searchKey: 'ALL',
+      searchKeyword: title,
+      searchLibraryArr: getLibraryCode(libraryName),
+      searchSort: 'SIMILAR',
+      searchOrder: 'DESC',
+      searchRecordCount: 100
     }
-  );
-}
-
-function searchDetail(opt, checkExistence) {
-  var bookId = '';
-  var title = '';
-  var libraryName = '';
-
-  if (global.debug) {
-    console.log('opt: ' + JSON.stringify(opt, null, 2));
-  }
-
-  if (opt.bookId) {
-    bookId = opt.bookId;
-  }
-
-  if (opt.title) {
-    title = opt.title;
-  } else {
-    if (checkExistence) {
-      checkExistence({msg: 'Need a book name'});
+  }, function (err, res, body) {
+    if (global.debug === true) {
+      console.log(body);
     }
-    return;
-  }
+    if (err || (res && res.statusCode !== 200)) {
+      var msg = '';
 
-  if (opt.libraryName) {
-    libraryName = opt.libraryName;
-  } else {
-    if (checkExistence) {
-      checkExistence({msg: 'Need a library name'});
-    }
-    return;
-  }
-
-  req.post({
-      url: 'http://search.snlib.go.kr/search/viewSearchDetail',
-      timeout: 20000,
-      headers: {
-        "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-      },
-      form: {
-        searchKey: 2,
-        searchLibrary: getLibraryCode(libraryName),
-        searchKeyword: title,
-        curPage: 2,
-        viewStatus: 'text',
-        bookId: bookId
-      }
-    }, function (err, res, body) {
-      if (global.debug === true) {
-        console.log(body);
-      }
       if (err) {
-        if (checkExistence) {
-          checkExistence({msg: err});
-        }
-      } else {
-        jsdom.env({
-            html: body,
-            src: [jquery],
-            done: function (errors, window) {
-              var $a = window.$('#frm > div:nth-child(15) > div > table > tbody > tr > td:nth-child(4)');
-              if (checkExistence) {
-                if (global.debug === true) {
-                  console.log('$a.text(): ' + $a.text());
-                }
-                if (exist(($a.text() + "").trim())) {
-                  checkExistence(null, true);
-                } else {
-                  checkExistence(null, false);
-                }
-              }
-
-              window.close();
-            }
-        });
+        msg = err;
       }
+
+      if (res && res.statusCode) {
+        msg = msg + " " + res.statusCode;
+      }
+
+      if (getBook) {
+        getBook({msg: msg});
+      }
+    } else {
+      jsdom.env({
+        html: body,
+        src: [jquery],
+        done: makeJsdomCallback(libraryName, getBook)
+      });
     }
+  }
   );
 }
 
