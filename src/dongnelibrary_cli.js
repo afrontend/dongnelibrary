@@ -8,7 +8,7 @@ var async = require('async');
 var global = {};
 
 program
-  .version('0.1.14')
+  .version('0.1.15')
   .option('-a, --all-library'                 , 'Show all library')
   .option('-j, --json-format'                 , 'JSON format')
   .option('-l, --library-name [value1,value2]', 'Add library name')
