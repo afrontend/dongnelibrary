@@ -1,4 +1,4 @@
-var gg = require('../src/library/gg');
+var osan = require('../src/library/osan');
 var util = require('../src/dongnelibrary_util.js');
 
 describe('오산시 도서관 (제한시간 20초)', function () {

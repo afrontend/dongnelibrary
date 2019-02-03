@@ -1,5 +1,6 @@
 var S = require('string');
 var fs = require('fs');
+var _ = require('lodash');
 
 function stripTags(str) {
   return S(str).decodeHTMLEntities().stripTags().replaceAll(/[,()]/,"").s;
@@ -45,12 +46,18 @@ function getArrayFromCommaSeparatedString(libs) {
   });
 }
 
+function getLibraryNames(lst) {
+  return _.map(lst, function(item) {
+    return item.name;
+  });
+}
+
 module.exports = {
   stripTags: stripTags,
   getJqueryString: getJqueryString,
   printBookList: printBookList,
   printTotalBookCount: printTotalBookCount,
-  getArrayFromCommaSeparatedString: getArrayFromCommaSeparatedString
+  getArrayFromCommaSeparatedString: getArrayFromCommaSeparatedString,
+  getLibraryNames: getLibraryNames
 };
-
 

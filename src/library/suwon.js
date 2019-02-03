@@ -1,8 +1,9 @@
 var jsdom = require('jsdom');
 var req = require('request');
-var _ = require('underscore');
+var _ = require('lodash');
 var jquery = require('../dongnelibrary_util.js').getJqueryString();
 var async = require('async');
+var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
 var global = {};
 
 var SEARCH_HOST = 'http://www.suwonlib.go.kr';
@@ -30,10 +31,6 @@ var libraryList = [
   {code: 'MZ', name: '수원시일월도서관'},
   {code: 'SB', name: '수원시화서다산도서관'},
 ];
-
-function getLibraryNames() {
-  return _.pluck(libraryList, 'name');
-}
 
 function getLibraryCode(libraryName) {
   var found = _.find(libraryList, function (lib) {
@@ -240,5 +237,7 @@ function searchDetail(book, checkExistence) {
 
 module.exports = {
   search: search,
-  getLibraryNames: getLibraryNames
+  getLibraryNames: function() {
+    return getLibraryNames(libraryList);
+  }
 };

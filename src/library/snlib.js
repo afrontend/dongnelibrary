@@ -1,8 +1,8 @@
 var jsdom = require('jsdom');
 var req = require('request');
-var _ = require('underscore');
+var _ = require('lodash');
 var jquery = require('../dongnelibrary_util.js').getJqueryString();
-var async = require('async');
+var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
 var global = {};
 
 var libraryList = [
@@ -17,10 +17,6 @@ var libraryList = [
   {code: 'CK', name: '중원어린이도서관'},
   {code: 'PK', name: '판교어린이도서관'}
 ];
-
-function getLibraryNames() {
-  return _.pluck(libraryList, 'name');
-}
 
 function getLibraryCode(libraryName) {
   var found = _.find(libraryList, function (lib) {
@@ -146,5 +142,7 @@ function search(opt, getBook) {
 
 module.exports = {
   search: search,
-  getLibraryNames: getLibraryNames
+  getLibraryNames: function() {
+    return getLibraryNames(libraryList);
+  }
 };

@@ -1,6 +1,6 @@
 var url = require('url');
 var req = require('request');
-var _ = require('underscore');
+var _ = require('lodash');
 var util = require('../dongnelibrary_util.js');
 
 var APIKEY = process.env.DAUM_APIKEY || '';
@@ -8,10 +8,6 @@ var APIKEY = process.env.DAUM_APIKEY || '';
 var libraryList = [
   {code: '', name: 'DAUM'},
 ];
-
-function getLibraryNames() {
-  return _.pluck(libraryList, 'name');
-}
 
 function search(opt, callback) {
   var title = 'javascript';
@@ -94,6 +90,8 @@ function search(opt, callback) {
 
 module.exports = {
   search: search,
-  getLibraryNames: getLibraryNames
+  getLibraryNames: function() {
+    return util.getLibraryNames(libraryList);
+  }
 };
 

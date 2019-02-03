@@ -11,7 +11,12 @@
   },
   "scripts": {
     "test": "mocha",
-    "snlib": "mocha test/snlib.spec.js"
+    "gg": "mocha test/gg.spec.js",
+    "gunpo": "mocha test/gunpo.spec.js",
+    "hscity": "mocha test/hscity.spec.js",
+    "osan": "mocha test/osan.spec.js",
+    "snlib": "mocha test/snlib.spec.js",
+    "suwon": "mocha test/suwon.spec.js"
   },
   "repository": {
     "type": "git",
@@ -35,7 +40,7 @@
   },
   "homepage": "https://github.com/afrontend/dongnelibrary#readme",
   "devDependencies": {
-    "mocha": "^2.5.3"
+    "mocha": "^5.2.0"
   },
   "tonicExampleFilename": "src/example.js",
   "dependencies": {
@@ -43,9 +48,8 @@
     "colors": "^1.1.2",
     "commander": "^2.11.0",
     "jsdom": "^9.4.1",
-    "mocha": "^2.5.3",
+    "lodash": "^4.17.11",
     "request": "^2.73.0",
-    "string": "^3.3.1",
-    "underscore": "^1.8.3"
+    "string": "^3.3.1"
   }
 }

@@ -1,8 +1,9 @@
 var jsdom = require('jsdom');
 var req = require('request');
-var _ = require('underscore');
+var _ = require('lodash');
 var jquery = require('../dongnelibrary_util.js').getJqueryString();
 var async = require('async');
+var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
 var global = {};
 
 var libraryList = [
@@ -13,10 +14,6 @@ var libraryList = [
   {code: 'ME', name: '경기도립포천도서관'},
   {code: 'MF', name: '경기도립김포도서관'}
 ];
-
-function getLibraryNames() {
-  return _.pluck(libraryList, 'name');
-}
 
 function getLibraryCode(libraryName) {
   var found = _.find(libraryList, function (lib) {
@@ -304,5 +301,7 @@ function searchDetail(opt, checkExistence) {
 
 module.exports = {
   search: search,
-  getLibraryNames: getLibraryNames
+  getLibraryNames: function() {
+    return getLibraryNames(libraryList);
+  }
 };

@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var gg = require('./library/gg');
 var gunpo = require('./library/gunpo');
 var hscity = require('./library/hscity');
@@ -6,6 +6,7 @@ var osan = require('./library/osan');
 var snlib = require('./library/snlib');
 var suwon = require('./library/suwon');
 var async = require('async');
+var util = require('./dongnelibrary_util.js');
 
 var libraryList = [
 ];
@@ -40,7 +41,7 @@ function makeLibraryList() {
 }
 
 function getLibraryNames() {
-  return _.pluck(libraryList, 'name');
+  return util.getLibraryNames(libraryList);
 }
 
 function getLibraryFunction(libraryName) {
@@ -185,5 +186,7 @@ activate();
 
 module.exports = {
   search: search,
-  getLibraryNames: getLibraryNames
+  getLibraryNames: function() {
+    return getLibraryNames(libraryList);
+  }
 };
