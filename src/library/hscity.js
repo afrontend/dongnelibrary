@@ -17,7 +17,10 @@ var libraryList = [
   {code: 'MJ', name: '기아행복마루도서관'},
   {code: 'MK', name: '동탄복합문화센터도서관'},
   {code: 'ML', name: '송산도서관'},
-  {code: 'MM', name: '정남도서관'}
+  {code: 'MM', name: '정남도서관'},
+  {code: 'MN', name: '비봉작은도서관'},
+  {code: 'MO', name: '진안도서관'},
+  {code: 'MP', name: '동탄중앙이음터도서관'}
 ];
 
 function getLibraryCode(libraryName) {
@@ -104,8 +107,8 @@ function search(opt, getBook) {
       searchOrder: 'DESC',
     }
   }, function (err, res, body) {
-      console.log(body);
     if (global.debug === true) {
+      console.log(body);
     }
     if (err || (res && res.statusCode !== 200)) {
       var msg = '';
