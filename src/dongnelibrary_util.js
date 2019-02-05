@@ -1,11 +1,11 @@
-var fs = require('fs');
-var _ = require('lodash');
+const fs = require('fs');
+const _ = require('lodash');
 
 function stripTags(str) {
   return str.replace(/<\/?[^>]+(>|$)/g, "");
 }
 
-var jquery = fs.readFileSync(__dirname + '/jquery.min.js').toString();
+const jquery = fs.readFileSync(__dirname + '/jquery.min.js').toString();
 
 function getJqueryString() {
   return jquery;
@@ -32,7 +32,7 @@ function printTotalBookCount(book) {
  */
 function getArrayFromCommaSeparatedString(libs) {
   if (!libs) return [];
-  var a = libs.split(',').filter(function (lib) {
+  const a = libs.split(',').filter(function (lib) {
     if (lib && lib.length > 0) {
       return true;
     } else {

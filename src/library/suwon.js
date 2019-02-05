@@ -1,14 +1,14 @@
-var jsdom = require('jsdom');
-var req = require('request');
-var _ = require('lodash');
-var jquery = require('../dongnelibrary_util.js').getJqueryString();
-var async = require('async');
-var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-var global = {};
+const jsdom = require('jsdom');
+const req = require('request');
+const _ = require('lodash');
+const jquery = require('../dongnelibrary_util.js').getJqueryString();
+const async = require('async');
+const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const global = {};
 
-var SEARCH_HOST = 'http://www.suwonlib.go.kr';
+const SEARCH_HOST = 'http://www.suwonlib.go.kr';
 
-var libraryList = [
+const libraryList = [
   {code: 'MA', name: '수원시선경도서관'},
   {code: 'MB', name: '수원시중앙도서관'},
   {code: 'MC', name: '수원시영통도서관'},
@@ -33,7 +33,7 @@ var libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -51,8 +51,8 @@ function getTotalCount(str) {
   if (global.debug) {
     console.log(str);
   }
-  var pattern = /(\d+)/g;
-  var matches = pattern.exec(str);
+  const pattern = /(\d+)/g;
+  const matches = pattern.exec(str);
   if (matches) {
     return matches[1];
   } else {
@@ -62,10 +62,10 @@ function getTotalCount(str) {
 
 function makeJsdomCallback(libraryName, body, opt, getBook) {
   return function (errors, window) {
-    var booklist = [],
-      $ = window.$,
-      $a = $('#A-LibMPageSearchList').children(),
-      totalBookCount = getTotalCount($('#A-LibMPageSearchInfo').text().trim());
+    const booklist = [];
+    const $ = window.$;
+    const $a = $('#A-LibMPageSearchList').children();
+    const totalBookCount = getTotalCount($('#A-LibMPageSearchInfo').text().trim());
 
     if (totalBookCount === '0') {
       getBook(null, {
@@ -76,7 +76,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
       return;
     } else {
       _.each($a, function (value) {
-        var $value = $(value);
+        const $value = $(value);
         booklist.push({
           libraryName: libraryName,
           title: $value.find('h4.title').text().trim(),
@@ -86,7 +86,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
       });
     }
 
-    var tasks = [];
+    const tasks = [];
 
     _.each(booklist, function(book, key) {
       tasks.push(function (callback) {
@@ -122,8 +122,8 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 }
 
 function search(opt, getBook) {
-  var title = '';
-  var libraryName = '';
+  let title = '';
+  let libraryName = '';
 
   if (opt.debug) {
     global.debug = true;
@@ -165,7 +165,7 @@ function search(opt, getBook) {
       console.log(body);
     }
     if (err || (res && res.statusCode !== 200)) {
-      var msg = '';
+      let msg = '';
 
       if (err) {
         msg = err;
@@ -215,7 +215,7 @@ function searchDetail(book, checkExistence) {
         html: body,
         src: [jquery],
         done: function (errors, window) {
-          var $a = window.$('#A-LibMPage > table > tbody > tr:nth-child(2) > td:nth-child(1)');
+          const $a = window.$('#A-LibMPage > table > tbody > tr:nth-child(2) > td:nth-child(1)');
           if (checkExistence) {
             if (global.debug === true) {
               console.log('$a.text(): ' + $a.text());

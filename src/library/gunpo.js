@@ -1,11 +1,11 @@
-var jsdom = require('jsdom');
-var req = require('request');
-var _ = require('lodash');
-var jquery = require('../dongnelibrary_util').getJqueryString();
-var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-var global = {};
+const jsdom = require('jsdom');
+const req = require('request');
+const _ = require('lodash');
+const jquery = require('../dongnelibrary_util').getJqueryString();
+const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const global = {};
 
-var libraryList = [
+const libraryList = [
   {code: '1', name: '군포시산본도서관'},
   {code: '2', name: '군포시당동도서관'},
   {code: '3', name: '군포시대야도서관'},
@@ -33,7 +33,7 @@ var libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -60,8 +60,8 @@ function addLibraryNameToBookList(libraryName, booklist) {
 }
 
 function search(opt, getBook) {
-  var title = '';
-  var libraryName = '';
+  let title = '';
+  let libraryName = '';
 
   if (opt.debug) {
     global.debug = true;
@@ -101,7 +101,7 @@ function search(opt, getBook) {
       console.log(body);
     }
     if (err || (res && res.statusCode !== 200)) {
-      var msg = '';
+      let msg = '';
 
       if (err) {
         msg = err;
@@ -115,7 +115,7 @@ function search(opt, getBook) {
         getBook({msg: msg});
       }
     } else {
-      var booklist = addLibraryNameToBookList(libraryName, getBookList(JSON.parse(body)));
+      const booklist = addLibraryNameToBookList(libraryName, getBookList(JSON.parse(body)));
       getBook(null, {
         totalBookCount: booklist.length,
         booklist: booklist

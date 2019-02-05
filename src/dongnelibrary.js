@@ -1,17 +1,17 @@
-var _ = require('lodash');
-var gg = require('./library/gg');
-var gunpo = require('./library/gunpo');
-var hscity = require('./library/hscity');
-var osan = require('./library/osan');
-var snlib = require('./library/snlib');
-var suwon = require('./library/suwon');
-var async = require('async');
-var util = require('./dongnelibrary_util.js');
+const _ = require('lodash');
+const gg = require('./library/gg');
+const gunpo = require('./library/gunpo');
+const hscity = require('./library/hscity');
+const osan = require('./library/osan');
+const snlib = require('./library/snlib');
+const suwon = require('./library/suwon');
+const async = require('async');
+const util = require('./dongnelibrary_util.js');
 
-var libraryList = [
+const libraryList = [
 ];
 
-var dummyLibraryFunction = {
+const dummyLibraryFunction = {
   search: function (opt, getBook) {
     if (getBook) {
       getBook({msg: 'Unknown library name'});
@@ -21,7 +21,7 @@ var dummyLibraryFunction = {
 }
 
 function makeLibraryList() {
-  var library = [];
+  const library = [];
 
   library.push(gg);
   library.push(gunpo);
@@ -45,7 +45,7 @@ function getLibraryNames() {
 }
 
 function getLibraryFunction(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -56,9 +56,9 @@ function getLibraryFunction(libraryName) {
 }
 
 function completeLibraryName(str) {
-  var names = getLibraryNames()
+  const names = getLibraryNames()
 
-  var found =  _.find(names, function (name) {
+  let found =  _.find(names, function (name) {
       return name === str;
   });
 
@@ -78,7 +78,7 @@ function completeLibraryName(str) {
 }
 
 function isValidLibraryName(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -90,8 +90,8 @@ function isValidLibraryName(libraryName) {
 }
 
 function getLibArray(libraryName) {
-  var libs = [];
-  var libArray = [];
+  let libs = [];
+  const libArray = [];
 
   if (Array.isArray(libraryName)) {
     libs = libraryName;
@@ -99,7 +99,7 @@ function getLibArray(libraryName) {
     libs.push(libraryName);
   }
   _.each(libs, function (name) {
-    var fullName = completeLibraryName(name);
+    const fullName = completeLibraryName(name);
     if (isValidLibraryName(fullName)) {
       libArray.push(getLibraryFunction(fullName));
     }
@@ -114,9 +114,8 @@ function search(opt, getBook, getAllBooks) {
     return;
   }
 
-  var title = opt.title;
-
-  var tasks = [];
+  const title = opt.title;
+  const tasks = [];
 
   _.each(getLibArray(opt.libraryName), function (lib) {
     tasks.push(function (callback) {
@@ -137,7 +136,7 @@ function search(opt, getBook, getAllBooks) {
           return;
         }
 
-        var books = _.map(data.booklist, function (book) {
+        let books = _.map(data.booklist, function (book) {
           return {
             libraryName: book.libraryName,
             title: book.title,
@@ -147,7 +146,7 @@ function search(opt, getBook, getAllBooks) {
 
         books = _.sortBy(books, function (book) { return !book.exist; });
 
-        var bookObj = {
+        const bookObj = {
           title: title,
           libraryName: lib.name,
           totalBookCount: data.totalBookCount,

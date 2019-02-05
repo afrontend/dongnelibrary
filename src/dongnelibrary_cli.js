@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-var dl = require('./dongnelibrary');
-var util = require('./dongnelibrary_util');
-var program = require('commander');
-var _ = require('lodash');
-var colors = require('colors');
-var async = require('async');
-var global = {};
+const dl = require('./dongnelibrary');
+const util = require('./dongnelibrary_util');
+const program = require('commander');
+const _ = require('lodash');
+const colors = require('colors');
+const async = require('async');
+const global = {};
 
 program
   .version('0.1.15')
@@ -17,8 +17,8 @@ program
   .parse(process.argv);
 
 function cutTail(str, tail) {
-  var result = '';
-  var index = str.indexOf(tail);
+  let result = '';
+  const index = str.indexOf(tail);
   if (index === -1) {
     result = str;
   } else {
@@ -27,8 +27,8 @@ function cutTail(str, tail) {
   return result;
 }
 
-var okMark = '✓ ';
-var notokMark = '✖ ';
+const okMark = '✓ ';
+const notokMark = '✖ ';
 
 function printBooks(book) {
   _.each(book.booklist, function (book) {
@@ -37,7 +37,7 @@ function printBooks(book) {
 }
 
 function printTail(book) {
-  var msg = cutTail(book.libraryName, '도서관') + " 모두 " + book.totalBookCount + ' 건';
+  let msg = cutTail(book.libraryName, '도서관') + " 모두 " + book.totalBookCount + ' 건';
   if (book.startPage) {
     msg += " (" + book.startPage + " 페이지)";
   }
@@ -45,22 +45,22 @@ function printTail(book) {
 }
 
 function printAllLibraryName(option) {
-  var libs = dl.getLibraryNames();
+  const libs = dl.getLibraryNames();
   if (option.jsonFormat) {
     console.log(JSON.stringify(libs, null, 2));
   } else {
     libs.forEach(function (name) {
       console.log(name);
     });
-    var msg = "모두 " + libs.length + ' 개의 도서관';
+    const msg = "모두 " + libs.length + ' 개의 도서관';
     console.log(colors.green(msg));
   }
 }
 
 function getFullLibraryName(str) {
-  var names = dl.getLibraryNames()
+  const names = dl.getLibraryNames()
 
-  var found =  _.find(names, function (name) {
+  let found =  _.find(names, function (name) {
       return name === str;
   });
 
@@ -101,7 +101,7 @@ function search(title, libraryName, callback) {
 
 function getBookCount(results) {
   return _.reduce(results, function (memo, book) {
-    var localSum = 0;
+    let localSum = 0;
     if(book && book.booklist && book.booklist.length) {
       localSum = book.booklist.length;
     }
@@ -121,8 +121,8 @@ function activate(option) {
     return;
   }
 
-  var tasks = [];
-  var libs = [];
+  const tasks = [];
+  let libs = [];
 
   if (option.libraryName && option.libraryName.length > 0) {
     libs = _.filter(util.getArrayFromCommaSeparatedString(option.libraryName), function (shortLibraryName) {

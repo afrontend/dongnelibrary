@@ -1,11 +1,11 @@
-var jsdom = require('jsdom');
-var req = require('request');
-var _ = require('lodash');
-var jquery = require('../dongnelibrary_util.js').getJqueryString();
-var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-var global = {};
+const jsdom = require('jsdom');
+const req = require('request');
+const _ = require('lodash');
+const jquery = require('../dongnelibrary_util.js').getJqueryString();
+const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const global = {};
 
-var libraryList = [
+const libraryList = [
   {code: 'CK', name: '중원어린이도서관'},
   {code: 'MA', name: '성남시중앙도서관'},
   {code: 'MB', name: '분당도서관'},
@@ -21,7 +21,7 @@ var libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -37,13 +37,13 @@ function isRented(str) {
 
 function makeJsdomCallback(libraryName, getBook) {
   return function(errors, window) {
-    var booklist = [];
-    var $ = window.$;
-    var totalBookCount = parseInt($('#searchForm > p > strong.themeFC').text().trim(), 10);
-    var $a = $('#searchForm > ul > li');
+    const booklist = [];
+    const $ = window.$;
+    const totalBookCount = parseInt($('#searchForm > p > strong.themeFC').text().trim(), 10);
+    const $a = $('#searchForm > ul > li');
     console.log($a.length);
     _.each($a, function (value) {
-      var $value = $(value);
+      const $value = $(value);
       console.log($value.text());
       booklist.push({
         libraryName: libraryName,
@@ -63,9 +63,8 @@ function makeJsdomCallback(libraryName, getBook) {
 }
 
 function search(opt, getBook) {
-  var title = '';
-  var libraryName = '';
-  var startPage = 1;
+  let title = '';
+  let libraryName = '';
 
   if (opt.debug) {
     global.debug = true;
@@ -87,10 +86,6 @@ function search(opt, getBook) {
       getBook({msg: 'Need a library name'});
     }
     return;
-  }
-
-  if (opt.startPage) {
-    startPage = opt.startPage;
   }
 
   req.get({
@@ -118,7 +113,7 @@ function search(opt, getBook) {
       console.log(body);
     }
     if (err || (res && res.statusCode !== 200)) {
-      var msg = '';
+      let msg = '';
 
       if (err) {
         msg = err;

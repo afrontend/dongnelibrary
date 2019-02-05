@@ -1,22 +1,22 @@
-var url = require('url');
-var req = require('request');
-var _ = require('lodash');
-var util = require('../dongnelibrary_util.js');
+const url = require('url');
+const req = require('request');
+const _ = require('lodash');
+const util = require('../dongnelibrary_util.js');
 
-var APIKEY = process.env.DAUM_APIKEY || '';
+const APIKEY = process.env.DAUM_APIKEY || '';
 
-var libraryList = [
+const libraryList = [
   {code: '', name: 'DAUM'},
 ];
 
 function search(opt, callback) {
-  var title = 'javascript';
+  let title = 'javascript';
 
   if(opt.title) {
     title = opt.title;
   }
 
-  var options = {
+  const options = {
     protocol: "http:",
     host: 'apis.daum.net',
     pathname: '/search/book',
@@ -42,10 +42,10 @@ function search(opt, callback) {
     return;
   }
 
-  var bookUrl = url.format(options);
+  const bookUrl = url.format(options);
   req.get(bookUrl, {timeout: 10000}, function (error, res, body) {
       if (!error && res.statusCode === 200) {
-        var booklist = _.map(JSON.parse(body).channel.item, function (book) {
+        const booklist = _.map(JSON.parse(body).channel.item, function (book) {
             return {
               'isbn': book.isbn13,
               'barcode': book.barcode,
@@ -68,7 +68,7 @@ function search(opt, callback) {
             }, booklist);
         }
       } else {
-        var msg = 'Error';
+        let msg = 'Error';
         if(error) {
           msg = error;
         }

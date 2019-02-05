@@ -1,11 +1,11 @@
-var jsdom = require('jsdom');
-var req = require('request');
-var _ = require('lodash');
-var jquery = require('../dongnelibrary_util').getJqueryString();
-var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-var global = {};
+const jsdom = require('jsdom');
+const req = require('request');
+const _ = require('lodash');
+const jquery = require('../dongnelibrary_util').getJqueryString();
+const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const global = {};
 
-var libraryList = [
+const libraryList = [
   {code: 'MA', name: '오산중앙도서관'},
   {code: 'MB', name: '청학도서관'},
   {code: 'MC', name: '햇살마루도서관'},
@@ -15,7 +15,7 @@ var libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -31,12 +31,12 @@ function exist(str) {
 
 function makeJsdomCallback(libraryName, getBook) {
   return function(errors, window) {
-    var booklist = [];
-    var $ = window.$;
-    var $a = $("form[name='searchPage'] table tr td table tr");
+    const booklist = [];
+    const $ = window.$;
+    const $a = $("form[name='searchPage'] table tr td table tr");
     _.each($a, function (value, key) {
         if (key !== 0) {
-          var $value = $(value);
+          const $value = $(value);
           booklist.push({
               libraryName: libraryName,
               title: $value.find('td:nth-child(2) > a').text().trim(),
@@ -55,8 +55,8 @@ function makeJsdomCallback(libraryName, getBook) {
 }
 
 function search(opt, getBook) {
-  var title = '';
-  var libraryName = '';
+  let title = '';
+  let libraryName = '';
 
   if (opt.debug) {
     global.debug = true;
@@ -94,7 +94,7 @@ function search(opt, getBook) {
         console.log(body);
       }
       if (err || (res && res.statusCode !== 200)) {
-        var msg = '';
+        let msg = '';
 
         if (err) {
           msg = err;

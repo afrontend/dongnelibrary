@@ -1,12 +1,12 @@
-var jsdom = require('jsdom');
-var req = require('request');
-var _ = require('lodash');
-var jquery = require('../dongnelibrary_util.js').getJqueryString();
-var async = require('async');
-var getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-var global = {};
+const jsdom = require('jsdom');
+const req = require('request');
+const _ = require('lodash');
+const jquery = require('../dongnelibrary_util.js').getJqueryString();
+const async = require('async');
+const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const global = {};
 
-var libraryList = [
+const libraryList = [
   {code: 'MA', name: '경기도립중앙도서관'},
   {code: 'MB', name: '경기도립평택도서관'},
   {code: 'MC', name: '경기도립광주도서관'},
@@ -16,7 +16,7 @@ var libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  var found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, function (lib) {
     return lib.name === libraryName;
   });
 
@@ -31,9 +31,9 @@ function exist(str) {
 }
 
 function getOffset(str) {
-  var offsetPattern = /javascript:detailview\('(\d+)/g,
-      matches,
-      offsetList = [];
+  const offsetPattern = /javascript:detailview\('(\d+)/g;
+  let matches;
+  const offsetList = [];
 
   while (matches = offsetPattern.exec(str)) {
     offsetList.push(matches[1]);
@@ -43,19 +43,18 @@ function getOffset(str) {
 }
 
 function appendOffset(booklist, str) {
-  var offsetList = getOffset(str);
+  const offsetList = getOffset(str);
   return _.map(booklist, function(item, key){
-      item.offset = offsetList[key];
-      return item;
+    item.offset = offsetList[key];
+    return item;
   });
 }
 
 function makeJsdomCallback(libraryName, body, opt, getBook) {
   return function (errors, window) {
-    var booklist = [],
-        $ = window.$;
-
-    var maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
+    let booklist = [];
+    const $ = window.$;
+    let maxoffset = $('form:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(2)').text().trim();
 
     if (maxoffset === '검색결과 없음') {
       getBook(null, {
@@ -76,16 +75,16 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
       console.log('maxoffset: ' + maxoffset);
     }
 
-    var $a = $('body > form:nth-child(1) > form > table > tbody > tr > td > table > tbody > tr');
+    const $a = $('body > form:nth-child(1) > form > table > tbody > tr > td > table > tbody > tr');
 
     _.each($a, function (value) {
-        var $value = $(value);
-        booklist.push({
-            libraryName: libraryName,
-            title: $value.find('a').text().trim(),
-            maxoffset: maxoffset,
-            exist: false
-        });
+      const $value = $(value);
+      booklist.push({
+        libraryName: libraryName,
+        title: $value.find('a').text().trim(),
+        maxoffset: maxoffset,
+        exist: false
+      });
     });
 
     booklist.shift();
@@ -93,10 +92,10 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 
     appendOffset(booklist, body);
 
-    var tasks = [];
+    const tasks = [];
 
     _.each(booklist, function(book, key) {
-      var o = _.clone(opt);
+      const o = _.clone(opt);
       o.offset = book.offset;
       o.maxoffset = book.maxoffset;
       tasks.push(function (callback) {
@@ -132,9 +131,9 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 }
 
 function search(opt, getBook) {
-  var title = '';
-  var libraryName = '';
-  var startPage = 1;
+  let title = '';
+  let libraryName = '';
+  let startPage = 1;
 
   if (opt.debug) {
     global.debug = true;
@@ -163,65 +162,65 @@ function search(opt, getBook) {
   }
 
   req.post({
-      url: 'http://www.gglib.or.kr:8081/kolas3_02/BookSearch/search_result.do',
-      timeout: 20000,
-      form: {
-         jongbook: '',
-         value2: '',
-         value3: '',
-         buhovalue1: '',
-         buhovalue2: '',
-         buhovalue3: '',
-         buhovalue4: '',
-         field1: 'IAL',
-         value1: title,
-         sort: 'RK DESC',
-         msa: '',
-         formclass: '',
-         textlang: '',
-         simplelang: '',
-         startyear: '',
-         endyear: '',
-         limitpage: 10,
-         local: '',
-         startpage: startPage,
-         mode: 0,
-         mgc: getLibraryCode(libraryName)
-       }
-    }, function (err, res, body) {
-      if (global.debug === true) {
-        console.log(body);
-      }
-      if (err || (res && res.statusCode !== 200)) {
-        var msg = '';
-
-        if (err) {
-          msg = err;
-        }
-
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
-
-        if (getBook) {
-          getBook({msg: msg});
-        }
-      } else {
-        jsdom.env({
-            html: body,
-            src: [jquery],
-            done: makeJsdomCallback(libraryName, body, _.clone(opt), getBook)
-        });
-      }
+    url: 'http://www.gglib.or.kr:8081/kolas3_02/BookSearch/search_result.do',
+    timeout: 20000,
+    form: {
+      jongbook: '',
+      value2: '',
+      value3: '',
+      buhovalue1: '',
+      buhovalue2: '',
+      buhovalue3: '',
+      buhovalue4: '',
+      field1: 'IAL',
+      value1: title,
+      sort: 'RK DESC',
+      msa: '',
+      formclass: '',
+      textlang: '',
+      simplelang: '',
+      startyear: '',
+      endyear: '',
+      limitpage: 10,
+      local: '',
+      startpage: startPage,
+      mode: 0,
+      mgc: getLibraryCode(libraryName)
     }
+  }, function (err, res, body) {
+    if (global.debug === true) {
+      console.log(body);
+    }
+    if (err || (res && res.statusCode !== 200)) {
+      let msg = '';
+
+      if (err) {
+        msg = err;
+      }
+
+      if (res && res.statusCode) {
+        msg = msg + " " + res.statusCode;
+      }
+
+      if (getBook) {
+        getBook({msg: msg});
+      }
+    } else {
+      jsdom.env({
+        html: body,
+        src: [jquery],
+        done: makeJsdomCallback(libraryName, body, _.clone(opt), getBook)
+      });
+    }
+  }
   );
 }
 
 function searchDetail(opt, checkExistence) {
-  var offset = 1;
-  var maxoffset = 356;
-  var title = '';
-  var libraryName = '';
+  let offset = 1;
+  let maxoffset = 356;
+  let title = '';
+  let libraryName = '';
 
   if (global.debug) {
     console.log('opt: ' + JSON.stringify(opt, null, 2));
@@ -254,48 +253,48 @@ function searchDetail(opt, checkExistence) {
   }
 
   req.post({
-      url: 'http://www.gglib.or.kr:8081/kolas3_01/BookSearch/detailview_result.do',
-      timeout: 20000,
-      form: {
-         sort: 'RK DESC',
-         beforequery: 'IAL:'+title.toUpperCase()+'* AND MGC:' + getLibraryCode(libraryName),
-         msa: 'M',
-         offset: offset,
-         maxoffset: maxoffset,
-         jongbook: '',
-         historycount: 0,
-         book_code: ''
-      }
-    }, function (err, res, body) {
-      if (global.debug === true) {
-        console.log(body);
-      }
-      if (err) {
-        if (checkExistence) {
-          checkExistence({msg: err});
-        }
-      } else {
-        jsdom.env({
-            html: body,
-            src: [jquery],
-            done: function (errors, window) {
-              var $a = window.$('table:nth-child(2) > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td.view2_01');
-              if (checkExistence) {
-                if (global.debug === true) {
-                  console.log('$a.text(): ' + $a.text());
-                }
-                if (exist(($a.text() + "").trim())) {
-                  checkExistence(null, true);
-                } else {
-                  checkExistence(null, false);
-                }
-              }
-
-              window.close();
-            }
-        });
-      }
+    url: 'http://www.gglib.or.kr:8081/kolas3_01/BookSearch/detailview_result.do',
+    timeout: 20000,
+    form: {
+      sort: 'RK DESC',
+      beforequery: 'IAL:'+title.toUpperCase()+'* AND MGC:' + getLibraryCode(libraryName),
+      msa: 'M',
+      offset: offset,
+      maxoffset: maxoffset,
+      jongbook: '',
+      historycount: 0,
+      book_code: ''
     }
+  }, function (err, res, body) {
+    if (global.debug === true) {
+      console.log(body);
+    }
+    if (err) {
+      if (checkExistence) {
+        checkExistence({msg: err});
+      }
+    } else {
+      jsdom.env({
+        html: body,
+        src: [jquery],
+        done: function (errors, window) {
+          const $a = window.$('table:nth-child(2) > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td.view2_01');
+          if (checkExistence) {
+            if (global.debug === true) {
+              console.log('$a.text(): ' + $a.text());
+            }
+            if (exist(($a.text() + "").trim())) {
+              checkExistence(null, true);
+            } else {
+              checkExistence(null, false);
+            }
+          }
+
+          window.close();
+        }
+      });
+    }
+  }
   );
 }
 
