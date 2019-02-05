@@ -1,5 +1,5 @@
 /*
- *var daum = require('../src/library/daum');
+ *const daum = require('../src/library/daum');
  *describe('daum (10s)', function () {
  *  this.timeout(10000);
  *  it('search book', function(done) {
