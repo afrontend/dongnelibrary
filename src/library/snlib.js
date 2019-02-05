@@ -45,7 +45,7 @@ function makeJsdomCallback(libraryName, getBook) {
       const $value = $(value);
       booklist.push({
         libraryName: libraryName,
-        title: $value.find('dl > dt > a').text().trim(),
+        title: $value.find('dl > dt > a').text().trim().split(' ').slice(1).join(' '),
         exist: !isRented($value.find('.bookStateBar .emp8').text().trim())
       });
     });
