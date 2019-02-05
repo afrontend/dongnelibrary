@@ -1,5 +1,5 @@
-var dl = require('../src/dongnelibrary');
-var assert = require('assert');
+const dl = require('../src/dongnelibrary');
+const assert = require('assert');
 
 describe('Should sure you can search the library.', function () {
   describe('Should can accept one library name.', function () {
@@ -21,7 +21,7 @@ describe('Should sure you can search the library.', function () {
 
   describe('Should can use several library name as comma separated string', function () {
     this.timeout(20000);
-    var libNameArray = ['여주', '성남', '판교'];
+    const libNameArray = ['여주', '성남', '판교'];
     it('-l ' + libNameArray.join(','), function (done) {
       dl.search({
         title: 'javascript',

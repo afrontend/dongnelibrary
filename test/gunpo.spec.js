@@ -1,5 +1,5 @@
-var gunpo = require('../src/library/gunpo');
-var util = require('../src/dongnelibrary_util.js');
+const gunpo = require('../src/library/gunpo');
+const util = require('../src/dongnelibrary_util.js');
 
 describe('군포시 도서관 (제한시간 20초)', function () {
   this.timeout(20000);

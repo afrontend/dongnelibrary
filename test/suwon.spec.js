@@ -1,5 +1,5 @@
-var suwon = require('../src/library/suwon');
-var util = require('../src/dongnelibrary_util.js');
+const suwon = require('../src/library/suwon');
+const util = require('../src/dongnelibrary_util.js');
 
 describe('수원시 도서관 (제한시간 20초)', function () {
   this.timeout(20000);

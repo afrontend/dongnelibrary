@@ -1,5 +1,5 @@
-var hscity = require('../src/library/hscity');
-var util = require('../src/dongnelibrary_util.js');
+const hscity = require('../src/library/hscity');
+const util = require('../src/dongnelibrary_util.js');
 
 describe('화성시 도서관 (제한시간 20초)', function () {
   this.timeout(20000);
