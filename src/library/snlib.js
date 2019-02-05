@@ -41,10 +41,8 @@ function makeJsdomCallback(libraryName, getBook) {
     const $ = window.$;
     const totalBookCount = parseInt($('#searchForm > p > strong.themeFC').text().trim(), 10);
     const $a = $('#searchForm > ul > li');
-    console.log($a.length);
     _.each($a, function (value) {
       const $value = $(value);
-      console.log($value.text());
       booklist.push({
         libraryName: libraryName,
         title: $value.find('dl > dt > a').text().trim(),
