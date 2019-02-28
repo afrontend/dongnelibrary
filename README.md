@@ -108,7 +108,6 @@ Usage
 [web-ui-url]: https://dongne.herokuapp.com "무료 서버라서 10초 정도 느리게 로딩될 수 있어요"
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
 
-[daum-url]: http://book.daum.net
 [gg-url]: http://www.gglib.or.kr
 [gunpo-url]: http://www.gunpolib.go.kr
 [osan-url]: http://www.osanlibrary.go.kr
