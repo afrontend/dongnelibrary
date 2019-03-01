@@ -8,27 +8,19 @@ const suwon = require('./library/suwon');
 const async = require('async');
 const util = require('./dongnelibrary_util.js');
 
-const libraryList = [
-];
+const libraryList = [];
 
-const dummyLibraryFunction = {
-  search: function (opt, getBook) {
-    if (getBook) {
-      getBook({msg: 'Unknown library name'});
-    }
-  },
-  name: 'Unknown'
-}
+const getLibraryNames = () => (util.getLibraryNames(libraryList));
 
 function makeLibraryList() {
-  const library = [];
-
-  library.push(gg);
-  library.push(gunpo);
-  library.push(hscity);
-  library.push(osan);
-  library.push(snlib);
-  library.push(suwon);
+  const library = [
+    gg,
+    gunpo,
+    hscity,
+    osan,
+    snlib,
+    suwon
+  ];
 
   _.each(library, library => {
     _.each(library.getLibraryNames(), name => {
@@ -40,17 +32,19 @@ function makeLibraryList() {
   })
 }
 
-const getLibraryNames = () => (util.getLibraryNames(libraryList));
-
 const getLibraryFunction = libraryName => {
   const found = _.find(libraryList, lib => {
     return lib.name === libraryName;
   });
 
-  if (found) {
-    return found;
-  }
-  return dummyLibraryFunction;
+  return found ? found : {
+    search: function (opt, getBook) {
+      if (getBook) {
+        getBook({msg: 'Unknown library name'});
+      }
+    },
+    name: 'Unknown'
+  };
 }
 
 function completeLibraryName(str) {
