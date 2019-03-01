@@ -30,8 +30,8 @@ function makeLibraryList() {
   library.push(snlib);
   library.push(suwon);
 
-  _.each(library, function (library) {
-    _.each(library.getLibraryNames(), function (name) {
+  _.each(library, library => {
+    _.each(library.getLibraryNames(), name => {
       libraryList.push({
         name: name,
         search: library.search
@@ -40,12 +40,10 @@ function makeLibraryList() {
   })
 }
 
-function getLibraryNames() {
-  return util.getLibraryNames(libraryList);
-}
+const getLibraryNames = () => (util.getLibraryNames(libraryList));
 
-function getLibraryFunction(libraryName) {
-  const found = _.find(libraryList, function (lib) {
+const getLibraryFunction = libraryName => {
+  const found = _.find(libraryList, lib => {
     return lib.name === libraryName;
   });
 
@@ -58,7 +56,7 @@ function getLibraryFunction(libraryName) {
 function completeLibraryName(str) {
   const names = getLibraryNames()
 
-  let found =  _.find(names, function (name) {
+  let found =  _.find(names, name => {
       return name === str;
   });
 
@@ -66,7 +64,7 @@ function completeLibraryName(str) {
     return found;
   }
 
-  found =  _.find(names, function (name) {
+  found =  _.find(names, name => {
       return (name.indexOf(str) >= 0);
   });
 
@@ -78,7 +76,7 @@ function completeLibraryName(str) {
 }
 
 function isValidLibraryName(libraryName) {
-  const found = _.find(libraryList, function (lib) {
+  const found = _.find(libraryList, lib => {
     return lib.name === libraryName;
   });
 
@@ -98,7 +96,7 @@ function getLibArray(libraryName) {
   } else {
     libs.push(libraryName);
   }
-  _.each(libs, function (name) {
+  _.each(libs, name => {
     const fullName = completeLibraryName(name);
     if (isValidLibraryName(fullName)) {
       libArray.push(getLibraryFunction(fullName));
@@ -117,13 +115,13 @@ function search(opt, getBook, getAllBooks) {
   const title = opt.title;
   const tasks = [];
 
-  _.each(getLibArray(opt.libraryName), function (lib) {
-    tasks.push(function (callback) {
+  _.each(getLibArray(opt.libraryName), lib => {
+    tasks.push(callback => {
       lib.search({
         title: title,
         libraryName: lib.name,
         debug: opt.debug
-      }, function (err, data) {
+      }, (err, data) => {
         if (err) {
           if(getBook) {
             getBook(err);
@@ -136,7 +134,7 @@ function search(opt, getBook, getAllBooks) {
           return;
         }
 
-        let books = _.map(data.booklist, function (book) {
+        let books = _.map(data.booklist, book => {
           return {
             libraryName: book.libraryName,
             title: book.title,
@@ -144,7 +142,7 @@ function search(opt, getBook, getAllBooks) {
           };
         });
 
-        books = _.sortBy(books, function (book) { return !book.exist; });
+        books = _.sortBy(books, book => (!book.exist));
 
         const bookObj = {
           title: title,
@@ -160,12 +158,11 @@ function search(opt, getBook, getAllBooks) {
         if(callback) {
           callback(null, bookObj)
         }
-      }
-      );
+      });
     })
   })
 
-  async.parallel(tasks, function (err, results) {
+  async.parallel(tasks, (err, results) => {
     if(getAllBooks) {
       if(err) {
         getAllBooks(err);
@@ -185,7 +182,5 @@ activate();
 
 module.exports = {
   search: search,
-  getLibraryNames: function() {
-    return getLibraryNames(libraryList);
-  }
+  getLibraryNames: () => (getLibraryNames(libraryList))
 };
