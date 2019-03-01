@@ -33,9 +33,7 @@ function makeLibraryList() {
 }
 
 const getLibraryFunction = libraryName => {
-  const found = _.find(libraryList, lib => {
-    return lib.name === libraryName;
-  });
+  const found = _.find(libraryList, lib => (lib.name === libraryName));
 
   return found ? found : {
     search: function (opt, getBook) {
@@ -49,36 +47,19 @@ const getLibraryFunction = libraryName => {
 
 function completeLibraryName(str) {
   const names = getLibraryNames()
-
-  let found =  _.find(names, name => {
-      return name === str;
-  });
+  let found = _.find(names, name => (name === str));
 
   if (found) {
     return found;
   }
 
-  found =  _.find(names, name => {
-      return (name.indexOf(str) >= 0);
-  });
-
-  if (found) {
-    return found;
-  } else {
-    return '';
-  }
+  found = _.find(names, name => (name.indexOf(str) >= 0));
+  return found ? found : '';
 }
 
 function isValidLibraryName(libraryName) {
-  const found = _.find(libraryList, lib => {
-    return lib.name === libraryName;
-  });
-
-  if (found) {
-    return true;
-  } else {
-    return false;
-  }
+  const found = _.find(libraryList, lib => (lib.name === libraryName));
+  return found ? true : false;
 }
 
 function getLibArray(libraryName) {
@@ -117,14 +98,11 @@ function search(opt, getBook, getAllBooks) {
         debug: opt.debug
       }, (err, data) => {
         if (err) {
-          if(getBook) {
-            getBook(err);
-          }
           callback(err);
           return
         }
         if(!data || !data.booklist) {
-          getBook({msg: 'invalid Data response'});
+          callback({msg: 'invalid Data response'});
           return;
         }
 
@@ -144,9 +122,6 @@ function search(opt, getBook, getAllBooks) {
           totalBookCount: data.totalBookCount,
           startPage: data.startPage,
           booklist: books
-        }
-        if (getBook) {
-          getBook(null, bookObj);
         }
 
         if(callback) {
