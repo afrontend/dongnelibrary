@@ -1,8 +1,8 @@
 const dl = require('../src/dongnelibrary');
 const assert = require('assert');
 
-describe('Should sure you can search the library.', function () {
-  describe('Should can accept one library name.', function () {
+describe('dongnelibrary test', function () {
+  describe('search in one library', function () {
     this.timeout(20000);
     it('-l 여주', function (done) {
       dl.search({
@@ -19,7 +19,7 @@ describe('Should sure you can search the library.', function () {
     });
   });
 
-  describe('Should can use several library name as comma separated string', function () {
+  describe('search in three library', function () {
     this.timeout(20000);
     const libNameArray = ['여주', '성남', '판교'];
     it('-l ' + libNameArray.join(','), function (done) {
@@ -40,5 +40,3 @@ describe('Should sure you can search the library.', function () {
     });
   });
 });
-
-
