@@ -2,24 +2,7 @@ const dl = require('../src/dongnelibrary');
 const assert = require('assert');
 
 describe('dongnelibrary test', function () {
-  describe('search in one library', function () {
-    this.timeout(20000);
-    it('-l 여주', function (done) {
-      dl.search({
-        title: 'javascript',
-        libraryName: '여주'
-      }, function (err, book) {
-        console.log(book.libraryName + ' "' + book.title + '"');
-        book.booklist.forEach(function (book) {
-          console.log((book.exist?' ✓ ':'  ') +' '+ book.title);
-        });
-        assert.notEqual(book.booklist.length, 0);
-        done();
-      });
-    });
-  });
-
-  describe('search in three library', function () {
+  describe('search in three libraries', function () {
     this.timeout(20000);
     const libNameArray = ['여주', '성남', '판교'];
     it('-l ' + libNameArray.join(','), function (done) {
