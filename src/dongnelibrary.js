@@ -34,7 +34,6 @@ function makeLibraryList() {
 
 const getLibraryFunction = libraryName => {
   const found = _.find(libraryList, lib => (lib.name === libraryName));
-
   return found ? found : {
     search: function (opt, getBook) {
       if (getBook) {
@@ -46,14 +45,7 @@ const getLibraryFunction = libraryName => {
 }
 
 function completeLibraryName(str) {
-  const names = getLibraryNames()
-  let found = _.find(names, name => (name === str));
-
-  if (found) {
-    return found;
-  }
-
-  found = _.find(names, name => (name.indexOf(str) >= 0));
+  const found = _.find(getLibraryNames(), name => (name.indexOf(str) >= 0));
   return found ? found : '';
 }
 
@@ -150,6 +142,6 @@ function activate() {
 activate();
 
 module.exports = {
-  search: search,
-  getLibraryNames: () => (getLibraryNames(libraryList))
+  search,
+  getLibraryNames
 };
