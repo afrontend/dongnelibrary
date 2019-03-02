@@ -90,10 +90,16 @@ function search(opt, getBook, getAllBooks) {
         debug: opt.debug
       }, (err, data) => {
         if (err) {
+          if(getBook) {
+            getBook(err);
+          }
           callback(err);
           return
         }
         if(!data || !data.booklist) {
+          if(getBook) {
+            getBook({msg: 'invalid Data response'});
+          }
           callback({msg: 'invalid Data response'});
           return;
         }
@@ -116,9 +122,10 @@ function search(opt, getBook, getAllBooks) {
           booklist: books
         }
 
-        if(callback) {
-          callback(null, bookObj)
+        if(getBook) {
+          getBook(null, bookObj);
         }
+        callback(null, bookObj)
       });
     })
   })
