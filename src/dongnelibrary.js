@@ -96,8 +96,7 @@ function search(opt, getBook, getAllBooks) {
     tasks.push(callback => {
       lib.search({
         title: title,
-        libraryName: lib.name,
-        debug: opt.debug
+        libraryName: lib.name
       }, (err, data) => {
         if (err) {
           if(getBook) {
