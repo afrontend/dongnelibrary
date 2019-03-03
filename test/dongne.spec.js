@@ -8,7 +8,7 @@ describe('dongnelibrary test', function () {
     it('-l ' + libNameArray.join(','), function (done) {
       dl.search({
         title: 'javascript',
-        libraryName:libNameArray
+        libraryName: libNameArray
       }, function (err, book) {
         console.log(book.libraryName + ' "' + book.title + '"');
         book.booklist.forEach(function (book) {
