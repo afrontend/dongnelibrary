@@ -1,10 +1,11 @@
 #!/usr/bin/env node
+const _ = require('lodash');
+const fp = require('lodash/fp');
+const async = require('async');
+const colors = require('colors');
+const program = require('commander');
 const dl = require('./dongnelibrary');
 const util = require('./dongnelibrary_util');
-const program = require('commander');
-const _ = require('lodash');
-const colors = require('colors');
-const async = require('async');
 
 program
   .version('0.1.16')
@@ -29,7 +30,7 @@ const okMark = '✓ ';
 const notokMark = '✖ ';
 
 function printBooks(book) {
-  _.each(book.booklist, function (book) {
+  _.each(book.booklist, book => {
     console.log(cutTail(book.libraryName, '도서관') + (book.exist?' ' + okMark + ' ':' ' + colors.red(notokMark) + ' ') + book.title + ' ');
   });
 }
@@ -47,7 +48,7 @@ function printAllLibraryName(option) {
   if (option.jsonFormat) {
     console.log(JSON.stringify(libs, null, 2));
   } else {
-    libs.forEach(function (name) {
+    libs.forEach(name => {
       console.log(name);
     });
     const msg = "모두 " + libs.length + ' 개의 도서관';
@@ -56,60 +57,45 @@ function printAllLibraryName(option) {
 }
 
 function getFullLibraryName(str) {
-  const names = dl.getLibraryNames()
-
-  let found =  _.find(names, function (name) {
-      return name === str;
-  });
-
-  if (found) {
-    return found;
-  }
-
-  found =  _.find(names, function (name) {
-      return (name.indexOf(str) >= 0);
-  });
-
-  if (found) {
-    return found;
-  } else {
-    return '';
-  }
+  const found =  _.find(dl.getLibraryNames(), name => (name.indexOf(str) >= 0));
+  return found ? found : '';
 }
 
 function search(title, libraryName, callback) {
   dl.search({
-      title: title,
-      libraryName: libraryName
-    }, function (err, book) {
-      if (err) {
-        err.msg = err.msg || "Unknown Error";
-        if (callback) {
-          callback(err);
-        }
-      } else {
-        if (callback) {
-          callback(null, book);
-        }
+    title,
+    libraryName
+  }, (err, book) => {
+    if (err) {
+      err.msg = err.msg || "Unknown Error";
+      if (callback) {
+        callback(err);
+      }
+    } else {
+      if (callback) {
+        callback(null, book);
       }
     }
-  );
+  });
 }
 
 function getBookCount(results) {
-  return _.reduce(results, function (memo, book) {
+  return _.reduce(results, (memo, book) => {
     let localSum = 0;
     if(book && book.booklist && book.booklist.length) {
       localSum = book.booklist.length;
     }
-    return memo + localSum ;
+    return memo + localSum;
   }, 0);
 }
 
+const getLibraryFullNameList = _.flow([
+  util.getArrayFromCommaSeparatedString,
+  fp.filter(shortLibraryName => (getFullLibraryName(shortLibraryName)))
+]);
+
 function activate(option) {
-  if(!(option.title && option.title.length > 0)) {
-    option.title = 'javascript';
-  }
+  option.title = option.title || 'javascript';
 
   if (option.allLibrary) {
     printAllLibraryName(option);
@@ -117,30 +103,13 @@ function activate(option) {
   }
 
   const tasks = [];
-  let libs = [];
+  const libs = option.libraryName ? getLibraryFullNameList(option.libraryName) : dl.getLibraryNames();
 
-  if (option.libraryName && option.libraryName.length > 0) {
-    libs = _.filter(util.getArrayFromCommaSeparatedString(option.libraryName), function (shortLibraryName) {
-      if (getFullLibraryName(shortLibraryName) === '') {
-        console.log(colors.green("'" + shortLibraryName + "' 도서관은 찾을 수 없습니다."));
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    libs = _.map(libs, function (shortLibraryName) {
-      return getFullLibraryName(shortLibraryName);
-    });
-  } else {
-    libs = dl.getLibraryNames();
-  }
-
-  _.each(libs, function (libraryName) {
+  _.each(libs, libraryName => {
     tasks.push(function (callback) {
-      search(option.title, libraryName, function (err, book) {
+      search(option.title, libraryName, (err, book) => {
         if (err) {
-          console.log(option.libraryName + ", " + option.title + ": " + err.msg);
+          console.log(`${option.libraryName} ,  ${option.title} :  ${err.msg}`);
           callback(null, {});
         } else {
           if (option.jsonFormat) {
@@ -154,11 +123,11 @@ function activate(option) {
     });
   });
 
-  async.parallel(tasks, function (err, results) {
+  async.parallel(tasks, (err, results) => {
     if (err) {
       getBook({msg: 'Error, Can\'t access detail information'});
     } else {
-      console.log(colors.green(results.length + '개의 도서관에서 ' + getBookCount(results) + '권 검색됨.'));
+      console.log(colors.green(`${results.length} 개의 도서관에서  ${getBookCount(results)} 권 검색됨`));
     }
   })
 }
