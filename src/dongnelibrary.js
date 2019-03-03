@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const fp = require('lodash/fp');
 const gg = require('./library/gg');
 const gunpo = require('./library/gunpo');
 const hscity = require('./library/hscity');
@@ -25,7 +26,7 @@ function makeLibraryList() {
   _.each(library, library => {
     _.each(library.getLibraryNames(), name => {
       libraryList.push({
-        name: name,
+        name,
         search: library.search
       })
     });
@@ -35,7 +36,7 @@ function makeLibraryList() {
 const getLibraryFunction = libraryName => {
   const found = _.find(libraryList, lib => (lib.name === libraryName));
   return found ? found : {
-    search: function (opt, getBook) {
+    search: (opt, getBook) => {
       if (getBook) {
         getBook({msg: 'Unknown library name'});
       }
@@ -73,6 +74,15 @@ function getLibArray(libraryName) {
   return libArray;
 }
 
+const getSortedBooks = _.flow([
+  fp.map(book => ({
+    libraryName: book.libraryName,
+    title: book.title,
+    exist: book.exist
+  })),
+  fp.sortBy(book => (!book.exist))
+]);
+
 function search(opt, getBook, getAllBooks) {
   if (!opt || (!getBook && !getAllBooks)) {
     console.log('invalid search options');
@@ -104,22 +114,12 @@ function search(opt, getBook, getAllBooks) {
           return;
         }
 
-        let books = _.map(data.booklist, book => {
-          return {
-            libraryName: book.libraryName,
-            title: book.title,
-            exist: book.exist
-          };
-        });
-
-        books = _.sortBy(books, book => (!book.exist));
-
         const bookObj = {
           title: title,
           libraryName: lib.name,
           totalBookCount: data.totalBookCount,
           startPage: data.startPage,
-          booklist: books
+          booklist: getSortedBooks(data.booklist)
         }
 
         if(getBook) {
@@ -138,7 +138,7 @@ function search(opt, getBook, getAllBooks) {
         getAllBooks(null, results);
       }
     }
-  })
+ })
 
 }
 
