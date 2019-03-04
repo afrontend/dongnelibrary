@@ -19,8 +19,7 @@ function makeLibraryList() {
     gunpo,
     hscity,
     osan,
-    snlib,
-    suwon
+    snlib
   ];
 
   _.each(library, library => {
