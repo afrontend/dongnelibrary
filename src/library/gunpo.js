@@ -1,7 +1,5 @@
-const jsdom = require('jsdom');
 const req = require('request');
 const _ = require('lodash');
-const jquery = require('../dongnelibrary_util').getJqueryString();
 const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
 const global = {};
 
@@ -47,7 +45,7 @@ function getBookList(json) {
   return _.map(json.data ? json.data.list : [], function (book) {
     return {
       title: book.titleStatement,
-      exist: _.some(book.branchVolumes, function (vol) { return vol.cState === '대출가능' }) === undefined ? false : true
+      exist: _.some(book.branchVolumes, vol => (vol.cState === '대출가능')) === undefined ? false : true
     };
   });
 }
@@ -126,7 +124,7 @@ function search(opt, getBook) {
 }
 
 module.exports = {
-  search: search,
+  search,
   getLibraryNames: function() {
     return getLibraryNames(libraryList);
   }

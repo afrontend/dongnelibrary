@@ -57,7 +57,7 @@ function makeJsdomCallback(libraryName, getBook) {
       });
     }
     window.close();
-  }
+  };
 }
 
 function search(opt, getBook) {

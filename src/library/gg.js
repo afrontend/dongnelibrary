@@ -27,7 +27,7 @@ function getLibraryCode(libraryName) {
 }
 
 function exist(str) {
-  return !(str.indexOf('대출중') >= 0)
+  return !(str.indexOf('대출중') >= 0);
 }
 
 function getOffset(str) {
@@ -94,7 +94,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 
     const tasks = [];
 
-    _.each(booklist, function(book, key) {
+    _.each(booklist, function(book) {
       const o = _.clone(opt);
       o.offset = book.offset;
       o.maxoffset = book.maxoffset;
@@ -127,7 +127,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
     });
 
     window.close();
-  }
+  };
 }
 
 function search(opt, getBook) {

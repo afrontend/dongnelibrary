@@ -44,7 +44,7 @@ function getLibraryCode(libraryName) {
 }
 
 function exist(str) {
-  return (str.indexOf('비치중') >= 0)
+  return (str.indexOf('비치중') >= 0);
 }
 
 function getTotalCount(str) {
@@ -88,7 +88,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
 
     const tasks = [];
 
-    _.each(booklist, function(book, key) {
+    _.each(booklist, function(book) {
       tasks.push(function (callback) {
         searchDetail(book, function (err, exist) {
           if (err) {
@@ -118,7 +118,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
     });
 
     window.close();
-  }
+  };
 }
 
 function search(opt, getBook) {
