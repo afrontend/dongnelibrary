@@ -5,7 +5,6 @@ const gunpo = require('./library/gunpo');
 const hscity = require('./library/hscity');
 const osan = require('./library/osan');
 const snlib = require('./library/snlib');
-const suwon = require('./library/suwon');
 const async = require('async');
 const util = require('./dongnelibrary_util.js');
 
@@ -27,9 +26,9 @@ function makeLibraryList() {
       libraryList.push({
         name,
         search: library.search
-      })
+      });
     });
-  })
+  });
 }
 
 const getLibraryFunction = libraryName => {
@@ -42,7 +41,7 @@ const getLibraryFunction = libraryName => {
     },
     name: 'Unknown'
   };
-}
+};
 
 function completeLibraryName(str) {
   const found = _.find(getLibraryNames(), name => (name.indexOf(str) >= 0));
@@ -55,22 +54,13 @@ function isValidLibraryName(libraryName) {
 }
 
 function getLibArray(libraryName) {
-  let libs = [];
-  const libArray = [];
-
-  if (Array.isArray(libraryName)) {
-    libs = libraryName;
-  } else {
-    libs.push(libraryName);
-  }
-  _.each(libs, name => {
-    const fullName = completeLibraryName(name);
-    if (isValidLibraryName(fullName)) {
-      libArray.push(getLibraryFunction(fullName));
-    }
-  });
-
-  return libArray;
+  return _.flow([
+    fp.map(name => {
+      const fullName = completeLibraryName(name);
+      return isValidLibraryName(fullName) ? getLibraryFunction(fullName) : null;
+    }),
+    _.compact
+  ])(Array.isArray(libraryName) ? libraryName : [libraryName]);
 }
 
 const getSortedBooks = _.flow([
@@ -102,7 +92,7 @@ function search(opt, getBook, getAllBooks) {
             getBook(err);
           }
           callback(err);
-          return
+          return;
         }
         if(!data || !data.booklist) {
           if(getBook) {
@@ -118,15 +108,15 @@ function search(opt, getBook, getAllBooks) {
           totalBookCount: data.totalBookCount,
           startPage: data.startPage,
           booklist: getSortedBooks(data.booklist)
-        }
+        };
 
         if(getBook) {
           getBook(null, bookObj);
         }
-        callback(null, bookObj)
+        callback(null, bookObj);
       });
-    })
-  })
+    });
+  });
 
   async.parallel(tasks, (err, results) => {
     if(getAllBooks) {
@@ -136,7 +126,7 @@ function search(opt, getBook, getAllBooks) {
         getAllBooks(null, results);
       }
     }
- })
+ });
 
 }
 
