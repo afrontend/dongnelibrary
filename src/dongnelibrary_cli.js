@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 const _ = require('lodash');
-const fp = require('lodash/fp');
 const colors = require('colors');
+const fp = require('lodash/fp');
+const inquirer = require('inquirer');
 const program = require('commander');
 const dl = require('./dongnelibrary');
 const util = require('./dongnelibrary_util');
@@ -10,7 +11,6 @@ program
   .version('0.1.16')
   .option('-a, --all-library', 'display libraries')
   .option('-i, --interactive', 'interactive mode')
-  .option('-j, --json-format', 'JSON format')
   .option('-l, --library-name [value1,value2]', 'library name')
   .option('-t, --title [value]', 'book title')
   .parse(process.argv);
@@ -38,33 +38,26 @@ function printBooks(book) {
 function printTail(book) {
   let msg = cutTail(book.libraryName, '도서관') + " 모두 " + book.totalBookCount + ' 건';
   if (book.startPage) {
-    msg += " (" + book.startPage + " 페이지)";
+    msg += ` ( ${book.startPage} 페이지)`;
   }
   console.log(colors.green(msg));
 }
 
 function printAllLibraryName(option) {
   const libs = dl.getLibraryNames();
-  if (option.jsonFormat) {
-    console.log(JSON.stringify(libs, null, 2));
-  } else {
-    libs.forEach(name => {
-      console.log(name);
-    });
-    const msg = "모두 " + libs.length + ' 개의 도서관';
-    console.log(colors.green(msg));
-  }
+  libs.forEach(name => {
+    console.log(name);
+  });
+  const msg = `모두 ${libs.length} 개의 도서관`;
+  console.log(colors.green(msg));
 }
 
-function getFullLibraryName(str) {
-  const found =  _.find(dl.getLibraryNames(), name => (name.indexOf(str) >= 0));
-  return found ? found : '';
-}
+const getFullLibraryName = str => _.find(dl.getLibraryNames(), name => (name.indexOf(str) >= 0));
 
-function search(title, libraryName, bookCallback, allBookCallback) {
+function search(option, bookCallback, allBookCallback) {
   dl.search({
-    title,
-    libraryName
+    title: option.title,
+    libraryName: getLibraries(option.libraryName)
   }, (err, book) => {
     if (err) {
       err.msg = err.msg || "Unknown Error";
@@ -90,15 +83,9 @@ function search(title, libraryName, bookCallback, allBookCallback) {
   });
 }
 
-function getBookCount(results) {
-  return _.reduce(results, (memo, book) => {
-    let localSum = 0;
-    if(book && book.booklist && book.booklist.length) {
-      localSum = book.booklist.length;
-    }
-    return memo + localSum;
-  }, 0);
-}
+const getBookCount = (results) => (
+  _.reduce(results, (memo, book) => (memo + ((book && book.booklist && book.booklist.length) ? book.booklist.length : 0)), 0)
+);
 
 const getLibraryFullNameList = _.flow([
   util.getArrayFromCommaSeparatedString,
@@ -107,36 +94,55 @@ const getLibraryFullNameList = _.flow([
 
 const getLibraries = (libraryName) => (libraryName ? getLibraryFullNameList(libraryName) : dl.getLibraryNames());
 
-function activate(option) {
-  option.title = option.title || 'javascript';
+const processOneLibrary = (err, book) => {
+  if (err) {
+    console.log(err.msg);
+  } else {
+    printBooks(book);
+  }
+}
 
+const processLibraries = (err, results) => {
+  if (err) {
+    console.log('Error, Can\'t access detail information');
+  } else {
+    console.log(colors.green(`${results.length} 개의 도서관에서  ${getBookCount(results)} 권 검색됨`));
+  }
+}
+
+function activate(option) {
   if (option.allLibrary) {
     printAllLibraryName(option);
     return;
   }
 
-  if (option.interactive) {
+  if (option.interactive || (!option.libraryName && !option.title)) {
     console.log("interactive");
-    return;
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'library',
+          message: '도서관 이름은?',
+          choices: dl.getLibraryNames()
+        },
+        {
+          type: 'input',
+          name: 'title',
+          message: '책 이름은?',
+          default: 'javascript'
+        }
+      ])
+      .then(answers => {
+        option.libraryName = answers['library'];
+        option.title = answers['title'];
+        if (option.libraryName && option.title) {
+          search(option, processOneLibrary, processLibraries);
+        }
+      });
+  } else {
+    search(option, processOneLibrary, processLibraries);
   }
-
-  search(option.title, getLibraries(option.libraryName), (err, book) => {
-    if (err) {
-      console.log(`${option.libraryName} ,  ${option.title} :  ${err.msg}`);
-    } else {
-      if (option.jsonFormat) {
-        console.log(JSON.stringify(book.booklist, null, 2));
-      } else {
-        printBooks(book);
-      }
-    }
-  }, (err, results) => {
-    if (err) {
-      console.log('Error, Can\'t access detail information');
-    } else {
-      console.log(colors.green(`${results.length} 개의 도서관에서  ${getBookCount(results)} 권 검색됨`));
-    }
-  });
 
 }
 
