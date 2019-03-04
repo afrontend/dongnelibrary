@@ -6,9 +6,10 @@ const inquirer = require('inquirer');
 const program = require('commander');
 const dl = require('./dongnelibrary');
 const util = require('./dongnelibrary_util');
+const pjson = require('../package.json');
 
 program
-  .version('0.1.16')
+  .version(pjson.version)
   .option('-a, --all-library', 'display libraries')
   .option('-i, --interactive', 'interactive mode')
   .option('-l, --library-name [value1,value2]', 'library name')
