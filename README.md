@@ -18,7 +18,6 @@ Usage
     dongnelibrary -a
     dongnelibrary -t javascript -l 남양도서관
     dongnelibrary -t javascript -l 남양,판교
-    dongnelibrary -t javascript -l 남양 -j
 
 [![asciicast](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF.png)](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF)
 
@@ -81,7 +80,6 @@ Usage
 
     ./src/dongnelibrary_cli.js -t javascript -l 남양
     ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
-    ./src/dongnelibrary_cli.js -t javascript -l 남양도서관 -j
     npm test
 
 ## 검색 가능한 도서관
