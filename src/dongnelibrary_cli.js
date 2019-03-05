@@ -12,8 +12,8 @@ program
   .version(pjson.version)
   .option('-a, --all-library', 'display libraries')
   .option('-i, --interactive', 'interactive mode')
-  .option('-l, --library-name [value1,value2]', 'library name')
-  .option('-t, --title [value]', 'book title')
+  .option('-l, --library-name [name,name]', 'library name')
+  .option('-t, --title [title]', 'book title')
   .parse(process.argv);
 
 function cutTail(str, tail) {
@@ -36,15 +36,7 @@ function printBooks(book) {
   });
 }
 
-function printTail(book) {
-  let msg = cutTail(book.libraryName, '도서관') + " 모두 " + book.totalBookCount + ' 건';
-  if (book.startPage) {
-    msg += ` ( ${book.startPage} 페이지)`;
-  }
-  console.log(colors.green(msg));
-}
-
-function printAllLibraryName(option) {
+function printAllLibraryName() {
   const libs = dl.getLibraryNames();
   libs.forEach(name => {
     console.log(name);
@@ -101,7 +93,7 @@ const processOneLibrary = (err, book) => {
   } else {
     printBooks(book);
   }
-}
+};
 
 const processLibraries = (err, results) => {
   if (err) {
@@ -109,7 +101,7 @@ const processLibraries = (err, results) => {
   } else {
     console.log(colors.green(`${results.length} 개의 도서관에서  ${getBookCount(results)} 권 검색됨`));
   }
-}
+};
 
 function activate(option) {
   if (option.allLibrary) {
