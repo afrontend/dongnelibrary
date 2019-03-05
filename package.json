@@ -16,8 +16,7 @@
     "gunpo": "mocha test/gunpo.spec.js",
     "hscity": "mocha test/hscity.spec.js",
     "osan": "mocha test/osan.spec.js",
-    "snlib": "mocha test/snlib.spec.js",
-    "suwon": "mocha test/suwon.spec.js"
+    "snlib": "mocha test/snlib.spec.js"
   },
   "repository": {
     "type": "git",
@@ -30,7 +29,6 @@
     "군포시도서관",
     "도서 검색",
     "성남시도서관",
-    "수원시도서관",
     "오산시도서관",
     "화성시립도서관"
   ],
