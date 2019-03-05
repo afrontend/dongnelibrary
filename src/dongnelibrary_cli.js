@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const Configstore = require('configstore');
 const _ = require('lodash');
 const colors = require('colors');
 const fp = require('lodash/fp');
@@ -6,10 +7,16 @@ const inquirer = require('inquirer');
 const program = require('commander');
 const dl = require('./dongnelibrary');
 const util = require('./dongnelibrary_util');
-const pjson = require('../package.json');
+const pkg = require('../package.json');
+
+const conf = new Configstore(pkg.name, {});
+const getDefaultLibrary = () => (conf.get('library'));
+const setDefaultLibrary = (name) => (conf.set('library', name));
+const getDefaultTitle = () => (conf.get('title') === undefined ? 'javascript' : conf.get('title'));
+const setDefaultTitle = (title) => (conf.set('title', title));
 
 program
-  .version(pjson.version)
+  .version(pkg.version)
   .option('-a, --all-library', 'display libraries')
   .option('-i, --interactive', 'interactive mode')
   .option('-l, --library-name [name,name]', 'library name')
@@ -117,18 +124,21 @@ function activate(option) {
           type: 'list',
           name: 'library',
           message: '도서관 이름은?',
-          choices: dl.getLibraryNames()
+          choices: dl.getLibraryNames(),
+          default: getDefaultLibrary()
         },
         {
           type: 'input',
           name: 'title',
           message: '책 이름은?',
-          default: 'javascript'
+          default: getDefaultTitle()
         }
       ])
       .then(answers => {
         option.libraryName = answers['library'];
         option.title = answers['title'];
+        setDefaultLibrary(option.libraryName);
+        setDefaultTitle(option.title);
         if (option.libraryName && option.title) {
           search(option, processOneLibrary, processLibraries);
         }
