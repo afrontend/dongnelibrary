@@ -2,6 +2,7 @@
 const Configstore = require('configstore');
 const _ = require('lodash');
 const colors = require('colors');
+const figlet = require('figlet');
 const fp = require('lodash/fp');
 const inquirer = require('inquirer');
 const program = require('commander');
@@ -14,6 +15,14 @@ const getDefaultLibrary = () => (conf.get('library'));
 const setDefaultLibrary = (name) => (conf.set('library', name));
 const getDefaultTitle = () => (conf.get('title') === undefined ? 'javascript' : conf.get('title'));
 const setDefaultTitle = (title) => (conf.set('title', title));
+
+const introMessage = (msg) => {
+  console.log(figlet.textSync(msg, {
+    font: 'Standard',
+    horizontalLayout: 'default',
+    verticalLayout: 'default'
+  }));
+};
 
 program
   .version(pkg.version)
@@ -116,8 +125,8 @@ function activate(option) {
     return;
   }
 
-  if (option.interactive || (!option.libraryName && !option.title)) {
-    console.log("interactive");
+  if (option.interactive) {
+    introMessage('Dongne Library');
     inquirer
       .prompt([
         {
