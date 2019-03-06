@@ -15,7 +15,7 @@ Installation
 Usage
 
     dongnelibrary
-    dongnelibrary -a
+    dongnelibrary -i
     dongnelibrary -t javascript -l 남양도서관
     dongnelibrary -t javascript -l 남양,판교
 
@@ -78,6 +78,7 @@ Installation
 
 Usage
 
+    ./src/dongnelibrary_cli.js -i
     ./src/dongnelibrary_cli.js -t javascript -l 남양
     ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
     npm test
