@@ -4,9 +4,12 @@
 
 # DongneLibrary
 
-도서관 책을 빌릴 수 있는지 확인하는 노드 모듈이다. 도서관 이름을 생략하면 모든 도서관을 검색한다. [블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
+> 도서관 책을 빌릴 수 있는지 확인하는 프로그램
 
-## 1. Npm
+
+도서관 이름을 생략하면 모든 도서관을 검색한다. [블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
+
+## 1. With npm
 
 Installation
 
@@ -19,9 +22,9 @@ Usage
     dongnelibrary -t javascript -l 남양도서관
     dongnelibrary -t javascript -l 남양,판교
 
-[![asciicast](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF.png)](https://asciinema.org/a/SEKhEJKZet5dLNFFLMWMCF4pF)
+[![asciicast](https://asciinema.org/a/E7Rjmrp78RxOno0eHSr7s1D5p.svg)](https://asciinema.org/a/E7Rjmrp78RxOno0eHSr7s1D5p)
 
-## 2. Docker
+## 2. With Docker
 
 Installation
 
@@ -44,7 +47,7 @@ dongne () {
     dongne -l 여주,판교 -t 자바
     dongne -l 여주도서관 -t 자바
 
-## 3. JavaScript
+## 3. With JavaScript
 
 Installation
 
