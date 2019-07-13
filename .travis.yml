@@ -1,3 +1,5 @@
 language: node_js
 node_js:
-  - "8.0.0"
+  - v8
+  - v6
+  - v4
