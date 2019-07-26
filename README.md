@@ -103,9 +103,6 @@ Usage
 [![SPA for dongnelibrary](https://agvim.files.wordpress.com/2017/07/dongne23.png?w=128)](https://dongne.herokuapp.com/)
 [![APP for dongnelibrary](https://agvim.files.wordpress.com/2019/06/dlserver.png?w=128)](https://dlserver.herokuapp.com/app/)
 
-<img style="display:none" src="https://dongne.herokuapp.com/">
-<img style="display:none" src="https://dlserver.herokuapp.com/app/">
-
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
 [hscity-url]: https://hscitylib.or.kr
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
