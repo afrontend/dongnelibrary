@@ -26,7 +26,7 @@ const introMessage = (msg) => {
 
 program
   .version(pkg.version)
-  .option('-a, --all-library', 'display libraries')
+  .option('-a, --library-list', 'display libraries')
   .option('-i, --interactive', 'interactive mode')
   .option('-l, --library-name [name,name]', 'library name')
   .option('-t, --title [title]', 'book title')
