@@ -120,7 +120,7 @@ const processLibraries = (err, results) => {
 };
 
 function activate(option) {
-  if (option.allLibrary) {
+  if (option.libraryList) {
     printAllLibraryName(option);
     return;
   }
