@@ -101,7 +101,7 @@ function search(opt, getBook) {
       preSearchKey: 'ALL',
       preSearchKeyword: 'javascript',
       searchKey: 'ALL',
-      searchKeyword: 'javascript',
+      searchKeyword: title,
       searchLibraryArr: getLibraryCode(libraryName),
       searchSort: 'SIMILAR',
       searchOrder: 'DESC',
