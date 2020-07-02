@@ -27,7 +27,7 @@ const introMessage = (msg) => {
 program
   .version(pkg.version)
   .option('-a, --library-list', 'display libraries')
-  .option('-i, --interactive', 'interactive mode')
+  .option('-A, --all', 'use -l, -t')
   .option('-l, --library-name [name,name]', 'library name')
   .option('-t, --title [title]', 'book title')
   .parse(process.argv);
@@ -125,7 +125,9 @@ function activate(option) {
     return;
   }
 
-  if (option.interactive) {
+  if (option.all) {
+    search(option, processOneLibrary, processLibraries);
+  } else {
     introMessage('Dongne Library');
     inquirer
       .prompt([
@@ -152,10 +154,7 @@ function activate(option) {
           search(option, processOneLibrary, processLibraries);
         }
       });
-  } else {
-    search(option, processOneLibrary, processLibraries);
   }
-
 }
 
 activate(program);
