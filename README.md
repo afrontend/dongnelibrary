@@ -18,9 +18,9 @@ Installation
 Usage
 
     dongnelibrary
-    dongnelibrary -i
-    dongnelibrary -t javascript -l 남양도서관
-    dongnelibrary -t javascript -l 남양,판교
+    dongnelibrary -a
+    dongnelibrary -A -t javascript -l 남양도서관
+    dongnelibrary -A -t javascript -l 남양,판교
 
 [![asciicast](https://asciinema.org/a/E7Rjmrp78RxOno0eHSr7s1D5p.svg)](https://asciinema.org/a/E7Rjmrp78RxOno0eHSr7s1D5p)
 
@@ -32,9 +32,10 @@ Installation
 
 Usage
 
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주,판교 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주도서관 -t 자바
 
 아래 함수를 `~/.bashrc` 파일에 추가하여 간편하게 사용할 수 있다.
 
@@ -44,8 +45,10 @@ dongne () {
 }
 ```
 
-    dongne -l 여주,판교 -t 자바
-    dongne -l 여주도서관 -t 자바
+    dongne
+    dongne -a
+    dongne -A -l 여주,판교 -t 자바
+    dongne -A -l 여주도서관 -t 자바
 
 ## 3. With JavaScript
 
@@ -81,9 +84,10 @@ Installation
 
 Usage
 
-    ./src/dongnelibrary_cli.js -i
-    ./src/dongnelibrary_cli.js -t javascript -l 남양
-    ./src/dongnelibrary_cli.js -t javascript -l 남양,판교
+    ./src/dongnelibrary_cli.js
+    ./src/dongnelibrary_cli.js -a
+    ./src/dongnelibrary_cli.js -A -t javascript -l 남양
+    ./src/dongnelibrary_cli.js -A -t javascript -l 남양,판교
     npm test
 
 ## 검색 가능한 도서관
