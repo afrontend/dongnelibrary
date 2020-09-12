@@ -22,7 +22,8 @@ Usage
     dongnelibrary -A -t javascript -l 남양도서관
     dongnelibrary -A -t javascript -l 남양,판교
 
-[![asciicast](https://asciinema.org/a/E7Rjmrp78RxOno0eHSr7s1D5p.svg)](https://asciinema.org/a/E7Rjmrp78RxOno0eHSr7s1D5p)
+[![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
+
 
 ## 2. With Docker
 
