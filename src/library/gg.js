@@ -4,7 +4,7 @@ const _ = require('lodash');
 const jquery = require('../dongnelibrary_util.js').getJqueryString();
 const async = require('async');
 const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-const global = {};
+const globalDebug = false;
 
 const libraryList = [
   {code: 'MA', name: '경기도립중앙도서관'},
@@ -26,7 +26,7 @@ function getLibraryCode(libraryName) {
   return '';
 }
 
-function exist(str) {
+function isInTheLibrary(str) {
   return !(str.indexOf('대출중') >= 0);
 }
 
@@ -71,7 +71,7 @@ function makeJsdomCallback(libraryName, body, opt, getBook) {
       }
     }
 
-    if (global.debug) {
+    if (globalDebug) {
       console.log('maxoffset: ' + maxoffset);
     }
 
@@ -136,7 +136,7 @@ function search(opt, getBook) {
   let startPage = 1;
 
   if (opt.debug) {
-    global.debug = true;
+    globalDebug = true;
   }
 
   if (opt.title) {
@@ -188,7 +188,7 @@ function search(opt, getBook) {
       mgc: getLibraryCode(libraryName)
     }
   }, function (err, res, body) {
-    if (global.debug === true) {
+    if (globalDebug === true) {
       console.log(body);
     }
     if (err || (res && res.statusCode !== 200)) {
@@ -222,7 +222,7 @@ function searchDetail(opt, checkExistence) {
   let title = '';
   let libraryName = '';
 
-  if (global.debug) {
+  if (globalDebug) {
     console.log('opt: ' + JSON.stringify(opt, null, 2));
   }
 
@@ -266,7 +266,7 @@ function searchDetail(opt, checkExistence) {
       book_code: ''
     }
   }, function (err, res, body) {
-    if (global.debug === true) {
+    if (globalDebug === true) {
       console.log(body);
     }
     if (err) {
@@ -280,10 +280,10 @@ function searchDetail(opt, checkExistence) {
         done: function (errors, window) {
           const $a = window.$('table:nth-child(2) > tbody > tr:nth-child(4) > td > table > tbody > tr:nth-child(2) > td.view2_01');
           if (checkExistence) {
-            if (global.debug === true) {
+            if (globalDebug === true) {
               console.log('$a.text(): ' + $a.text());
             }
-            if (exist(($a.text() + "").trim())) {
+            if (isInTheLibrary(($a.text() + "").trim())) {
               checkExistence(null, true);
             } else {
               checkExistence(null, false);
