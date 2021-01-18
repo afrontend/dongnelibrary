@@ -9,7 +9,7 @@
 
 도서관 이름을 생략하면 모든 도서관을 검색한다. [블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
 
-## 1. With npm
+## Use npm
 
 Installation
 
@@ -25,7 +25,7 @@ Usage
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
 
-## 2. With Docker
+## Use docker
 
 Installation
 
@@ -51,7 +51,7 @@ dongne () {
     dongne -A -l 여주,판교 -t 자바
     dongne -A -l 여주도서관 -t 자바
 
-## 3. With JavaScript
+## Use JavaScript
 
 Installation
 
