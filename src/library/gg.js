@@ -42,9 +42,9 @@ function getOffset(str) {
   return offsetList;
 }
 
-function appendOffset(booklist, str) {
+function appendOffset(bookList, str) {
   const offsetList = getOffset(str);
-  return _.map(booklist, function(item, key){
+  return _.map(bookList, function(item, key){
     item.offset = offsetList[key];
     return item;
   });
