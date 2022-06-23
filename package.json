@@ -51,7 +51,7 @@
     "configstore": "^4.0.0",
     "figlet": "^1.2.1",
     "inquirer": "^6.2.2",
-    "jsdom": "^9.4.1",
+    "jsdom": "^16.5.0",
     "lodash": "^4.17.20",
     "request": "^2.73.0"
   }
