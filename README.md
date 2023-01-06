@@ -7,16 +7,25 @@
 > 도서관 책을 빌릴 수 있는지 확인하는 프로그램
 
 
-도서관 이름을 생략하면 모든 도서관을 검색한다. [블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
+도서관 이름을 생략하면 모든 도서관을 검색한다.
+[블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
 
-## Use npm
+## install with git
 
-Installation
+    git clone https://github.com/afrontend/dongnelibrary
+    cd dongnelibrary
+    npm ci
+    chmod a+x src/dongnelibrary_cli.js
+
+    node ./src/dongnelibrary_cli.js
+    node ./src/dongnelibrary_cli.js -a
+    node ./src/dongnelibrary_cli.js -A -t javascript -l 남양
+    node ./src/dongnelibrary_cli.js -A -t javascript -l 남양,판교
+    npm test
+
+## install with NPM
 
     npm install dongnelibrary -g
-
-Usage
-
     dongnelibrary
     dongnelibrary -a
     dongnelibrary -A -t javascript -l 남양도서관
@@ -24,21 +33,15 @@ Usage
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
-
-## Use docker
-
-Installation
+## Using with docker
 
     docker pull frontendwordpress/dongnelibrary
-
-Usage
-
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주,판교 -t 자바
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주도서관 -t 자바
 
-아래 함수를 `~/.bashrc` 파일에 추가하여 간편하게 사용할 수 있다.
+아래 함수를 `~/.bashrc` 파일에 추가하여 사용할 수 있다.
 
 ```bash
 dongne () {
@@ -51,13 +54,9 @@ dongne () {
     dongne -A -l 여주,판교 -t 자바
     dongne -A -l 여주도서관 -t 자바
 
-## Use JavaScript
-
-Installation
+## Using with JavaScript
 
     npm install dongnelibrary
-
-Usage
 
 ```javascript
 const dl = require('dongnelibrary');
@@ -73,23 +72,6 @@ dl.search({
   console.log(books.length + ' 개의 도서관을 검색했습니다.');
 });
 ```
-
-## 4. Git
-
-Installation
-
-    git clone https://github.com/afrontend/dongnelibrary
-    cd dongnelibrary
-    npm install
-    chmod a+x src/dongnelibrary_cli.js
-
-Usage
-
-    ./src/dongnelibrary_cli.js
-    ./src/dongnelibrary_cli.js -a
-    ./src/dongnelibrary_cli.js -A -t javascript -l 남양
-    ./src/dongnelibrary_cli.js -A -t javascript -l 남양,판교
-    npm test
 
 ## 검색 가능한 도서관
 
