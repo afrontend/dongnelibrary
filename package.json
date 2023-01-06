@@ -41,7 +41,7 @@
   "devDependencies": {
     "acorn": ">=5.7.4",
     "minimist": ">=1.2.2",
-    "mocha": "^8.1.3"
+    "mocha": "^10.2.0"
   },
   "tonicExampleFilename": "src/example.js",
   "dependencies": {
