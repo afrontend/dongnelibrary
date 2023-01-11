@@ -90,6 +90,17 @@ dl.search({
 [![SPA for dongnelibrary](https://agvim.files.wordpress.com/2017/07/dongne23.png?w=128)](https://dongne.herokuapp.com/)
 [![APP for dongnelibrary](https://agvim.files.wordpress.com/2019/06/dlserver.png?w=128)](https://dlserver.herokuapp.com/app/)
 
+## Test
+
+    npm test
+    npm run dongne  # 여러 도서관 검색
+    npm run gg      # 경기도 도서관
+    npm run gunpo   # 군포시 도서관
+    npm run hscity  # 화성시 도서관
+    npm run osan    # 오산시 도서관
+    npm run snlib   # 성남시 도서관
+
+
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
 [hscity-url]: https://hscitylib.or.kr
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg

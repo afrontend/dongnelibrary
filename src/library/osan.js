@@ -119,7 +119,7 @@ function search(opt, getBook) {
 }
 
 module.exports = {
-  search: search,
+  search,
   getLibraryNames: function() {
     return getLibraryNames(libraryList);
   }
