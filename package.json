@@ -41,17 +41,17 @@
   "devDependencies": {
     "acorn": ">=5.7.4",
     "minimist": ">=1.2.2",
-    "mocha": "^8.1.3"
+    "mocha": "^10.2.0"
   },
   "tonicExampleFilename": "src/example.js",
   "dependencies": {
     "async": "^2.5.0",
-    "colors": "^1.1.2",
+    "colors": "^1.4.0",
     "commander": "^2.11.0",
     "configstore": "^4.0.0",
     "figlet": "^1.2.1",
     "inquirer": "^6.2.2",
-    "jsdom": "^9.4.1",
+    "jsdom": "^21.1.1",
     "lodash": "^4.17.20",
     "request": "^2.73.0"
   }
