@@ -6,8 +6,8 @@ describe('경기도 도서관 (제한시간 20초)', function () {
   it('search book', function (done) {
     gg.search({
       title: 'javascript',
-      libraryName: '경기도립중앙도서관',
-      startPage: 2
+      libraryName: '경기중앙교육도서관',
+      startPage: 1
     }, function (err, book) {
       if(err) {
         console.log(err);
