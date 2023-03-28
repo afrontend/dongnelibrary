@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
 const jquery = require('jquery');
 const req = require('request')
@@ -23,15 +22,9 @@ function getLibraryCode(libraryName) {
   return found ? found.code : '';
 }
 
-function isRented(str) {
-  return !(str.indexOf('대출중') >= 0);
-}
-
 function search(opt, getBook) {
-  // console.log('opt', opt)
   let title = opt.title
   let libraryName = opt.libraryName
-  let startPage = opt.startPage
 
   if (!title) {
     if (getBook) {
@@ -74,13 +67,14 @@ function search(opt, getBook) {
       // const $row = dom.window.document.querySelectorAll('.row .book-title')
       const $ = jquery(dom.window)
       const booklist = []
-      $('.row .book-title > span').each((_, a) => {
-        const title = $(a).text().trim()
+      $('.bif').each((_, a) => {
+        const title = $(a).find('.book-title > span').text().trim()
+        const rented = $(a).find('.state.typeC').text().trim()
         booklist.push({
           libraryName,
           title,
           maxoffset: count,
-          exist: false
+          exist: rented === '대출가능'
         });
       })
       getBook(null, {
