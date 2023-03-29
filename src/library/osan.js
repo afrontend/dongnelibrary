@@ -1,121 +1,87 @@
-const jsdom = require('jsdom');
-const req = require('request');
-const _ = require('lodash');
-const jquery = require('../dongnelibrary_util').getJqueryString();
 const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-const global = {};
+const jquery = require('jquery');
+const req = require('request')
+const { JSDOM } = require("jsdom");
 
 const libraryList = [
-  {code: 'MA', name: '오산중앙도서관'},
-  {code: 'MB', name: '청학도서관'},
-  {code: 'MC', name: '햇살마루도서관'},
-  {code: 'MD', name: '양산도서관'},
+  {code: 'MA', name: '중앙도서관'},
+  {code: 'MG', name: '꿈두레도서관'},
   {code: 'ME', name: '초평도서관'},
-  {code: 'MG', name: '꿈두레도서관'}
+  {code: 'MC', name: '햇살마루도서관'},
+  {code: 'MB', name: '청학도서관'},
+  {code: 'MD', name: '양산도서관'},
+  {code: 'MI', name: '소리울도서관'},
+  {code: 'MY', name: '무지개도서관'},
+  {code: 'MH', name: '고현초꿈키움도서관'},
+  {code: 'MJ', name: '쌍용예가시민개방도서관'},
 ];
 
 function getLibraryCode(libraryName) {
-  const found = _.find(libraryList, function (lib) {
-    return lib.name === libraryName;
-  });
-
-  if (found) {
-    return found.code;
-  }
-  return '';
-}
-
-function exist(str) {
-  return !(str === '관외대출자료');
-}
-
-function makeJsdomCallback(libraryName, getBook) {
-  return function(errors, window) {
-    const booklist = [];
-    const $ = window.$;
-    const $a = $("form[name='searchPage'] table tr td table tr");
-    _.each($a, function (value, key) {
-        if (key !== 0) {
-          const $value = $(value);
-          booklist.push({
-              libraryName: libraryName,
-              title: $value.find('td:nth-child(2) > a').text().trim(),
-              exist: exist($value.find('td:nth-child(8)').text().trim())
-          });
-        }
-    });
-    if (getBook) {
-      getBook(null, {
-        totalBookCount: booklist.length,
-        booklist: booklist
-      });
-    }
-    window.close();
-  };
+  const found = libraryList.find(lib => (lib.name === libraryName));
+  return found ? found.code : '';
 }
 
 function search(opt, getBook) {
-  let title = '';
-  let libraryName = '';
+  let title = opt.title
+  let libraryName = opt.libraryName
 
-  if (opt.debug) {
-    global.debug = true;
-  }
-
-  if (opt.title) {
-    title = opt.title;
-  } else {
+  if (!title) {
     if (getBook) {
       getBook({msg: 'Need a book name'});
     }
     return;
   }
 
-  if (opt.libraryName) {
-    libraryName = opt.libraryName;
-  } else {
+  if (!libraryName) {
     if (getBook) {
       getBook({msg: 'Need a library name'});
     }
     return;
   }
 
-  req.post({
-      url: 'http://www.osanlibrary.go.kr:9090/kolas3_01/BookSearch/search_result.do?jongbook=_book&field1=IAL&aon1=AND&field2=IT&value2=&aon2=AND&field3=IA&value3=&aon3=AND&buho1=SIB&buhovalue1=&aon4=AND&buho2=KDC&buhovalue2=&aon5=AND&buhovalue3=&univname=&aon6=AND&buhovalue4=&govname=&sort=RK+DESC&msa=&formclass=&textlang=&simplelang=&startyear=&endyear=&limitpage=100&local=+&startpage=1&mode=0&mgc='+getLibraryCode(libraryName),
-      timeout: 20000,
-      headers: {
-        "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-      },
-      form: {
-        value1: title
+  // https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=MA&searchKey=ALL&searchKeyword=javascript&searchRecordCount=20
+  const lcode = getLibraryCode(libraryName)
+  const etitle = encodeURIComponent(title)
+  req.get({
+    url: `https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=${lcode}&searchKey=ALL&searchKeyword=${etitle}&searchRecordCount=1000`,
+    timeout: 20000,
+  }, function (err, res, body) {
+    if (err || (res && res.statusCode !== 200)) {
+      let msg = '';
+
+      if (err) {
+        msg = err;
       }
-    }, function (err, res, body) {
-      if (global.debug === true) {
-        console.log(body);
+
+      if (res && res.statusCode) {
+        msg = msg + " " + res.statusCode;
       }
-      if (err || (res && res.statusCode !== 200)) {
-        let msg = '';
 
-        if (err) {
-          msg = err;
-        }
-
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
-
-        if (getBook) {
-          getBook({msg: msg});
-        }
-      } else {
-        jsdom.env({
-            html: body,
-            src: [jquery],
-            done: makeJsdomCallback(libraryName, getBook)
+      if (getBook) {
+        getBook({msg: msg});
+      }
+    } else {
+      const dom = new JSDOM(body);
+      const count = dom.window.document.querySelector('b.themeFC').innerHTML.match(/\d+/)[0]
+      const $ = jquery(dom.window)
+      const booklist = []
+      $('.resultList > li').each((_, a) => {
+        const title = $(a).find('.tit a').text().trim()
+        const rented = $(a).find('.bookStateBar .txt b').text().trim()
+        booklist.push({
+          libraryName,
+          title,
+          maxoffset: count,
+          exist: rented.includes('대출가능')
         });
-      }
+      })
+      getBook(null, {
+        startPage: opt.startPage,
+        totalBookCount: count,
+        booklist,
+      });
     }
-  );
+  });
 }
 
 module.exports = {
