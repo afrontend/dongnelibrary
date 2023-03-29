@@ -42,8 +42,9 @@ function search(opt, getBook) {
 
   // 'https://lib.goe.go.kr/gg/intro/search/index.do?menu_idx=10&viewPage=1&search_text=%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8&booktype=BOOKANDNONBOOK&libraryCodes=MA&sortField=NONE&sortType=ASC&rowCount=1000#search_result',
   const lcode = getLibraryCode(libraryName)
+  const etitle = encodeURIComponent(title)
   req.get({
-    url: `https://lib.goe.go.kr/gg/intro/search/index.do?menu_idx=10&viewPage=1&search_text=%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8&booktype=BOOKANDNONBOOK&libraryCodes=${lcode}&sortField=NONE&sortType=ASC&rowCount=1000#search_result`,
+    url: `https://lib.goe.go.kr/gg/intro/search/index.do?menu_idx=10&viewPage=1&search_text=${etitle}&booktype=BOOKANDNONBOOK&libraryCodes=${lcode}&sortField=NONE&sortType=ASC&rowCount=1000#search_result`,
     timeout: 20000,
   }, function (err, res, body) {
     if (err || (res && res.statusCode !== 200)) {
