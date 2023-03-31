@@ -6,7 +6,7 @@ describe('화성시 도서관 (제한시간 20초)', function () {
   it('search book', function (done) {
     hscity.search({
       title: 'javascript',
-      libraryName: '남양도서관'
+      libraryName: '남양'
     }, function (err, book) {
       if(err) {
         console.log(err.msg);
