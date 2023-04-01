@@ -31,14 +31,8 @@ const libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  const found = _.find(libraryList, function (lib) {
-    return lib.name === libraryName;
-  });
-
-  if (found) {
-    return found.code;
-  }
-  return '';
+  const found = libraryList.find(lib => (lib.name === libraryName));
+  return found ? found.code : '';
 }
 
 function getBookList(json) {
@@ -92,7 +86,7 @@ function search(opt, getBook) {
     qs: {
       all: `k|a|${title}`,
       branch: getLibraryCode(libraryName),
-      max: 200
+      max: 1000
     }
   }, function (err, res, body) {
     if (global.debug === true) {
