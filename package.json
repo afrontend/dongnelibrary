@@ -16,7 +16,8 @@
     "gunpo": "mocha test/gunpo.spec.js",
     "hscity": "mocha test/hscity.spec.js",
     "osan": "mocha test/osan.spec.js",
-    "snlib": "mocha test/snlib.spec.js"
+    "snlib": "mocha test/snlib.spec.js",
+    "suwon": "mocha test/suwon.spec.js"
   },
   "repository": {
     "type": "git",
