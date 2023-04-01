@@ -6,7 +6,7 @@ describe('군포시 도서관 (제한시간 20초)', function () {
   it('search book', function (done) {
     gunpo.search({
       title: 'javascript',
-      libraryName: '산본도서관'
+      libraryName: '군포시중앙도서관'
     }, function (err, book) {
       if(err) {
         console.log(err);

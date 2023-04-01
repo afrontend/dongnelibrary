@@ -77,6 +77,8 @@ function search(opt, getBook) {
     return;
   }
 
+  const branch = getLibraryCode(libraryName)
+
   req.get({
     url: 'https://www.gunpolib.go.kr/pyxis-api/1/collections/1/search',
     timeout: 20000,
@@ -85,7 +87,7 @@ function search(opt, getBook) {
     },
     qs: {
       all: `k|a|${title}`,
-      branch: getLibraryCode(libraryName),
+      branch,
       max: 1000
     }
   }, function (err, res, body) {
@@ -107,7 +109,7 @@ function search(opt, getBook) {
         getBook({msg: msg});
       }
     } else {
-      const booklist = addLibraryNameToBookList(libraryName, getBookList(JSON.parse(body)));
+      const booklist = addLibraryNameToBookList(branch === '' ? '전체도서관': libraryName, getBookList(JSON.parse(body)));
       getBook(null, {
         totalBookCount: booklist.length,
         booklist: booklist
