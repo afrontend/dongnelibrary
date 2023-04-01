@@ -87,15 +87,12 @@ function search(opt, getBook) {
         getBook({msg});
       }
     } else {
-      console.log(body)
       const dom = new JSDOM(body);
       const count = dom.window.document.querySelector('#totalCnt').innerHTML.match(/\d+/)[0]
-      console.log('count', count)
       const $ = jquery(dom.window)
       const booklist = []
       $('.bookArea').each((_, a) => {
         const title = $(a).find('p.book_name.kor.on > a').attr('title')
-        console.log(title)
         const rented = $(a).find('span.emp8').text().trim()
         booklist.push({
           libraryName,
