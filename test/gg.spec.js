@@ -1,22 +1,28 @@
 const gg = require('../src/library/gg');
 const util = require('../src/dongnelibrary_util.js');
+const assert = require('assert').strict
 
 describe('경기도 도서관 (제한시간 20초)', function () {
   this.timeout(20000);
-  it('search book', function (done) {
+  it('Show library list', function (done) {
+    assert.ok(gg.getLibraryNames().length > 1);
+    done();
+  });
+
+  it('Show book list of one name', function (done) {
     gg.search({
       title: 'javascript',
-      libraryName: '경기중앙교육도서관',
+      libraryName: '경기평택교육도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {
-        console.log(err);
+        assert.fail(err.msg);
       } else {
         if(book.booklist.length > 0) {
           util.printBookList(book.booklist);
           util.printTotalBookCount(book);
         } else {
-          console.log('book.booklist.length: ' + book.booklist.length);
+          assert.fail('Book count must be above 1')
         }
       }
       done();
