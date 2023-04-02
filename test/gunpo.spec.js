@@ -19,7 +19,7 @@ describe('군포시 도서관 (제한시간 20초)', function () {
         assert.fail(err.msg);
       } else {
         if(book.booklist.length > 0) {
-          util.printBookList(book.booklist);
+          // util.printBookList(book.booklist);
           util.printTotalBookCount(book);
         } else {
           assert.fail('Book count must be above 1')
