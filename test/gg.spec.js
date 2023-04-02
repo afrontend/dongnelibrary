@@ -1,16 +1,16 @@
-const gg = require('../src/library/gg');
-const util = require('../src/dongnelibrary_util.js');
 const assert = require('assert').strict
+const lib = require('../src/library/gg');
+const util = require('../src/dongnelibrary_util.js');
 
 describe('경기도 도서관 (제한시간 20초)', function () {
   this.timeout(20000);
   it('Show library list', function (done) {
-    assert.ok(gg.getLibraryNames().length > 1);
+    assert.ok(lib.getLibraryNames().length > 1);
     done();
   });
 
   it('Show book list of one name', function (done) {
-    gg.search({
+    lib.search({
       title: 'javascript',
       libraryName: '경기평택교육도서관',
       startPage: 1
