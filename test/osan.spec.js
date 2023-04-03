@@ -9,7 +9,7 @@ describe('오산시 도서관 (제한시간 20초)', function () {
     done();
   });
 
-  it('Show book list of one library name', function (done) {
+  it('Show book list of one library', function (done) {
     lib.search({
       title: 'javascript',
       libraryName: '양산도서관',

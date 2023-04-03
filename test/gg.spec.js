@@ -9,7 +9,7 @@ describe('경기도 도서관 (제한시간 20초)', function () {
     done();
   });
 
-  it('Show book list of one library name', function (done) {
+  it('Show book list of one library', function (done) {
     lib.search({
       title: 'javascript',
       libraryName: '경기평택교육도서관',

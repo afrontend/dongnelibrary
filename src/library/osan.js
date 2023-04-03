@@ -32,19 +32,20 @@ function search(opt, getBook) {
     return;
   }
 
-  if (!libraryName) {
-    if (getBook) {
-      getBook({msg: 'Need a library name'});
-    }
-    return;
-  }
-
   // https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=MA&searchKey=ALL&searchKeyword=javascript&searchRecordCount=20
   const lcode = getLibraryCode(libraryName)
   const etitle = encodeURIComponent(title)
   req.get({
-    url: `https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=${lcode}&searchKey=ALL&searchKeyword=${etitle}&searchRecordCount=1000`,
+    url: `https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do`,
     timeout: 20000,
+    qs: {
+      searchType: "SIMPLE",
+      searchCategory: "ALL",
+      searchLibraryArr: lcode,
+      searchKey: "ALL",
+      searchKeyword: etitle,
+      searchRecordCount: 1000,
+    }
   }, function (err, res, body) {
     if (err || (res && res.statusCode !== 200)) {
       let msg = '';
@@ -68,6 +69,7 @@ function search(opt, getBook) {
       $('.resultList > li').each((_, a) => {
         const title = $(a).find('.tit a').text().trim()
         const rented = $(a).find('.bookStateBar .txt b').text().trim()
+        const libraryName = $(a).find('.site > span:first-child').text().split(']')[1].trim()
         booklist.push({
           libraryName,
           title,

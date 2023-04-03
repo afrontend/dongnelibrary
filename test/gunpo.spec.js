@@ -9,10 +9,10 @@ describe('군포시 도서관 (제한시간 20초)', function () {
     done();
   });
 
-  it('Show book list of all library', function (done) {
+  it('Show book list of one library', function (done) {
     lib.search({
       title: 'javascript',
-      libraryName: '',
+      libraryName: '대야도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {
@@ -29,10 +29,10 @@ describe('군포시 도서관 (제한시간 20초)', function () {
     });
   });
 
-  it('Show book list of one library', function (done) {
+  it('Show book list of all libraries', function (done) {
     lib.search({
       title: 'javascript',
-      libraryName: '대야도서관',
+      libraryName: '',
       startPage: 1
     }, function (err, book) {
       if(err) {
