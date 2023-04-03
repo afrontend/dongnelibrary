@@ -19,7 +19,7 @@ describe('오산시 도서관 (제한시간 20초)', function () {
         assert.fail(err.msg);
       } else {
         if(book.booklist.length > 0) {
-          // util.printBookList(book.booklist);
+          util.printBookList(book.booklist);
           util.printTotalBookCount(book);
         } else {
           assert.fail('Book count must be above 1')
@@ -28,4 +28,26 @@ describe('오산시 도서관 (제한시간 20초)', function () {
       done();
     });
   });
+
+
+  it('Show book list of all libraries', function (done) {
+    lib.search({
+      title: 'javascript',
+      libraryName: '',
+      startPage: 1
+    }, function (err, book) {
+      if(err) {
+        assert.fail(err.msg);
+      } else {
+        if(book.booklist.length > 0) {
+          util.printBookList(book.booklist);
+          util.printTotalBookCount(book);
+        } else {
+          assert.fail('Book count must be above 1')
+        }
+      }
+      done();
+    });
+  });
+
 });
