@@ -49,13 +49,6 @@ function search(opt, getBook) {
     return;
   }
 
-  if (!libraryName) {
-    if (getBook) {
-      getBook({msg: 'Need a library name'});
-    }
-    return;
-  }
-
   const lcode = getLibraryCode(libraryName)
   const etitle = encodeURIComponent(title)
   // const url=`https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do?searchType=SIMPLE&searchManageCodeArr=MK&searchKeyword=javascript`
@@ -70,6 +63,7 @@ function search(opt, getBook) {
       searchType: 'SIMPLE',
       searchKeyword: etitle,
       searchManageCodeArr: lcode,
+      searchDisplay: 1000,
     }
   }, function (err, res, body) {
     if (err || (res && res.statusCode !== 200)) {
@@ -94,8 +88,9 @@ function search(opt, getBook) {
       $('.bookArea').each((_, a) => {
         const title = $(a).find('p.book_name.kor.on > a').attr('title')
         const rented = $(a).find('span.emp8').text().trim()
+        const libraryName = $(a).find('b.themeFC').text().trim()
         booklist.push({
-          libraryName,
+          libraryName: libraryName.replace(/[\[\]]/g, ''),
           title,
           maxoffset: count,
           exist: rented.includes('대출가능')
