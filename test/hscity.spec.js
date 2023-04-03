@@ -12,7 +12,27 @@ describe('화성시 도서관 (제한시간 20초)', function () {
   it('Show book list of one library name', function (done) {
     lib.search({
       title: 'javascript',
-      libraryName: '봉담도서관',
+      libraryName: '병점도서관',
+      startPage: 1
+    }, function (err, book) {
+      if(err) {
+        assert.fail(err.msg);
+      } else {
+        if(book.booklist.length > 0) {
+          util.printBookList(book.booklist);
+          util.printTotalBookCount(book);
+        } else {
+          assert.fail('Book count must be above 1')
+        }
+      }
+      done();
+    });
+  });
+
+  it('Show book list of all libraries', function (done) {
+    lib.search({
+      title: 'javascript',
+      libraryName: '',
       startPage: 1
     }, function (err, book) {
       if(err) {
