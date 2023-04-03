@@ -9,7 +9,7 @@ describe('화성시 도서관 (제한시간 20초)', function () {
     done();
   });
 
-  it('Show book list of one name', function (done) {
+  it('Show book list of one library name', function (done) {
     lib.search({
       title: 'javascript',
       libraryName: '봉담도서관',
