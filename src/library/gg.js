@@ -78,6 +78,7 @@ function search(opt, getBook) {
       $('.bif').each((_, a) => {
         const title = $(a).find('.book-title > span').text().trim()
         const rented = $(a).find('.state.typeC').text().trim()
+        const libraryName = $(a).find("span:contains('도서관')").next().text().split('|')[0].trim()
         booklist.push({
           libraryName,
           title,
