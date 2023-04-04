@@ -1,9 +1,7 @@
-const jsdom = require('jsdom');
-const req = require('request');
-const _ = require('lodash');
-const jquery = require('../dongnelibrary_util.js').getJqueryString();
 const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-const global = {};
+const jquery = require('jquery');
+const req = require('request');
+const { JSDOM } = require("jsdom");
 
 const libraryList = [
   {code: 'CK', name: '중원어린이도서관'},
@@ -21,95 +19,40 @@ const libraryList = [
 ];
 
 function getLibraryCode(libraryName) {
-  const found = _.find(libraryList, function (lib) {
-    return lib.name === libraryName;
-  });
-
-  if (found) {
-    return found.code;
-  }
-  return '';
-}
-
-function isRented(str) {
-  return !!str.indexOf('대출가능');
-}
-
-function makeJsdomCallback(libraryName, getBook) {
-  return function(errors, window) {
-    const booklist = [];
-    const $ = window.$;
-    const totalBookCount = parseInt($('#searchForm > p > strong.themeFC').text().trim(), 10);
-    const $a = $('#searchForm > ul > li');
-    _.each($a, function (value) {
-      const $value = $(value);
-      booklist.push({
-        libraryName: libraryName,
-        title: $value.find('dl > dt > a').text().trim().split(' ').slice(1).join(' '),
-        exist: !isRented($value.find('.bookStateBar .emp8').text().trim())
-      });
-    });
-
-    if (getBook) {
-      getBook(null, {
-        totalBookCount: totalBookCount || booklist.length,
-        booklist: booklist
-      });
-    }
-    window.close();
-  };
+  const found = libraryList.find(lib => (lib.name === libraryName));
+  return found ? found.code : libraryList.map(lib => lib.code)
 }
 
 function search(opt, getBook) {
-  let title = '';
-  let libraryName = '';
+  let title = opt.title
+  let libraryName = opt.libraryName
 
-  if (opt.debug) {
-    global.debug = true;
-  }
-
-  if (opt.title) {
-    title = opt.title;
-  } else {
+  if (!title) {
     if (getBook) {
       getBook({msg: 'Need a book name'});
     }
     return;
   }
 
-  if (opt.libraryName) {
-    libraryName = opt.libraryName;
-  } else {
-    if (getBook) {
-      getBook({msg: 'Need a library name'});
-    }
-    return;
-  }
-
+  const lcode = getLibraryCode(libraryName)
+  const etitle = encodeURIComponent(title)
   req.get({
-    url: 'https://www.snlib.go.kr/uj/menu/10641/program/30009/plusSearchResultList.do',
+    url: 'https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do',
     timeout: 20000,
-    headers: {
-      "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-    },
-    qs : {
-      searchType: 'SIMPLE',
-      searchCategory: 'BOOK',
+    qs: {
+      searchType: "SIMPLE",
+      searchCategory: "BOOK",
       currentPageNo: 1,
-      viewStatus: 'IMAGE',
-      preSearchKey: 'ALL',
-      preSearchKeyword: title,
-      searchKey: 'ALL',
-      searchKeyword: title,
-      searchLibraryArr: getLibraryCode(libraryName),
-      searchSort: 'SIMILAR',
-      searchOrder: 'DESC',
-      searchRecordCount: 100
+      searchKey: "ALL",
+      searchKeyword: etitle,
+      searchLibraryArr: lcode,
+      searchSort: "SIMILAR",
+      searchOrder: "DESC",
+      searchRecordCount: 1000,
+      searchBookClass: "ALL"
     }
+    // searchPbLibrary: "ALL",
   }, function (err, res, body) {
-    if (global.debug === true) {
-      console.log(body);
-    }
     if (err || (res && res.statusCode !== 200)) {
       let msg = '';
 
@@ -125,18 +68,34 @@ function search(opt, getBook) {
         getBook({msg: msg});
       }
     } else {
-      jsdom.env({
-        html: body,
-        src: [jquery],
-        done: makeJsdomCallback(libraryName, getBook)
+      const dom = new JSDOM(body);
+      const $ = jquery(dom.window)
+      const count = $('strong.themeFC').text().match(/\d+/)[0]
+      const booklist = []
+      if (count) {
+        $('.resultList > li').each((_, a) => {
+          const title = $(a).find('.tit a').text().trim()
+          const rented = $(a).find('.bookStateBar .txt b').text()
+          const libraryName = $(a).find('.site > span:first-child').text().split(':')[1].trim()
+          booklist.push({
+            libraryName,
+            title,
+            maxoffset: count,
+            exist: rented.includes('대출가능')
+          });
+        })
+      }
+      getBook(null, {
+        startPage: opt.startPage,
+        totalBookCount: count,
+        booklist,
       });
     }
-  }
-  );
+  });
 }
 
 module.exports = {
-  search: search,
+  search,
   getLibraryNames: function() {
     return getLibraryNames(libraryList);
   }
