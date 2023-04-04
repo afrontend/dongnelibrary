@@ -1,9 +1,9 @@
 const assert = require('assert').strict
-const lib = require('../src/library/osan');
+const lib = require('../src/library/suwon');
 const util = require('../src/dongnelibrary_util.js');
 
-describe('오산시 도서관 (제한시간 20초)', function () {
-  this.timeout(20000);
+describe('수원시 도서관 (제한시간 25초)', function () {
+  this.timeout(25000);
   it('Show library list', function (done) {
     assert.ok(lib.getLibraryNames().length > 1);
     done();
@@ -12,7 +12,7 @@ describe('오산시 도서관 (제한시간 20초)', function () {
   it('Show book list of one library', function (done) {
     lib.search({
       title: 'javascript',
-      libraryName: '양산도서관',
+      libraryName: '수원시중앙도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {
