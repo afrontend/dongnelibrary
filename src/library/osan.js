@@ -63,8 +63,8 @@ function search(opt, getBook) {
       }
     } else {
       const dom = new JSDOM(body);
-      const count = dom.window.document.querySelector('b.themeFC').innerHTML.match(/\d+/)[0]
       const $ = jquery(dom.window)
+      const count = $('b.themeFC').text().match(/\d+/)[0]
       const booklist = []
       $('.resultList > li').each((_, a) => {
         const title = $(a).find('.tit a').text().trim()

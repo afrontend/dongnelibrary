@@ -82,8 +82,8 @@ function search(opt, getBook) {
       }
     } else {
       const dom = new JSDOM(body);
-      const count = dom.window.document.querySelector('#totalCnt').innerHTML.match(/\d+/)[0]
       const $ = jquery(dom.window)
+      const count = $('#totalCnt').text().match(/\d+/)[0]
       const booklist = []
       $('.bookArea').each((_, a) => {
         const title = $(a).find('p.book_name.kor.on > a').attr('title')
