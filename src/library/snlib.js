@@ -24,7 +24,7 @@ const libraryList = [
 
 function getLibraryCode(libraryName) {
   const found = libraryList.find(lib => (lib.name === libraryName));
-  return found ? found.code : libraryList.map(lib => lib.code)
+  return found ? found.code : ''
 }
 
 function search(opt, getBook) {
@@ -55,7 +55,6 @@ function search(opt, getBook) {
       searchSort: "SIMILAR",
       searchType: "SIMPLE",
     }
-    // searchPbLibrary: "ALL",
   }, function (err, res, body) {
     if (err || (res && res.statusCode !== 200)) {
       let msg = '';
