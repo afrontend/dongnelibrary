@@ -34,7 +34,6 @@ function search(opt, getBook) {
 
   // https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=MA&searchKey=ALL&searchKeyword=javascript&searchRecordCount=20
   const lcode = getLibraryCode(libraryName)
-  const etitle = encodeURIComponent(title)
   req.get({
     url: `https://www.osanlibrary.go.kr/kolaseek/plus/search/plusSearchResultList.do`,
     timeout: 20000,
@@ -43,7 +42,7 @@ function search(opt, getBook) {
       searchCategory: "ALL",
       searchLibraryArr: lcode,
       searchKey: "ALL",
-      searchKeyword: etitle,
+      searchKeyword: title,
       searchRecordCount: 1000,
     }
   }, function (err, res, body) {

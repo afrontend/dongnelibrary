@@ -39,7 +39,6 @@ function search(opt, getBook) {
   }
 
   const lcode = getLibraryCode(libraryName)
-  const etitle = encodeURIComponent(title)
   req.get({
     url: 'https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do',
     timeout: 20000,
@@ -48,7 +47,7 @@ function search(opt, getBook) {
       searchBookClass: "ALL",
       searchCategory: "BOOK",
       searchKey: "ALL",
-      searchKeyword: etitle,
+      searchKeyword: title,
       searchLibraryArr: lcode,
       searchOrder: "DESC",
       searchRecordCount: 1000,

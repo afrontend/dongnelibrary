@@ -50,7 +50,6 @@ function search(opt, getBook) {
   }
 
   const lcode = getLibraryCode(libraryName)
-  const etitle = encodeURIComponent(title)
   // const url=`https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do?searchType=SIMPLE&searchManageCodeArr=MK&searchKeyword=javascript`
   const url=`https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do`
   req.post({
@@ -61,7 +60,7 @@ function search(opt, getBook) {
     },
     form: {
       searchType: 'SIMPLE',
-      searchKeyword: etitle,
+      searchKeyword: title,
       searchManageCodeArr: lcode,
       searchDisplay: 1000,
     }

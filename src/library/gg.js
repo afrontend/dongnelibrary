@@ -42,7 +42,6 @@ function search(opt, getBook) {
 
   // 'https://lib.goe.go.kr/gg/intro/search/index.do?viewPage=1&search_text=javascript&booktype=BOOKANDNONBOOK&libraryCodes=MB&rowCount=1000',
   const lcode = getLibraryCode(libraryName)
-  const etitle = encodeURIComponent(title)
   req.get({
     url: `https://lib.goe.go.kr/gg/intro/search/index.do`,
     timeout: 20000,
@@ -50,7 +49,7 @@ function search(opt, getBook) {
       booktype: 'BOOKANDNONBOOK',
       libraryCodes: lcode,
       rowCount: 1000,
-      search_text: etitle,
+      search_text: title,
       viewPage: 1,
     }
   }, function (err, res, body) {
