@@ -4,18 +4,22 @@ const req = require('request');
 const { JSDOM } = require("jsdom");
 
 const libraryList = [
+  {code: 'BF', name: '논골도서관'},
   {code: 'CK', name: '중원어린이도서관'},
-  {code: 'MA', name: '성남시중앙도서관'},
+  {code: 'MA', name: '중앙도서관'},
   {code: 'MB', name: '분당도서관'},
   {code: 'MG', name: '구미도서관'},
   {code: 'MH', name: '해오름도서관'},
   {code: 'MJ', name: '중원도서관'},
   {code: 'MM', name: '무지개도서관'},
   {code: 'MP', name: '판교도서관'},
+  {code: 'MR', name: '위례도서관'},
   {code: 'MS', name: '수정도서관'},
+  {code: 'MT', name: '책테마파크도서관'},
   {code: 'MU', name: '운중도서관'},
   {code: 'MV', name: '서현도서관'},
-  {code: 'PK', name: '판교어린이도서관'}
+  {code: 'MW', name: '복정도서관'},
+  {code: 'PK', name: '판교어린이도서관'},
 ];
 
 function getLibraryCode(libraryName) {
@@ -40,16 +44,16 @@ function search(opt, getBook) {
     url: 'https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do',
     timeout: 20000,
     qs: {
-      searchType: "SIMPLE",
-      searchCategory: "BOOK",
       currentPageNo: 1,
+      searchBookClass: "ALL",
+      searchCategory: "BOOK",
       searchKey: "ALL",
       searchKeyword: etitle,
       searchLibraryArr: lcode,
-      searchSort: "SIMILAR",
       searchOrder: "DESC",
       searchRecordCount: 1000,
-      searchBookClass: "ALL"
+      searchSort: "SIMILAR",
+      searchType: "SIMPLE",
     }
     // searchPbLibrary: "ALL",
   }, function (err, res, body) {
