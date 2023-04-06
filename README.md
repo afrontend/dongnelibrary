@@ -17,29 +17,29 @@
     npm ci
     chmod a+x src/cli.js
 
-    node ./src/cli.js
+    node ./src/cli.js -i
     node ./src/cli.js -a
-    node ./src/cli.js -A -t javascript -l 남양
-    node ./src/cli.js -A -t javascript -l 남양,판교
+    node ./src/cli.js -t javascript -l 남양
+    node ./src/cli.js -t javascript -l 남양,판교
     npm test
 
 ## install with NPM
 
     npm install dongnelibrary -g
-    dongnelibrary
+    dongnelibrary -i
     dongnelibrary -a
-    dongnelibrary -A -t javascript -l 남양도서관
-    dongnelibrary -A -t javascript -l 남양,판교
+    dongnelibrary -t javascript -l 남양도서관
+    dongnelibrary -t javascript -l 남양,판교
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
 ## Using with docker
 
     docker pull frontendwordpress/dongnelibrary
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -i
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주,판교 -t 자바
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주도서관 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
 
 아래 함수를 `~/.bashrc` 파일에 추가하여 사용할 수 있다.
 
@@ -49,10 +49,10 @@ dongne () {
 }
 ```
 
-    dongne
+    dongne -i
     dongne -a
-    dongne -A -l 여주,판교 -t 자바
-    dongne -A -l 여주도서관 -t 자바
+    dongne -l 여주,판교 -t 자바
+    dongne -l 여주도서관 -t 자바
 
 ## Using with JavaScript
 

@@ -152,7 +152,7 @@ function activate(option) {
           search(option, processOneLibrary, processLibraries);
         }
       });
-  } else {
+  } else if (option.libraryName && option.title) {
     search(option, processOneLibrary, processLibraries);
   }
 }
