@@ -70,7 +70,7 @@ function search(opt, getBook) {
     } else {
       const dom = new JSDOM(body);
       const $counter = dom.window.document.querySelector('#search_result > div.research-box > div.search-info > b')
-      const count = Number($counter.innerHTML)
+      const count = $counter ? Number($counter.innerHTML) : 0;
       // const $row = dom.window.document.querySelectorAll('.row .book-title')
       const $ = jquery(dom.window)
       const booklist = []
@@ -78,12 +78,14 @@ function search(opt, getBook) {
         const title = $(a).find('.book-title > span').text().trim()
         const rented = $(a).find('.state.typeC').text().trim()
         const libraryName = $(a).find("span:contains('도서관')").next().text().split('|')[0].trim()
-        booklist.push({
-          libraryName,
-          title,
-          maxoffset: count,
-          exist: rented === '대출가능'
-        });
+        if (title) {
+          booklist.push({
+            libraryName,
+            title,
+            maxoffset: count,
+            exist: rented === '대출가능'
+          });
+        }
       })
       getBook(null, {
         startPage: opt.startPage,
