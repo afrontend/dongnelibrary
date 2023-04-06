@@ -1,6 +1,6 @@
 const req = require('request');
 const _ = require('lodash');
-const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const getLibraryNames = require('../util.js').getLibraryNames;
 
 const libraryList = [
   {code: '1', name: '산본도서관'},

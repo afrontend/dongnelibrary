@@ -7,7 +7,7 @@ const osan = require('./library/osan');
 const snlib = require('./library/snlib');
 const suwon = require('./library/suwon');
 const async = require('async');
-const util = require('./dongnelibrary_util.js');
+const util = require('./util.js');
 
 const libraryList = [];
 

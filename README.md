@@ -15,12 +15,12 @@
     git clone https://github.com/afrontend/dongnelibrary
     cd dongnelibrary
     npm ci
-    chmod a+x src/dongnelibrary_cli.js
+    chmod a+x src/cli.js
 
-    node ./src/dongnelibrary_cli.js
-    node ./src/dongnelibrary_cli.js -a
-    node ./src/dongnelibrary_cli.js -A -t javascript -l 남양
-    node ./src/dongnelibrary_cli.js -A -t javascript -l 남양,판교
+    node ./src/cli.js
+    node ./src/cli.js -a
+    node ./src/cli.js -A -t javascript -l 남양
+    node ./src/cli.js -A -t javascript -l 남양,판교
     npm test
 
 ## install with NPM

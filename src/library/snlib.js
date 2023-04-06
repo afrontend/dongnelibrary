@@ -1,4 +1,4 @@
-const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
+const getLibraryNames = require('../util.js').getLibraryNames;
 const jquery = require('jquery');
 const req = require('request');
 const { JSDOM } = require("jsdom");

@@ -7,7 +7,7 @@ const fp = require('lodash/fp');
 const inquirer = require('inquirer');
 const program = require('commander');
 const dl = require('./dongnelibrary');
-const util = require('./dongnelibrary_util');
+const util = require('./util');
 const pkg = require('../package.json');
 
 const conf = new Configstore(pkg.name, {});

@@ -1,6 +1,6 @@
 const assert = require('assert').strict
 const lib = require('../src/library/suwon');
-const util = require('../src/dongnelibrary_util.js');
+const util = require('../src/util.js');
 
 describe('수원시 도서관 (제한시간 25초)', function () {
   this.timeout(25000);
