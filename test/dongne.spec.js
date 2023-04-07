@@ -13,18 +13,18 @@ describe('dongnelibrary test', function () {
         if  (err) {
           assert.fail(err.msg);
         }
-        console.log(book.libraryName + ' "' + book.title + '"');
-        book.booklist.forEach(function (book) {
-          console.log((book.exist?' ✓ ':'  ') +' '+ book.title);
-        });
+        // console.log(book.libraryName + ' "' + book.title + '"');
+        // book.booklist.forEach(function (book) {
+          // console.log((book.exist?' ✓ ':'  ') +' '+ book.title);
+        // });
         assert.notEqual(book.booklist.length, 0);
       }, function (err, books) {
         if  (err) {
           assert.fail(err.msg);
         }
-        console.log(books.length + ' 개의 도서관을 검색했습니다.');
+        // console.log(books.length + ' 개의 도서관을 검색했습니다.');
         assert.equal(books.length, 4);
-        console.log('books: ' + JSON.stringify(books, null, 2));
+        // console.log('books: ' + JSON.stringify(books, null, 2));
         done();
       });
     });
