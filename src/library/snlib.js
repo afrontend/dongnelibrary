@@ -78,13 +78,16 @@ function search(opt, getBook) {
         $('.resultList > li').each((_, a) => {
           const title = $(a).find('.tit a').text().trim()
           const rented = $(a).find('.bookStateBar .txt b').text()
-          const libraryName = $(a).find('.site > span:first-child').text().split(':')[1].trim()
-          booklist.push({
-            libraryName,
-            title,
-            maxoffset: count,
-            exist: rented.includes('대출가능')
-          });
+          const b = $(a).find('.site > span:first-child').text().split(':')
+          const libraryName =  b && b[1] ? b[1].trim() : ''
+          if (title) {
+            booklist.push({
+              libraryName,
+              title,
+              maxoffset: count,
+              exist: rented.includes('대출가능')
+            });
+          }
         })
       }
       getBook(null, {
