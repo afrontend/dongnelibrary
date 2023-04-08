@@ -2,7 +2,7 @@ const assert = require('assert').strict
 const lib = require('../src/library/gg');
 const util = require('../src/util.js');
 
-describe('경기도 도서관 (제한시간 20초)', function () {
+describe('경기교육도서관 (제한시간 20초)', function () {
   this.timeout(20000);
 
   it('Show library list', function (done) {
