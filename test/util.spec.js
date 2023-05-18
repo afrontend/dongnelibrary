@@ -1,4 +1,4 @@
-const util = require('../src/dongnelibrary_util');
+const util = require('../src/util');
 const assert = require('assert');
 
 describe('util', function () {
