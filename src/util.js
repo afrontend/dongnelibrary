@@ -1,14 +1,5 @@
-const fs = require('fs');
-const _ = require('lodash');
-
 function stripTags(str) {
   return str.replace(/<\/?[^>]+(>|$)/g, "");
-}
-
-const jquery = fs.readFileSync(__dirname + '/jquery.min.js').toString();
-
-function getJqueryString() {
-  return jquery;
 }
 
 function printBookList(booklist) {
@@ -46,14 +37,13 @@ function getArrayFromCommaSeparatedString(libs) {
 }
 
 function getLibraryNames(lst) {
-  return _.map(lst, function(item) {
+  return lst.map(function(item) {
     return item.name;
   });
 }
 
 module.exports = {
   stripTags: stripTags,
-  getJqueryString: getJqueryString,
   printBookList: printBookList,
   printTotalBookCount: printTotalBookCount,
   getArrayFromCommaSeparatedString: getArrayFromCommaSeparatedString,
