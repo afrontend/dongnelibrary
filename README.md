@@ -7,38 +7,41 @@
 > 도서관 책을 빌릴 수 있는지 확인하는 프로그램
 
 
-도서관 이름을 생략하면 모든 도서관을 검색한다. [블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
+도서관 이름을 생략하면 모든 도서관을 검색한다.
+[블로그](https://agvim.wordpress.com/2017/01/20/check-if-a-library-book-was-rented/)에서 간단한 설명을 볼 수 있다.
 
-## Use npm
+## install with git
 
-Installation
+    git clone https://github.com/afrontend/dongnelibrary
+    cd dongnelibrary
+    npm ci
+    chmod a+x src/cli.js
+
+    node ./src/cli.js -i
+    node ./src/cli.js -a
+    node ./src/cli.js -t javascript -l 남양
+    node ./src/cli.js -t javascript -l 남양,판교
+    npm test
+
+## install with NPM
 
     npm install dongnelibrary -g
-
-Usage
-
-    dongnelibrary
+    dongnelibrary -i
     dongnelibrary -a
-    dongnelibrary -A -t javascript -l 남양도서관
-    dongnelibrary -A -t javascript -l 남양,판교
+    dongnelibrary -t javascript -l 남양도서관
+    dongnelibrary -t javascript -l 남양,판교
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
-
-## Use docker
-
-Installation
+## Using with docker
 
     docker pull frontendwordpress/dongnelibrary
-
-Usage
-
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -i
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주,판교 -t 자바
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -A -l 여주도서관 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
 
-아래 함수를 `~/.bashrc` 파일에 추가하여 간편하게 사용할 수 있다.
+아래 함수를 `~/.bashrc` 파일에 추가하여 사용할 수 있다.
 
 ```bash
 dongne () {
@@ -46,18 +49,14 @@ dongne () {
 }
 ```
 
-    dongne
+    dongne -i
     dongne -a
-    dongne -A -l 여주,판교 -t 자바
-    dongne -A -l 여주도서관 -t 자바
+    dongne -l 여주,판교 -t 자바
+    dongne -l 여주도서관 -t 자바
 
-## Use JavaScript
-
-Installation
+## Using with JavaScript
 
     npm install dongnelibrary
-
-Usage
 
 ```javascript
 const dl = require('dongnelibrary');
@@ -74,30 +73,14 @@ dl.search({
 });
 ```
 
-## 4. Git
-
-Installation
-
-    git clone https://github.com/afrontend/dongnelibrary
-    cd dongnelibrary
-    npm install
-    chmod a+x src/dongnelibrary_cli.js
-
-Usage
-
-    ./src/dongnelibrary_cli.js
-    ./src/dongnelibrary_cli.js -a
-    ./src/dongnelibrary_cli.js -A -t javascript -l 남양
-    ./src/dongnelibrary_cli.js -A -t javascript -l 남양,판교
-    npm test
-
 ## 검색 가능한 도서관
 
-* [경기도립도서관][gg-url] (중앙, 평택, 광주, 여주, 포천, 김포)
-* [성남시도서관][snlib-url] (중원어린이, 중앙, 분당, 구미, 중원, 무지개, 판교, 수정, 운중, 서현, 판교어린이)
-* [오산시도서관][osan-url] (오산중앙, 청학, 햇살마루, 양산, 초평, 꿈두레)
-* [화성시립도서관][hscity-url] (남양, 태안, 삼괴, 병점, 샘내작은, 두빛나래어린이, 봉담, 둥지나래어린이, 기아행복마루, 동탄복합문화센터, 송산, 정남, 비봉작은, 진안, 동탄중앙이음터)
-* [군포시도서관][gunpo-url] (산본, 당동, 대야, 어린이, 이동, 중앙, 누리천문대, 시청북카페밥상머리, 부곡, 당정문화, 동화나무어린이, 금정작은, 재궁꿈나무, 궁내동작은, 노루목작은, 버드나무에부는바람작은, 꿈쟁이, 우리마을, 북카페사랑아이엔지, 산본역, 하늘정원작은, 꿈이지, 꿈드림작은, 여담작은)
+* [경기교육통합도서관][gg-url] (경기중앙교육도서관,경기평택교육도서관,경기광주교육도서관,경기여주가남교육도서관,경기포천교육도서관,경기김포교육도서관,경기과천교육도서관,경기성남교육도서관,경기화성교육도서관,경기의정부교육도서관,경기평생교육학습관)
+* [군포시도서관][gunpo-url] (산본도서관,당동도서관,대야도서관,어린이도서관,이동도서관,중앙도서관,누리천문대,시청북카페밥상머리,부곡도서관,당정문화도서관,동화나무어린이도서관,금정작은도서관,재궁꿈나무도서관,궁내동작은도서관,노루목작은도서관,버드나무에부는바람작은도서관,꿈쟁이도서관,우리마을도서관,북카페사랑아이엔지,산본역도서관,하늘정원작은도서관,꿈이지,꿈드림작은도서관,여담작은도서관)
+* [성남시도서관][snlib-url] (논골도서관,중원어린이도서관,중앙도서관,분당도서관,구미도서관,해오름도서관,중원도서관,무지개도서관,판교도서관,위례도서관,수정도서관,책테마파크도서관,운중도서관,서현도서관,복정도서관,판교어린이도서관)
+* [오산시도서관][osan-url] (중앙도서관,꿈두레도서관,초평도서관,햇살마루도서관,청학도서관,양산도서관,소리울도서관,무지개도서관,고현초꿈키움도서관,쌍용예가시민개방도서관)
+* [화성시립도서관][hscity-url] (남양도서관,태안도서관,삼괴도서관,병점도서관,샘내도서관,두빛나래도서관,봉담도서관,둥지나래도서관,목동이음터도서관,기아행복마루도서관,동탄복합문화센터도서관,송산도서관,정남도서관,비봉도서관,진안도서관,중앙이음터도서관,양감도서관,다원이음터도서관,송린이음터도서관,팔탄도서관,마도도서관,봉담커피앤북도서관,왕배푸른숲도서관,노을빛도서관,서연이음터도서관,호연이음터도서관,늘봄이음터도서관)
+* [수원시도서관][suwon-url] (선경도서관,중앙도서관,영통도서관,슬기샘도서관,바른샘도서관,지혜샘도서관,서수원도서관,북수원도서관,태장마루도서관,한아름도서관,반달어린이도서관,사랑샘도서관,희망샘도서관,화홍어린이도서관,대추골도서관,한림도서관,창룡도서관,버드내도서관,광교홍재도서관,호매실도서관,일월도서관,화서다산도서관,광교푸른숲도서관,매여울도서관,망포글빛도서관)
 
 ## 마무리
 
@@ -108,8 +91,18 @@ Usage
 [![SPA for dongnelibrary](https://agvim.files.wordpress.com/2017/07/dongne23.png?w=128)](https://dongne.herokuapp.com/)
 [![APP for dongnelibrary](https://agvim.files.wordpress.com/2019/06/dlserver.png?w=128)](https://dlserver.herokuapp.com/app/)
 
+## Test
+
+    npm test
+    npm run dongne  # 여러 도서관 검색
+    npm run gg      # 경기도 도서관
+    npm run gunpo   # 군포시 도서관
+    npm run hscity  # 화성시 도서관
+    npm run osan    # 오산시 도서관
+    npm run snlib   # 성남시 도서관
+    npm run suwon   # 수원시 도서관
+
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
-[hscity-url]: https://hscitylib.or.kr
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [travis-build-image]: https://travis-ci.org/afrontend/dongnelibrary.svg?branch=master
@@ -119,7 +112,9 @@ Usage
 
 [gg-url]: http://www.gglib.or.kr
 [gunpo-url]: http://www.gunpolib.go.kr
+[hscity-url]: https://hscitylib.or.kr
 [osan-url]: http://www.osanlibrary.go.kr
-[sample-url]: https://npm.runkit.com/dongnelibrary
 [snlib-url]: http://www.snlib.net
 [suwon-url]: http://www.suwonlib.go.kr
+
+[sample-url]: https://npm.runkit.com/dongnelibrary

@@ -1,9 +1,9 @@
 const assert = require('assert').strict
-const lib = require('../src/library/gunpo');
+const lib = require('../src/library/suwon');
 const util = require('../src/util.js');
 
-describe('군포시 도서관 (제한시간 20초)', function () {
-  this.timeout(20000);
+describe('수원시 도서관 (제한시간 25초)', function () {
+  this.timeout(35000);
 
   it('Show library list', function (done) {
     assert.ok(lib.getLibraryNames().length > 1);
@@ -13,7 +13,7 @@ describe('군포시 도서관 (제한시간 20초)', function () {
   it('Use empty book title', function (done) {
     lib.search({
       title: '',
-      libraryName: '대야도서관',
+      libraryName: '수원시중앙도서관',
       startPage: 1
     }, function (err) {
       if(err) {
@@ -28,7 +28,7 @@ describe('군포시 도서관 (제한시간 20초)', function () {
   it('Use invalid book title', function (done) {
     lib.search({
       title: 'zyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxyz',
-      libraryName: '경기평택교육도서관',
+      libraryName: '수원시중앙도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {
@@ -42,7 +42,7 @@ describe('군포시 도서관 (제한시간 20초)', function () {
   it('Show book list of one library', function (done) {
     lib.search({
       title: 'javascript',
-      libraryName: '대야도서관',
+      libraryName: '수원시중앙도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {

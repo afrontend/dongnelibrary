@@ -1,169 +1,79 @@
-const jsdom = require('jsdom');
+const getLibraryNames = require('../util.js').getLibraryNames;
 const req = require('request');
-const _ = require('lodash');
-const jquery = require('../dongnelibrary_util.js').getJqueryString();
-const async = require('async');
-const getLibraryNames = require('../dongnelibrary_util.js').getLibraryNames;
-const global = {};
-
-const SEARCH_HOST = 'http://www.suwonlib.go.kr';
 
 const libraryList = [
-  {code: 'MA', name: '수원시선경도서관'},
-  {code: 'MB', name: '수원시중앙도서관'},
-  {code: 'MC', name: '수원시영통도서관'},
-  {code: 'MD', name: '수원시슬기샘도서관'},
-  {code: 'ME', name: '수원시바른샘도서관'},
-  {code: 'MF', name: '수원시지혜샘도서관'},
-  {code: 'MG', name: '수원시서수원도서관'},
-  {code: 'MH', name: '수원시북수원도서관'},
-  {code: 'MI', name: '수원시태장마루도서관'},
-  {code: 'MK', name: '수원시한아름도서관'},
-  {code: 'MM', name: '수원시반달어린이도서관'},
-  {code: 'MN', name: '수원시사랑샘도서관'},
-  {code: 'MO', name: '수원시희망샘도서관'},
-  {code: 'MT', name: '수원시대추골도서관'},
-  {code: 'MU', name: '수원시한림도서관'},
-  {code: 'MV', name: '수원시창룡도서관'},
-  {code: 'MW', name: '수원시버드내도서관'},
-  {code: 'MX', name: '수원시광교홍재도서관'},
-  {code: 'MY', name: '수원시호매실도서관'},
-  {code: 'MZ', name: '수원시일월도서관'},
-  {code: 'SB', name: '수원시화서다산도서관'},
+  {code: 'MA', name: '선경도서관'},
+  {code: 'MB', name: '중앙도서관'},
+  {code: 'MC', name: '영통도서관'},
+  {code: 'MD', name: '슬기샘도서관'},
+  {code: 'ME', name: '바른샘도서관'},
+  {code: 'MF', name: '지혜샘도서관'},
+  {code: 'MG', name: '서수원도서관'},
+  {code: 'MH', name: '북수원도서관'},
+  {code: 'MI', name: '태장마루도서관'},
+  {code: 'MK', name: '한아름도서관'},
+  {code: 'MM', name: '반달어린이도서관'},
+  {code: 'MN', name: '사랑샘도서관'},
+  {code: 'MO', name: '희망샘도서관'},
+  {code: 'MP', name: '화홍어린이도서관'},
+  {code: 'MT', name: '대추골도서관'},
+  {code: 'MU', name: '한림도서관'},
+  {code: 'MV', name: '창룡도서관'},
+  {code: 'MW', name: '버드내도서관'},
+  {code: 'MX', name: '광교홍재도서관'},
+  {code: 'MY', name: '호매실도서관'},
+  {code: 'MZ', name: '일월도서관'},
+  {code: 'SB', name: '화서다산도서관'},
+  {code: 'SC', name: '광교푸른숲도서관'},
+  {code: 'SD', name: '매여울도서관'},
+  {code: 'SE', name: '망포글빛도서관'},
 ];
 
 function getLibraryCode(libraryName) {
-  const found = _.find(libraryList, function (lib) {
-    return lib.name === libraryName;
+  const found = libraryList.find(lib => (lib.name === libraryName));
+  return found ? found.code : 'ALL';
+}
+
+function getBookList(json) {
+  const bl = json.contents ? json.contents.bookList : []
+  return bl.map(function (book) {
+    return {
+      title: book.originalTitle,
+      exist: book.workingStatus === "비치중",
+      libraryName: book.libName
+    };
   });
-
-  if (found) {
-    return found.code;
-  }
-  return '';
-}
-
-function exist(str) {
-  return (str.indexOf('비치중') >= 0);
-}
-
-function getTotalCount(str) {
-  if (global.debug) {
-    console.log(str);
-  }
-  const pattern = /(\d+)/g;
-  const matches = pattern.exec(str);
-  if (matches) {
-    return matches[1];
-  } else {
-    return 0;
-  }
-}
-
-function makeJsdomCallback(libraryName, body, opt, getBook) {
-  return function (errors, window) {
-    const booklist = [];
-    const $ = window.$;
-    const $a = $('#A-LibMPageSearchList').children();
-    const totalBookCount = getTotalCount($('#A-LibMPageSearchInfo').text().trim());
-
-    if (totalBookCount === '0') {
-      getBook(null, {
-        startPage: opt.startPage,
-        totalBookCount: +totalBookCount,
-        booklist: booklist
-      });
-      return;
-    } else {
-      _.each($a, function (value) {
-        const $value = $(value);
-        booklist.push({
-          libraryName: libraryName,
-          title: $value.find('h4.title').text().trim(),
-          detailLink: $value.find('h4.title a').attr('href'),
-          exist: false
-        });
-      });
-    }
-
-    const tasks = [];
-
-    _.each(booklist, function(book) {
-      tasks.push(function (callback) {
-        searchDetail(book, function (err, exist) {
-          if (err) {
-            exist = false;
-          }
-          callback(null, exist);
-        });
-      });
-    });
-
-    async.parallel(tasks, function (err, results) {
-      if (err) {
-        getBook({msg: 'Error, Can\'t access detail information'});
-        return;
-      }
-      if (getBook) {
-        booklist = _.map(booklist, function (item, key) {
-          item.exist = results[key];
-          return item;
-        });
-        getBook(null, {
-          startPage: opt.startPage,
-          totalBookCount: totalBookCount,
-          booklist: booklist
-        });
-      }
-    });
-
-    window.close();
-  };
 }
 
 function search(opt, getBook) {
-  let title = '';
-  let libraryName = '';
+  let title = opt.title
+  let libraryName = opt.libraryName
 
-  if (opt.debug) {
-    global.debug = true;
-  }
-
-  if (opt.title) {
-    title = opt.title;
-  } else {
+  if (!title) {
     if (getBook) {
       getBook({msg: 'Need a book name'});
     }
     return;
   }
 
-  if (opt.libraryName) {
-    libraryName = opt.libraryName;
-  } else {
-    if (getBook) {
-      getBook({msg: 'Need a library name'});
-    }
-    return;
-  }
-
-  req.get({
-    url: SEARCH_HOST + '/ct/html/02_search/search01.asp',
+  const lcode = getLibraryCode(libraryName)
+  // const etitle = encodeURIComponent(title)
+  req.post({
+    url: 'https://www.suwonlib.go.kr:8443/api/search',
     timeout: 20000,
     headers: {
-      "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
+      "User-Agent": 'User-Agent:Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
     },
-    qs: {
-      a_lib: getLibraryCode(libraryName),
-      a_v: 'f',
-      a_qf: 'Z',
-      a_q: title,
-      a_vp: 100
+    form: {
+      article: "SCORE",
+      display: "1000",
+      manageCode: lcode,
+      order: "DESC",
+      page: "1",
+      pubFormCode: "MO",
+      searchKeyword: title,
     }
   }, function (err, res, body) {
-    if (global.debug === true) {
-      console.log(body);
-    }
     if (err || (res && res.statusCode !== 200)) {
       let msg = '';
 
@@ -179,64 +89,17 @@ function search(opt, getBook) {
         getBook({msg: msg});
       }
     } else {
-      jsdom.env({
-        html: body,
-        src: [jquery],
-        done: makeJsdomCallback(libraryName, body, _.clone(opt), getBook)
+      const booklist = getBookList(JSON.parse(body))
+      getBook(null, {
+        totalBookCount: booklist.length,
+        booklist,
       });
     }
-  }
-  );
-}
-
-function searchDetail(book, checkExistence) {
-  if (global.debug) {
-    console.log('book: ' + JSON.stringify(book, null, 2));
-    console.log('detailUrl: ' + SEARCH_HOST + book.detailLink);
-  }
-
-  req.get({
-    url: SEARCH_HOST + book.detailLink,
-    timeout: 20000,
-    headers: {
-      "User-Agent": 'User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-    }
-  }, function (err, res, body) {
-    if (global.debug === true) {
-      console.log('detail body ' + body);
-    }
-
-    if (err) {
-      if (checkExistence) {
-        checkExistence({msg: err});
-      }
-    } else {
-      jsdom.env({
-        html: body,
-        src: [jquery],
-        done: function (errors, window) {
-          const $a = window.$('#A-LibMPage > table > tbody > tr:nth-child(2) > td:nth-child(1)');
-          if (checkExistence) {
-            if (global.debug === true) {
-              console.log('$a.text(): ' + $a.text());
-            }
-            if (exist(($a.text() + "").trim())) {
-              checkExistence(null, true);
-            } else {
-              checkExistence(null, false);
-            }
-          }
-
-          window.close();
-        }
-      });
-    }
-  }
-  );
+  });
 }
 
 module.exports = {
-  search: search,
+  search,
   getLibraryNames: function() {
     return getLibraryNames(libraryList);
   }
