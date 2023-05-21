@@ -5,8 +5,9 @@ const gunpo = require('./library/gunpo');
 const hscity = require('./library/hscity');
 const osan = require('./library/osan');
 const snlib = require('./library/snlib');
+const suwon = require('./library/suwon');
 const async = require('async');
-const util = require('./dongnelibrary_util.js');
+const util = require('./util.js');
 
 const libraryList = [];
 
@@ -18,7 +19,8 @@ function makeLibraryList() {
     gunpo,
     hscity,
     osan,
-    snlib
+    snlib,
+    suwon
   ];
 
   _.each(library, library => {
