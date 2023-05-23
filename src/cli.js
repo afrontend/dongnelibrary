@@ -7,7 +7,7 @@ const fp = require('lodash/fp');
 const inquirer = require('inquirer');
 const program = require('commander');
 const dl = require('./dongnelibrary');
-const util = require('./dongnelibrary_util');
+const util = require('./util');
 const pkg = require('../package.json');
 
 const conf = new Configstore(pkg.name, {});
@@ -26,10 +26,10 @@ const introMessage = (msg) => {
 
 program
   .version(pkg.version)
-  .option('-a, --library-list', 'display libraries')
-  .option('-A, --all', 'use -l, -t')
+  .option('-a, --library-list', 'Show libraries')
+  .option('-i, --interactive', 'Use menu')
   .option('-l, --library-name [name,name]', 'library name')
-  .option('-t, --title [title]', 'book title')
+  .option('-t, --title [title]', 'a part of book title')
   .parse(process.argv);
 
 function cutTail(str, tail) {
@@ -125,9 +125,7 @@ function activate(option) {
     return;
   }
 
-  if (option.all) {
-    search(option, processOneLibrary, processLibraries);
-  } else {
+  if (option.interactive) {
     introMessage('Dongne Library');
     inquirer
       .prompt([
@@ -154,6 +152,8 @@ function activate(option) {
           search(option, processOneLibrary, processLibraries);
         }
       });
+  } else if (option.libraryName && option.title) {
+    search(option, processOneLibrary, processLibraries);
   }
 }
 
