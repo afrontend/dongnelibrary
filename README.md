@@ -1,5 +1,4 @@
 [![NPM Version][npm-image]][npm-url]
-[![Travis Build][travis-build-image]][travis-build-url]
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 # DongneLibrary
@@ -103,14 +102,12 @@ dl.search(
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
 [npm-url]: https://npmjs.org/package/dongnelibrary
-[travis-build-image]: https://travis-ci.org/afrontend/dongnelibrary.svg?branch=master
-[travis-build-url]: https://travis-ci.org/afrontend/dongnelibrary
 [web-ui-url]: https://dongne.onrender.com
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
-[gg-url]: http://www.gglib.or.kr
-[gunpo-url]: http://www.gunpolib.go.kr
+[gg-url]: https://lib.goe.go.kr
+[gunpo-url]: https://www.gunpolib.go.kr
 [hscity-url]: https://hscitylib.or.kr
-[osan-url]: http://www.osanlibrary.go.kr
-[snlib-url]: http://www.snlib.net
-[suwon-url]: http://www.suwonlib.go.kr
+[osan-url]: https://www.osanlibrary.go.kr
+[snlib-url]: https://www.snlib.go.kr
+[suwon-url]: https://www.suwonlib.go.kr
 [sample-url]: https://npm.runkit.com/dongnelibrary

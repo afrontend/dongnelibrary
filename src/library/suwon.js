@@ -64,9 +64,14 @@ function search(opt, getBook) {
     return;
   }
 
-  const lcode = libraryName
-    ? getLibraryCode(libraryName)
-    : getAllLibraryCodes();
+  if (!libraryName) {
+    if (getBook) {
+      getBook({ msg: "Need a library name" });
+    }
+    return;
+  }
+
+  const lcode = getLibraryCode(libraryName);
 
   // Create a cookie jar to maintain session
   const jar = req.jar();

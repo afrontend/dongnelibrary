@@ -49,6 +49,13 @@ function search(opt, getBook) {
     return;
   }
 
+  if (!libraryName) {
+    if (getBook) {
+      getBook({ msg: "Need a library name" });
+    }
+    return;
+  }
+
   const lcode = getLibraryCode(libraryName);
   // const url=`https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do?searchType=SIMPLE&searchManageCodeArr=MK&searchKeyword=javascript`
   const url = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do`;

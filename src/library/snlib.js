@@ -38,6 +38,13 @@ function search(opt, getBook) {
     return;
   }
 
+  if (!libraryName) {
+    if (getBook) {
+      getBook({ msg: "Need a library name" });
+    }
+    return;
+  }
+
   const lcode = getLibraryCode(libraryName);
   req.get(
     {

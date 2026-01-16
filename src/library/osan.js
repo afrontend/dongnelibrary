@@ -31,6 +31,13 @@ function search(opt, getBook) {
     return;
   }
 
+  if (!libraryName) {
+    if (getBook) {
+      getBook({ msg: "Need a library name" });
+    }
+    return;
+  }
+
   // https://www.osanlibrary.go.kr/intro/program/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=MA&searchKey=ALL&searchKeyword=javascript&searchRecordCount=20
   const lcode = getLibraryCode(libraryName);
   req.get(
