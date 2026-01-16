@@ -5,6 +5,7 @@ files.txt
 gg.sh
 osan.rest
 osan.sh
+.npmrc
 
 # Claude Code instructions
 CLAUDE.md
