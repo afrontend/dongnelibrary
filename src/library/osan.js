@@ -3,7 +3,7 @@ const req = require("request");
 const { JSDOM } = require("jsdom");
 
 const libraryList = [
-  { code: "MA", name: "중앙도서관" },
+  { code: "MA", name: "오산중앙도서관" },
   { code: "MG", name: "꿈두레도서관" },
   { code: "ME", name: "초평도서관" },
   { code: "MC", name: "햇살마루도서관" },

@@ -3,7 +3,7 @@ const req = require("request");
 
 const libraryList = [
   { code: "141025", name: "선경도서관" },
-  { code: "141024", name: "중앙도서관" },
+  { code: "141024", name: "수원중앙도서관" },
   { code: "141549", name: "창룡도서관" },
   { code: "141572", name: "화서다산도서관" },
   { code: "141552", name: "호매실도서관" },

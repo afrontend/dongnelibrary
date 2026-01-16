@@ -8,7 +8,7 @@ const libraryList = [
   { code: "3", name: "대야도서관" },
   { code: "4", name: "어린이도서관" },
   { code: "5", name: "이동도서관" },
-  { code: "6", name: "중앙도서관" },
+  { code: "6", name: "군포중앙도서관" },
   { code: "7", name: "누리천문대" },
   { code: "8", name: "시청북카페밥상머리" },
   { code: "9", name: "부곡도서관" },

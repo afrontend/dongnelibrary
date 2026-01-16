@@ -6,7 +6,7 @@ const { JSDOM } = require("jsdom");
 const libraryList = [
   { code: "BF", name: "논골도서관" },
   { code: "CK", name: "중원어린이도서관" },
-  { code: "MA", name: "중앙도서관" },
+  { code: "MA", name: "성남중앙도서관" },
   { code: "MB", name: "분당도서관" },
   { code: "MG", name: "구미도서관" },
   { code: "MH", name: "해오름도서관" },
