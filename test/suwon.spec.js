@@ -13,7 +13,7 @@ describe('수원시 도서관 (제한시간 25초)', function () {
   it('Use empty book title', function (done) {
     lib.search({
       title: '',
-      libraryName: '수원시중앙도서관',
+      libraryName: '중앙도서관',
       startPage: 1
     }, function (err) {
       if(err) {
@@ -28,7 +28,7 @@ describe('수원시 도서관 (제한시간 25초)', function () {
   it('Use invalid book title', function (done) {
     lib.search({
       title: 'zyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxyz',
-      libraryName: '수원시중앙도서관',
+      libraryName: '중앙도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {
@@ -42,7 +42,7 @@ describe('수원시 도서관 (제한시간 25초)', function () {
   it('Show book list of one library', function (done) {
     lib.search({
       title: 'javascript',
-      libraryName: '수원시중앙도서관',
+      libraryName: '중앙도서관',
       startPage: 1
     }, function (err, book) {
       if(err) {

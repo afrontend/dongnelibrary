@@ -4,7 +4,7 @@ const assert = require('assert');
 describe('dongnelibrary test', function () {
   describe('search in four libraries', function () {
     this.timeout(20000);
-    const libNameArray = ['여주', '성남', '판교', '영통'];
+    const libNameArray = ['여주', '성남', '판교', '선경'];
     it('-l ' + libNameArray.join(','), function (done) {
       dl.search({
         title: '자바스크립트',
