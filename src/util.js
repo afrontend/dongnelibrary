@@ -23,7 +23,7 @@ function printTotalBookCount(book) {
  */
 function getArrayFromCommaSeparatedString(libs) {
   if (!libs) return [];
-  const a = libs.split(',').filter(function (lib) {
+  const a = libs.split(",").filter(function (lib) {
     if (lib && lib.length > 0) {
       return true;
     } else {
@@ -37,7 +37,7 @@ function getArrayFromCommaSeparatedString(libs) {
 }
 
 function getLibraryNames(lst) {
-  return lst.map(function(item) {
+  return lst.map(function (item) {
     return item.name;
   });
 }
@@ -47,6 +47,5 @@ module.exports = {
   printBookList: printBookList,
   printTotalBookCount: printTotalBookCount,
   getArrayFromCommaSeparatedString: getArrayFromCommaSeparatedString,
-  getLibraryNames: getLibraryNames
+  getLibraryNames: getLibraryNames,
 };
-

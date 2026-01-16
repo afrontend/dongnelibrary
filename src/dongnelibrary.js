@@ -1,135 +1,132 @@
-const _ = require('lodash');
-const fp = require('lodash/fp');
-const gg = require('./library/gg');
-const gunpo = require('./library/gunpo');
-const hscity = require('./library/hscity');
-const osan = require('./library/osan');
-const snlib = require('./library/snlib');
-const suwon = require('./library/suwon');
-const async = require('async');
-const util = require('./util.js');
+const _ = require("lodash");
+const fp = require("lodash/fp");
+const gg = require("./library/gg");
+const gunpo = require("./library/gunpo");
+const hscity = require("./library/hscity");
+const osan = require("./library/osan");
+const snlib = require("./library/snlib");
+const suwon = require("./library/suwon");
+const async = require("async");
+const util = require("./util.js");
 
 const libraryList = [];
 
-const getLibraryNames = () => (util.getLibraryNames(libraryList));
+const getLibraryNames = () => util.getLibraryNames(libraryList);
 
 function makeLibraryList() {
-  const library = [
-    gg,
-    gunpo,
-    hscity,
-    osan,
-    snlib,
-    suwon
-  ];
+  const library = [gg, gunpo, hscity, osan, snlib, suwon];
 
-  _.each(library, library => {
-    _.each(library.getLibraryNames(), name => {
+  _.each(library, (library) => {
+    _.each(library.getLibraryNames(), (name) => {
       libraryList.push({
         name,
-        search: library.search
+        search: library.search,
       });
     });
   });
 }
 
-const getLibraryFunction = libraryName => {
-  const found = _.find(libraryList, lib => (lib.name === libraryName));
-  return found ? found : {
-    search: (opt, getBook) => {
-      if (getBook) {
-        getBook({msg: 'Unknown library name'});
-      }
-    },
-    name: 'Unknown'
-  };
+const getLibraryFunction = (libraryName) => {
+  const found = _.find(libraryList, (lib) => lib.name === libraryName);
+  return found
+    ? found
+    : {
+        search: (opt, getBook) => {
+          if (getBook) {
+            getBook({ msg: "Unknown library name" });
+          }
+        },
+        name: "Unknown",
+      };
 };
 
 function completeLibraryName(str) {
-  const found = _.find(getLibraryNames(), name => (name.indexOf(str) >= 0));
-  return found ? found : '';
+  const found = _.find(getLibraryNames(), (name) => name.indexOf(str) >= 0);
+  return found ? found : "";
 }
 
 function isValidLibraryName(libraryName) {
-  const found = _.find(libraryList, lib => (lib.name === libraryName));
+  const found = _.find(libraryList, (lib) => lib.name === libraryName);
   return found ? true : false;
 }
 
 function getLibArray(libraryName) {
   return _.flow([
-    fp.map(name => {
+    fp.map((name) => {
       const fullName = completeLibraryName(name);
       return isValidLibraryName(fullName) ? getLibraryFunction(fullName) : null;
     }),
-    _.compact
+    _.compact,
   ])(Array.isArray(libraryName) ? libraryName : [libraryName]);
 }
 
 const getSortedBooks = _.flow([
-  fp.map(book => ({
+  fp.map((book) => ({
     libraryName: book.libraryName,
     title: book.title,
-    exist: book.exist
+    exist: book.exist,
   })),
-  fp.sortBy(book => (!book.exist))
+  fp.sortBy((book) => !book.exist),
 ]);
 
 function search(opt, getBook, getAllBooks) {
   if (!opt || (!getBook && !getAllBooks)) {
-    console.log('invalid search options');
+    console.log("invalid search options");
     return;
   }
 
   const title = opt.title;
   const tasks = [];
 
-  _.each(getLibArray(opt.libraryName), lib => {
-    tasks.push(callback => {
-      lib.search({
-        title: title,
-        libraryName: lib.name
-      }, (err, data) => {
-        if (err) {
-          if(getBook) {
-            getBook(err);
-          }
-          callback(err);
-          return;
-        }
-        if(!data || !data.booklist) {
-          if(getBook) {
-            getBook({msg: 'invalid Data response'});
-          }
-          callback({msg: 'invalid Data response'});
-          return;
-        }
-
-        const bookObj = {
+  _.each(getLibArray(opt.libraryName), (lib) => {
+    tasks.push((callback) => {
+      lib.search(
+        {
           title: title,
           libraryName: lib.name,
-          totalBookCount: data.totalBookCount,
-          startPage: data.startPage,
-          booklist: getSortedBooks(data.booklist)
-        };
+        },
+        (err, data) => {
+          if (err) {
+            if (getBook) {
+              getBook(err);
+            }
+            callback(err);
+            return;
+          }
+          if (!data || !data.booklist) {
+            if (getBook) {
+              getBook({ msg: "invalid Data response" });
+            }
+            callback({ msg: "invalid Data response" });
+            return;
+          }
 
-        if(getBook) {
-          getBook(null, bookObj);
-        }
-        callback(null, bookObj);
-      });
+          const bookObj = {
+            title: title,
+            libraryName: lib.name,
+            totalBookCount: data.totalBookCount,
+            startPage: data.startPage,
+            booklist: getSortedBooks(data.booklist),
+          };
+
+          if (getBook) {
+            getBook(null, bookObj);
+          }
+          callback(null, bookObj);
+        },
+      );
     });
   });
 
   async.parallel(tasks, (err, results) => {
-    if(getAllBooks) {
-      if(err) {
+    if (getAllBooks) {
+      if (err) {
         getAllBooks(err);
       } else {
         getAllBooks(null, results);
       }
     }
- });
-
+  });
 }
 
 function activate() {
@@ -140,5 +137,5 @@ activate();
 
 module.exports = {
   search,
-  getLibraryNames
+  getLibraryNames,
 };
