@@ -1,6 +1,6 @@
 const getLibraryNames = require("../util.js").getLibraryNames;
 const jquery = require("jquery");
-const req = require("request");
+const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
 const libraryList = [
@@ -22,7 +22,7 @@ function getLibraryCode(libraryName) {
   return found ? found.code : "";
 }
 
-function search(opt, getBook) {
+async function search(opt, getBook) {
   let title = opt.title;
   let libraryName = opt.libraryName;
 
@@ -40,70 +40,70 @@ function search(opt, getBook) {
     return;
   }
 
-  // 'https://lib.goe.go.kr/gg/intro/search/index.do?viewPage=1&search_text=javascript&booktype=BOOKANDNONBOOK&libraryCodes=MB&rowCount=1000',
   const lcode = getLibraryCode(libraryName);
-  req.get(
-    {
-      url: `https://lib.goe.go.kr/gg/intro/search/index.do`,
-      timeout: 20000,
-      qs: {
-        booktype: "BOOKANDNONBOOK",
-        libraryCodes: lcode,
-        rowCount: 1000,
-        search_text: title,
-        viewPage: 1,
+
+  try {
+    const { statusCode, body } = await get(
+      `https://lib.goe.go.kr/gg/intro/search/index.do`,
+      {
+        qs: {
+          booktype: "BOOKANDNONBOOK",
+          libraryCodes: lcode,
+          rowCount: 1000,
+          search_text: title,
+          viewPage: 1,
+        },
       },
-    },
-    function (err, res, body) {
-      if (err || (res && res.statusCode !== 200)) {
-        let msg = "";
+    );
 
-        if (err) {
-          msg = err;
-        }
+    if (statusCode !== 200) {
+      if (getBook) {
+        getBook({ msg: `HTTP ${statusCode}` });
+      }
+      return;
+    }
 
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
-
-        if (getBook) {
-          getBook({ msg: msg });
-        }
-      } else {
-        const dom = new JSDOM(body);
-        const $counter = dom.window.document.querySelector(
-          "#search_result > div.research-box > div.search-info > b",
-        );
-        const count = $counter ? Number($counter.innerHTML) : 0;
-        // const $row = dom.window.document.querySelectorAll('.row .book-title')
-        const $ = jquery(dom.window);
-        const booklist = [];
-        $(".bif").each((_, a) => {
-          const title = $(a).find(".book-title > span").text().trim();
-          const rented = $(a).find(".state.typeC").text().trim();
-          const libraryName = $(a)
-            .find("span:contains('도서관')")
-            .next()
-            .text()
-            .split("|")[0]
-            .trim();
-          if (title) {
-            booklist.push({
-              libraryName,
-              title,
-              maxoffset: count,
-              exist: rented === "대출가능",
-            });
-          }
-        });
-        getBook(null, {
-          startPage: opt.startPage,
-          totalBookCount: count,
-          booklist,
+    const dom = new JSDOM(body);
+    const $counter = dom.window.document.querySelector(
+      "#search_result > div.research-box > div.search-info > b",
+    );
+    const count = $counter ? Number($counter.innerHTML) : 0;
+    const $ = jquery(dom.window);
+    const booklist = [];
+    $(".bif").each((_, a) => {
+      const titleElement = $(a).find(".book-title");
+      const title = titleElement.find("> span").text().trim();
+      const bookPath = titleElement.attr("href");
+      const bookUrl = bookPath
+        ? "https://lib.goe.go.kr/gg/intro/search/" + bookPath
+        : "";
+      const rented = $(a).find(".state.typeC").text().trim();
+      const libraryName = $(a)
+        .find("span:contains('도서관')")
+        .next()
+        .text()
+        .split("|")[0]
+        .trim();
+      if (title) {
+        booklist.push({
+          libraryName,
+          title,
+          bookUrl,
+          maxoffset: count,
+          exist: rented === "대출가능",
         });
       }
-    },
-  );
+    });
+    getBook(null, {
+      startPage: opt.startPage,
+      totalBookCount: count,
+      booklist,
+    });
+  } catch (err) {
+    if (getBook) {
+      getBook({ msg: err.toString() });
+    }
+  }
 }
 
 module.exports = {

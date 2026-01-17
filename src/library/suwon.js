@@ -1,5 +1,5 @@
 const getLibraryNames = require("../util.js").getLibraryNames;
-const req = require("request");
+const { createSession } = require("../http");
 
 const libraryList = [
   { code: "141025", name: "선경도서관" },
@@ -32,10 +32,6 @@ function getLibraryCode(libraryName) {
   return found ? found.code : "";
 }
 
-function getAllLibraryCodes() {
-  return libraryList.map((lib) => lib.code).join(",");
-}
-
 function stripHtml(str) {
   return str ? str.replace(/<[^>]*>/g, "") : "";
 }
@@ -45,15 +41,20 @@ function getBookList(data) {
     return [];
   }
   return data.SEARCH_RESULT.SEARCH_LIST.map(function (book) {
+    let bookUrl = "";
+    if (book.MANAGE_CODE && book.ISBN && book.BOOK_KEY) {
+      bookUrl = `https://search.suwonlib.go.kr/detail/${book.MANAGE_CODE}/${book.ISBN}/${book.BOOK_KEY}`;
+    }
     return {
       title: stripHtml(book.TITLE_INFO || ""),
       exist: book.LOAN_CODE === "OK",
       libraryName: book.LIB_NAME || "",
+      bookUrl,
     };
   });
 }
 
-function search(opt, getBook) {
+async function search(opt, getBook) {
   let title = opt.title;
   let libraryName = opt.libraryName;
 
@@ -73,102 +74,71 @@ function search(opt, getBook) {
 
   const lcode = getLibraryCode(libraryName);
 
-  // Create a cookie jar to maintain session
-  const jar = req.jar();
+  try {
+    // Create a session to maintain cookies
+    const session = createSession();
 
-  // First, visit the search page to initialize session
-  req.get(
-    {
-      url: "https://search.suwonlib.go.kr/search",
-      jar: jar,
-      timeout: 20000,
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    // First, visit the search page to initialize session
+    await session.get("https://search.suwonlib.go.kr/search");
+
+    // Now make the API call with the session cookies
+    const { statusCode, body } = await session.post(
+      "https://search.suwonlib.go.kr/getSearchResult/normal",
+      {
+        form: {
+          searchTxt: title,
+          kCid: "",
+          kdcValue: "",
+          searchKind: "book",
+          manageCode: lcode,
+          isInnerSearch: "F",
+          innerSearchTxt: "",
+          keywordSearch: false,
+          displayNo: "1000",
+          orderbyItem: "ACCURACY_SORT",
+          orderby: "DESC",
+          pageNo: "1",
+          facetLib: "",
+          facetLibName: "",
+          facetAuthor: "",
+          facetPublisher: "",
+          facetPubYear: "",
+          facetSubject: "",
+          facetSubjectName: "",
+          facetMedia: "",
+          facetMediaName: "",
+        },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          Referer: "https://search.suwonlib.go.kr/search",
+          "X-Requested-With": "XMLHttpRequest",
+          ajax: "true",
+        },
       },
-    },
-    function (err1, res1, body1) {
-      if (err1) {
-        if (getBook) {
-          getBook({ msg: err1.toString() });
-        }
-        return;
+    );
+
+    if (statusCode !== 200) {
+      if (getBook) {
+        getBook({ msg: `HTTP ${statusCode}` });
       }
+      return;
+    }
 
-      // Now make the API call with the session cookies
-      // Requires 'ajax: true' header and full parameter set including empty facet parameters
-      req.post(
-        {
-          url: "https://search.suwonlib.go.kr/getSearchResult/normal",
-          jar: jar,
-          timeout: 20000,
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            Referer: "https://search.suwonlib.go.kr/search",
-            "X-Requested-With": "XMLHttpRequest",
-            ajax: "true",
-          },
-          form: {
-            searchTxt: title,
-            kCid: "",
-            kdcValue: "",
-            searchKind: "book",
-            manageCode: lcode,
-            isInnerSearch: "F",
-            innerSearchTxt: "",
-            keywordSearch: false,
-            displayNo: "1000",
-            orderbyItem: "ACCURACY_SORT",
-            orderby: "DESC",
-            pageNo: "1",
-            facetLib: "",
-            facetLibName: "",
-            facetAuthor: "",
-            facetPublisher: "",
-            facetPubYear: "",
-            facetSubject: "",
-            facetSubjectName: "",
-            facetMedia: "",
-            facetMediaName: "",
-          },
-        },
-        function (err, res, body) {
-          if (err || (res && res.statusCode !== 200)) {
-            let msg = "";
-
-            if (err) {
-              msg = err;
-            }
-
-            if (res && res.statusCode) {
-              msg = msg + " " + res.statusCode;
-            }
-
-            if (getBook) {
-              getBook({ msg: msg });
-            }
-          } else {
-            try {
-              const data = JSON.parse(body);
-              const booklist = getBookList(data);
-              const totalCount =
-                data.SEARCH_RESULT && data.SEARCH_RESULT.SEARCH_COUNT
-                  ? data.SEARCH_RESULT.SEARCH_COUNT
-                  : booklist.length;
-              getBook(null, {
-                totalBookCount: totalCount,
-                booklist,
-              });
-            } catch (e) {
-              getBook({ msg: "Failed to parse response: " + e.message });
-            }
-          }
-        },
-      );
-    },
-  );
+    const data = JSON.parse(body);
+    const booklist = getBookList(data);
+    const totalCount =
+      data.SEARCH_RESULT && data.SEARCH_RESULT.SEARCH_COUNT
+        ? data.SEARCH_RESULT.SEARCH_COUNT
+        : booklist.length;
+    getBook(null, {
+      totalBookCount: totalCount,
+      booklist,
+    });
+  } catch (err) {
+    if (getBook) {
+      getBook({ msg: err.toString() });
+    }
+  }
 }
 
 module.exports = {

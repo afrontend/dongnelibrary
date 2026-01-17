@@ -1,7 +1,7 @@
 {
   "name": "dongnelibrary",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "version": "0.2.8",
   "description": "책을 빌릴 수 있는지 확인한다.",
@@ -56,6 +56,6 @@
     "jquery": "^3.7.1",
     "jsdom": "^21.1.1",
     "lodash": "^4.17.20",
-    "request": "^2.73.0"
+    "undici": "^6.23.0"
   }
 }

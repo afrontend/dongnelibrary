@@ -1,4 +1,4 @@
-const req = require("request");
+const { get } = require("../http");
 const _ = require("lodash");
 const getLibraryNames = require("../util.js").getLibraryNames;
 
@@ -40,11 +40,12 @@ function getBookList(json) {
       title: book.titleStatement,
       exist: book.branchVolumes.some((vol) => vol.cState.includes("대출가능")),
       libraryName: book.branchVolumes.map((vol) => vol.name).join(","),
+      bookUrl: book.id ? `https://www.gunpolib.go.kr/#/book/${book.id}` : "",
     };
   });
 }
 
-function search(opt, getBook) {
+async function search(opt, getBook) {
   let title = opt.title;
   let libraryName = opt.libraryName;
 
@@ -64,44 +65,35 @@ function search(opt, getBook) {
 
   const branch = getLibraryCode(libraryName);
 
-  req.get(
-    {
-      url: "https://www.gunpolib.go.kr/pyxis-api/1/collections/1/search",
-      timeout: 20000,
-      headers: {
-        "User-Agent":
-          "User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36",
+  try {
+    const { statusCode, body } = await get(
+      "https://www.gunpolib.go.kr/pyxis-api/1/collections/1/search",
+      {
+        qs: {
+          all: `k|a|${title}`,
+          branch,
+          max: 1000,
+        },
       },
-      qs: {
-        all: `k|a|${title}`,
-        branch,
-        max: 1000,
-      },
-    },
-    function (err, res, body) {
-      if (err || (res && res.statusCode !== 200)) {
-        let msg = "";
+    );
 
-        if (err) {
-          msg = err;
-        }
-
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
-
-        if (getBook) {
-          getBook({ msg: msg });
-        }
-      } else {
-        const booklist = getBookList(JSON.parse(body));
-        getBook(null, {
-          totalBookCount: booklist.length,
-          booklist,
-        });
+    if (statusCode !== 200) {
+      if (getBook) {
+        getBook({ msg: `HTTP ${statusCode}` });
       }
-    },
-  );
+      return;
+    }
+
+    const booklist = getBookList(JSON.parse(body));
+    getBook(null, {
+      totalBookCount: booklist.length,
+      booklist,
+    });
+  } catch (err) {
+    if (getBook) {
+      getBook({ msg: err.toString() });
+    }
+  }
 }
 
 module.exports = {

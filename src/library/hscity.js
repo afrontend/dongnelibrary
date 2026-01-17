@@ -1,6 +1,6 @@
 const getLibraryNames = require("../util.js").getLibraryNames;
 const jquery = require("jquery");
-const req = require("request");
+const { post } = require("../http");
 const { JSDOM } = require("jsdom");
 
 const libraryList = [
@@ -38,7 +38,7 @@ function getLibraryCode(libraryName) {
   return found ? found.code : "";
 }
 
-function search(opt, getBook) {
+async function search(opt, getBook) {
   let title = opt.title;
   let libraryName = opt.libraryName;
 
@@ -57,62 +57,61 @@ function search(opt, getBook) {
   }
 
   const lcode = getLibraryCode(libraryName);
-  // const url=`https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do?searchType=SIMPLE&searchManageCodeArr=MK&searchKeyword=javascript`
   const url = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do`;
-  req.post(
-    {
-      url,
-      timeout: 20000,
-      headers: {
-        "User-Agent":
-          "User-Agent:Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36",
-      },
+
+  try {
+    const { statusCode, body } = await post(url, {
       form: {
         searchType: "SIMPLE",
         searchKeyword: title,
         searchManageCodeArr: lcode,
         searchDisplay: 1000,
       },
-    },
-    function (err, res, body) {
-      if (err || (res && res.statusCode !== 200)) {
-        let msg = "";
+    });
 
-        if (err) {
-          msg = err;
-        }
-
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
-
-        if (getBook) {
-          getBook({ msg });
-        }
-      } else {
-        const dom = new JSDOM(body);
-        const $ = jquery(dom.window);
-        const count = $("#totalCnt").text().match(/\d+/)[0];
-        const booklist = [];
-        $(".bookArea").each((_, a) => {
-          const title = $(a).find("p.book_name.kor.on > a").attr("title");
-          const rented = $(a).find("span.emp8").text().trim();
-          const libraryName = $(a).find("b.themeFC").text().trim();
-          booklist.push({
-            libraryName: libraryName.replace(/[\[\]]/g, ""),
-            title,
-            maxoffset: count,
-            exist: rented.includes("대출가능"),
-          });
-        });
-        getBook(null, {
-          startPage: opt.startPage,
-          totalBookCount: count,
-          booklist,
-        });
+    if (statusCode !== 200) {
+      if (getBook) {
+        getBook({ msg: `HTTP ${statusCode}` });
       }
-    },
-  );
+      return;
+    }
+
+    const dom = new JSDOM(body);
+    const $ = jquery(dom.window);
+    const count = $("#totalCnt").text().match(/\d+/)[0];
+    const booklist = [];
+    $(".bookArea").each((_, a) => {
+      const titleElement = $(a).find("p.book_name.kor.on > a");
+      const title = titleElement.attr("title");
+      const onclick = titleElement.attr("onclick") || "";
+      const match = onclick.match(
+        /fnDetail\('(\d+)',\s*'(\d+)',\s*'([^']*)',\s*'(\w+)'\)/,
+      );
+      let bookUrl = "";
+      if (match) {
+        const [, bookKey, speciesKey, isbn, pubFormCode] = match;
+        bookUrl = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultDetail.do?bookKey=${bookKey}&speciesKey=${speciesKey}&isbn=${isbn}&pubFormCode=${pubFormCode}`;
+      }
+      const rented = $(a).find("span.emp8").text().trim();
+      const libraryName = $(a).find("b.themeFC").text().trim();
+      booklist.push({
+        libraryName: libraryName.replace(/[\[\]]/g, ""),
+        title,
+        bookUrl,
+        maxoffset: count,
+        exist: rented.includes("대출가능"),
+      });
+    });
+    getBook(null, {
+      startPage: opt.startPage,
+      totalBookCount: count,
+      booklist,
+    });
+  } catch (err) {
+    if (getBook) {
+      getBook({ msg: err.toString() });
+    }
+  }
 }
 
 module.exports = {

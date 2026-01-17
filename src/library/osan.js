@@ -1,5 +1,5 @@
 const getLibraryNames = require("../util.js").getLibraryNames;
-const req = require("request");
+const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
 const libraryList = [
@@ -20,7 +20,7 @@ function getLibraryCode(libraryName) {
   return found ? found.code : "";
 }
 
-function search(opt, getBook) {
+async function search(opt, getBook) {
   let title = opt.title;
   let libraryName = opt.libraryName;
 
@@ -38,95 +38,103 @@ function search(opt, getBook) {
     return;
   }
 
-  // https://www.osanlibrary.go.kr/intro/program/plusSearchResultList.do?searchType=SIMPLE&searchCategory=ALL&searchLibraryArr=MA&searchKey=ALL&searchKeyword=javascript&searchRecordCount=20
   const lcode = getLibraryCode(libraryName);
-  req.get(
-    {
-      url: `https://www.osanlibrary.go.kr/intro/program/plusSearchResultList.do`,
-      timeout: 20000,
-      qs: {
-        searchType: "SIMPLE",
-        searchCategory: "ALL",
-        searchLibraryArr: lcode,
-        searchKey: "ALL",
-        searchKeyword: title,
-        searchRecordCount: 1000,
+
+  try {
+    const { statusCode, body } = await get(
+      `https://www.osanlibrary.go.kr/intro/program/plusSearchResultList.do`,
+      {
+        qs: {
+          searchType: "SIMPLE",
+          searchCategory: "ALL",
+          searchLibraryArr: lcode,
+          searchKey: "ALL",
+          searchKeyword: title,
+          searchRecordCount: 1000,
+        },
       },
-    },
-    function (err, res, body) {
-      if (err || (res && res.statusCode !== 200)) {
-        let msg = "";
+    );
 
-        if (err) {
-          msg = err;
-        }
+    if (statusCode !== 200) {
+      if (getBook) {
+        getBook({ msg: `HTTP ${statusCode}` });
+      }
+      return;
+    }
 
-        if (res && res.statusCode) {
-          msg = msg + " " + res.statusCode;
-        }
+    const dom = new JSDOM(body);
+    const document = dom.window.document;
 
-        if (getBook) {
-          getBook({ msg: msg });
-        }
-      } else {
-        const dom = new JSDOM(body);
-        const document = dom.window.document;
+    // Extract total count from "총 <span class="highlight">44</span>건"
+    const highlightSpans = document.querySelectorAll("span.highlight");
+    let count = "0";
+    for (const span of highlightSpans) {
+      const text = span.textContent.trim();
+      if (/^\d+$/.test(text)) {
+        count = text;
+        break;
+      }
+    }
 
-        // Extract total count from "총 <span class="highlight">44</span>건"
-        const highlightSpans = document.querySelectorAll("span.highlight");
-        let count = "0";
-        for (const span of highlightSpans) {
-          const text = span.textContent.trim();
-          if (/^\d+$/.test(text)) {
-            count = text;
-            break;
+    const booklist = [];
+    const bookItems = document.querySelectorAll(".bookList .listWrap > li");
+    bookItems.forEach((li) => {
+      // Get title and book URL from .book_name link
+      const titleLink = li.querySelector(".book_name");
+      const titleEl = titleLink ? titleLink.querySelector("span") : null;
+      const bookTitle = titleEl ? titleEl.textContent.trim() : "";
+
+      // Extract book URL from onclick handler
+      let bookUrl = "";
+      const onclick = titleLink ? titleLink.getAttribute("onclick") || "" : "";
+      const urlMatch = onclick.match(
+        /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
+      );
+      if (urlMatch) {
+        const [, recKey, bookKey, publishFormCode] = urlMatch;
+        bookUrl = `https://www.osanlibrary.go.kr/intro/menu/10003/program/30004/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
+      }
+
+      // Get availability status from .status p
+      const statusEl = li.querySelector(".status p");
+      const statusText = statusEl ? statusEl.textContent.trim() : "";
+      const exist = statusText.includes("대출가능");
+
+      // Get library name from ".book_info .fb p" containing "소장도서관"
+      let libName = "";
+      const fbParagraphs = li.querySelectorAll(".book_info .fb p");
+      fbParagraphs.forEach((p) => {
+        const text = p.textContent;
+        if (text.includes("소장도서관")) {
+          // Format: "[공공]오산시중앙도서관" - extract library name after "]"
+          const match = text.match(/\](.+)$/);
+          if (match) {
+            libName = match[1].trim();
           }
         }
+      });
 
-        const booklist = [];
-        const bookItems = document.querySelectorAll(".bookList .listWrap > li");
-        bookItems.forEach((li) => {
-          // Get title from .book_name span
-          const titleEl = li.querySelector(".book_name span");
-          const bookTitle = titleEl ? titleEl.textContent.trim() : "";
-
-          // Get availability status from .status p
-          const statusEl = li.querySelector(".status p");
-          const statusText = statusEl ? statusEl.textContent.trim() : "";
-          const exist = statusText.includes("대출가능");
-
-          // Get library name from ".book_info .fb p" containing "소장도서관"
-          let libName = "";
-          const fbParagraphs = li.querySelectorAll(".book_info .fb p");
-          fbParagraphs.forEach((p) => {
-            const text = p.textContent;
-            if (text.includes("소장도서관")) {
-              // Format: "[공공]오산시중앙도서관" - extract library name after "]"
-              const match = text.match(/\](.+)$/);
-              if (match) {
-                libName = match[1].trim();
-              }
-            }
-          });
-
-          if (bookTitle) {
-            booklist.push({
-              libraryName: libName,
-              title: bookTitle,
-              maxoffset: count,
-              exist: exist,
-            });
-          }
-        });
-
-        getBook(null, {
-          startPage: opt.startPage,
-          totalBookCount: count,
-          booklist,
+      if (bookTitle) {
+        booklist.push({
+          libraryName: libName,
+          title: bookTitle,
+          bookUrl,
+          maxoffset: count,
+          exist: exist,
         });
       }
-    },
-  );
+    });
+
+    getBook(null, {
+      startPage: opt.startPage,
+      totalBookCount: count,
+      booklist,
+    });
+  } catch (err) {
+    if (getBook) {
+      getBook({ msg: err.toString() });
+    }
+  }
 }
 
 module.exports = {
