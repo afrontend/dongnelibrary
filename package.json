@@ -54,7 +54,7 @@
     "commander": "^2.11.0",
     "configstore": "^4.0.0",
     "figlet": "^1.2.1",
-    "inquirer": "^6.2.2",
+    "@inquirer/prompts": "^7.0.0",
     "jquery": "^3.7.1",
     "jsdom": "^21.1.1",
     "lodash": "^4.17.20",

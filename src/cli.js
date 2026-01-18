@@ -2,7 +2,7 @@
 const Configstore = require("configstore");
 const colors = require("colors");
 const figlet = require("figlet");
-const inquirer = require("inquirer");
+const { select, input } = require("@inquirer/prompts");
 const program = require("commander");
 const dl = require("./dongnelibrary");
 const util = require("./util");
@@ -111,21 +111,17 @@ const printSearchSummary = (results) => {
 
 const promptForSearchOptions = async () => {
   introMessage("Dongne Library");
-  const { library, title } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "library",
-      message: "도서관 이름은?",
-      choices: dl.getLibraryNames(),
-      default: config.getLibrary(),
-    },
-    {
-      type: "input",
-      name: "title",
-      message: "책 이름은?",
-      default: config.getTitle(),
-    },
-  ]);
+
+  const library = await select({
+    message: "도서관 이름은?",
+    choices: dl.getLibraryNames().map((name) => ({ name, value: name })),
+    default: config.getLibrary(),
+  });
+
+  const title = await input({
+    message: "책 이름은?",
+    default: config.getTitle(),
+  });
 
   config.setLibrary(library);
   config.setTitle(title);
