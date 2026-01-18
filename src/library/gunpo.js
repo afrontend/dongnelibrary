@@ -42,7 +42,7 @@ function getBookList(json) {
       title: book.titleStatement,
       exist: book.branchVolumes.some((vol) => vol.cState.includes("대출가능")),
       libraryName: book.branchVolumes.map((vol) => vol.name).join(","),
-      bookUrl: book.id ? `https://www.gunpolib.go.kr/#/book/${book.id}` : "",
+      bookUrl: book.id ? `https://www.gunpolib.go.kr/#/search/detail/${book.id}` : "",
     };
   });
 }

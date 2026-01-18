@@ -98,6 +98,61 @@ function createLibraryTestSuite(lib, description) {
       });
     });
 
+    it("Verify bookUrl format is valid", { timeout: 30000 }, async () => {
+      const book = await new Promise((resolve, reject) => {
+        lib.search(
+          {
+            title: "javascript",
+            libraryName: firstLibraryName,
+            startPage: 1,
+          },
+          (err, result) => {
+            if (err) reject(new Error(err.msg));
+            else resolve(result);
+          },
+        );
+      });
+
+      assert.ok(book.booklist.length > 0, "Need at least one book to test bookUrl");
+
+      const bookWithUrl = book.booklist.find((b) => b.bookUrl);
+      assert.ok(bookWithUrl, "At least one book should have a bookUrl");
+
+      const bookUrl = bookWithUrl.bookUrl;
+
+      assert.ok(
+        bookUrl.startsWith("http://") || bookUrl.startsWith("https://"),
+        `bookUrl should start with http:// or https://: ${bookUrl}`,
+      );
+
+      const getBaseDomain = (url) => {
+        try {
+          const hostname = new URL(url.split("#")[0]).hostname;
+          const parts = hostname.split(".");
+          return parts.slice(-2).join(".");
+        } catch {
+          return null;
+        }
+      };
+
+      const homeBaseDomain = getBaseDomain(lib.homeUrl);
+      const bookBaseDomain = getBaseDomain(bookUrl);
+
+      assert.ok(
+        homeBaseDomain && bookBaseDomain && homeBaseDomain === bookBaseDomain,
+        `bookUrl domain (${bookBaseDomain}) should match homeUrl domain (${homeBaseDomain}): ${bookUrl}`,
+      );
+
+      const urlWithoutHash = bookUrl.split("#")[0];
+      try {
+        new URL(urlWithoutHash);
+      } catch {
+        assert.fail(`bookUrl base is not a valid URL: ${bookUrl}`);
+      }
+
+      console.log(`  ✓ bookUrl format verified: ${bookUrl}`);
+    });
+
     it("Make sure the book is searchable in each library", { timeout: 60000 }, () => {
       return new Promise((resolve) => {
         let completed = 0;

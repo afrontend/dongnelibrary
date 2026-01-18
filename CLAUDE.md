@@ -75,9 +75,9 @@ Tests in `test/` mirror the library modules and use Node.js built-in test runner
 ## Current API Endpoints
 
 - **gg.js**: `https://lib.goe.go.kr/gg/intro/search/index.do`
-- **gunpo.js**: `http://www.gunpolib.go.kr/...`
-- **hscity.js**: `https://hscitylib.or.kr/...`
-- **osan.js**: `https://www.osanlibrary.go.kr/intro/program/plusSearchResultList.do`
-- **snlib.js**: `http://www.snlib.net/...`
+- **gunpo.js**: `https://www.gunpolib.go.kr/pyxis-api/1/collections/1/search` (JSON API)
+- **hscity.js**: `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do`
+- **osan.js**: `https://www.osanlibrary.go.kr/intro/menu/10003/program/30004/plusSearchResultList.do`
+- **snlib.js**: `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do`
 - **suwon.js**: `https://search.suwonlib.go.kr/getSearchResult/normal` (requires session init)
 - **yongin.js**: `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultList.do`
