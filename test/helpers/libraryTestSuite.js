@@ -97,6 +97,7 @@ function createLibraryTestSuite(lib, description) {
       this.timeout(60000);
       let completed = 0;
       const failures = [];
+      let successCount = 0;
 
       libraryNames.forEach(function (libraryName) {
         lib.search(
@@ -116,18 +117,30 @@ function createLibraryTestSuite(lib, description) {
                 book.booklist !== undefined,
                 `${libraryName} should return a booklist`,
               );
-              console.log(
-                `  ✓ ${libraryName}: ${book.totalBookCount} books found`,
-              );
+              if (book.totalBookCount > 0) {
+                console.log(
+                  `  ✓ ${libraryName}: ${book.totalBookCount} books found`,
+                );
+                successCount++;
+              } else {
+                // Some libraries (smart/small) may legitimately have 0 results
+                console.log(
+                  `  - ${libraryName}: 0 books found (may be expected for small collections)`,
+                );
+              }
             }
 
             if (completed === libraryNames.length) {
-              if (failures.length > 0) {
-                console.log(`  Warning: ${failures.length} libraries failed`);
-              }
+              console.log(
+                `  Summary: ${successCount} libraries with results, ${failures.length} errors`,
+              );
               assert.ok(
                 failures.length < libraryNames.length,
                 "At least one library should be searchable",
+              );
+              assert.ok(
+                successCount > 0,
+                "At least one library should return results",
               );
               done();
             }

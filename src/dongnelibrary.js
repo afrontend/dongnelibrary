@@ -6,6 +6,7 @@ const hscity = require("./library/hscity");
 const osan = require("./library/osan");
 const snlib = require("./library/snlib");
 const suwon = require("./library/suwon");
+const yongin = require("./library/yongin");
 const async = require("async");
 const util = require("./util.js");
 
@@ -14,7 +15,7 @@ const libraryList = [];
 const getLibraryNames = () => util.getLibraryNames(libraryList);
 
 function makeLibraryList() {
-  const library = [gg, gunpo, hscity, osan, snlib, suwon];
+  const library = [gg, gunpo, hscity, osan, snlib, suwon, yongin];
 
   _.each(library, (library) => {
     _.each(library.getLibraryNames(), (name) => {
