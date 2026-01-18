@@ -11,12 +11,12 @@ const libraryList = [
   { code: "MC", name: "삼괴도서관" },
   { code: "MD", name: "병점도서관" },
   { code: "ME", name: "샘내도서관" },
-  { code: "MF", name: "두빛나래도서관" },
+  { code: "MF", name: "두빛나래어린이도서관" },
   { code: "MG", name: "봉담도서관" },
-  { code: "MH", name: "둥지나래도서관" },
+  { code: "MH", name: "둥지나래어린이도서관" },
   { code: "MI", name: "목동이음터도서관" },
   { code: "MJ", name: "기아행복마루도서관" },
-  { code: "MK", name: "동탄복합문화센터도서관" },
+  { code: "MK", name: "화성동탄중앙도서관" },
   { code: "ML", name: "송산도서관" },
   { code: "MM", name: "정남도서관" },
   { code: "MN", name: "비봉도서관" },
@@ -32,7 +32,10 @@ const libraryList = [
   { code: "MX", name: "노을빛도서관" },
   { code: "MY", name: "서연이음터도서관" },
   { code: "MZ", name: "호연이음터도서관" },
+  { code: "NA", name: "향남복합문화센터도서관" },
+  { code: "NB", name: "봉담와우도서관" },
   { code: "TA", name: "늘봄이음터도서관" },
+  { code: "TB", name: "달빛나래어린이도서관" },
 ];
 
 function getLibraryCode(libraryName) {
