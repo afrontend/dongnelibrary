@@ -10,15 +10,15 @@
     "dongnelibrary": "src/cli.js"
   },
   "scripts": {
-    "test": "mocha",
-    "dongne": "mocha test/dongne.spec.js",
-    "gg": "mocha test/gg.spec.js",
-    "gunpo": "mocha test/gunpo.spec.js",
-    "hscity": "mocha test/hscity.spec.js",
-    "osan": "mocha test/osan.spec.js",
-    "snlib": "mocha test/snlib.spec.js",
-    "suwon": "mocha test/suwon.spec.js",
-    "yongin": "mocha test/yongin.spec.js"
+    "test": "node --test test/*.spec.js",
+    "dongne": "node --test test/dongne.spec.js",
+    "gg": "node --test test/gg.spec.js",
+    "gunpo": "node --test test/gunpo.spec.js",
+    "hscity": "node --test test/hscity.spec.js",
+    "osan": "node --test test/osan.spec.js",
+    "snlib": "node --test test/snlib.spec.js",
+    "suwon": "node --test test/suwon.spec.js",
+    "yongin": "node --test test/yongin.spec.js"
   },
   "repository": {
     "type": "git",
@@ -44,8 +44,7 @@
   "homepage": "https://github.com/afrontend/dongnelibrary#readme",
   "devDependencies": {
     "acorn": ">=5.7.4",
-    "minimist": ">=1.2.2",
-    "mocha": "^10.2.0"
+    "minimist": ">=1.2.2"
   },
   "tonicExampleFilename": "src/example.js",
   "dependencies": {

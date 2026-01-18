@@ -98,6 +98,7 @@ dl.search(
     npm run osan    # 오산시 도서관
     npm run snlib   # 성남시 도서관
     npm run suwon   # 수원시 도서관
+    npm run yongin  # 용인시 도서관
 
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
