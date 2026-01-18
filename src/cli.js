@@ -45,7 +45,10 @@ const MARKS = {
   notOk: "✖ ",
 };
 
-const printBooks = ({ booklist }) => {
+const printBooks = ({ booklist, homeUrl }) => {
+  if (homeUrl) {
+    console.log(colors.yellow(`[${homeUrl}]`));
+  }
   for (const { libraryName, exist, title, bookUrl } of booklist) {
     const mark = exist ? ` ${MARKS.ok} ` : ` ${colors.red(MARKS.notOk)} `;
     console.log(`${cutTail(libraryName, "도서관")}${mark}${title}`);

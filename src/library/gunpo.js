@@ -2,6 +2,8 @@ const { get } = require("../http");
 const _ = require("lodash");
 const getLibraryNames = require("../util.js").getLibraryNames;
 
+const homeUrl = "https://www.gunpolib.go.kr";
+
 const libraryList = [
   { code: "1", name: "산본도서관" },
   { code: "2", name: "당동도서관" },
@@ -98,6 +100,7 @@ async function search(opt, getBook) {
 
 module.exports = {
   search,
+  homeUrl,
   getLibraryNames: function () {
     return getLibraryNames(libraryList);
   },

@@ -1,6 +1,8 @@
 const getLibraryNames = require("../util.js").getLibraryNames;
 const { createSession } = require("../http");
 
+const homeUrl = "https://www.suwonlib.go.kr";
+
 const libraryList = [
   { code: "141025", name: "선경도서관" },
   { code: "141024", name: "수원중앙도서관" },
@@ -143,6 +145,7 @@ async function search(opt, getBook) {
 
 module.exports = {
   search,
+  homeUrl,
   getLibraryNames: function () {
     return getLibraryNames(libraryList);
   },

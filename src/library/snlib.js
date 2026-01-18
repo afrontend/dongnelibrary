@@ -3,6 +3,8 @@ const jquery = require("jquery");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
+const homeUrl = "https://www.snlib.go.kr";
+
 const libraryList = [
   { code: "BF", name: "논골도서관" },
   { code: "CK", name: "중원어린이도서관" },
@@ -118,6 +120,7 @@ async function search(opt, getBook) {
 
 module.exports = {
   search,
+  homeUrl,
   getLibraryNames: function () {
     return getLibraryNames(libraryList);
   },

@@ -13,6 +13,7 @@ const libraryList = LIBRARY_MODULES.flatMap((module) =>
   module.getLibraryNames().map((name) => ({
     name,
     search: module.search,
+    homeUrl: module.homeUrl,
   })),
 );
 
@@ -60,6 +61,7 @@ const searchLibrary = (lib, title) =>
         result: {
           title,
           libraryName: lib.name,
+          homeUrl: lib.homeUrl,
           totalBookCount: data.totalBookCount,
           startPage: data.startPage,
           booklist: getSortedBooks(data.booklist),

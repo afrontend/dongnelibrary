@@ -2,6 +2,8 @@ const getLibraryNames = require("../util.js").getLibraryNames;
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
+const homeUrl = "https://lib.yongin.go.kr";
+
 const libraryList = [
   // Public libraries (시립도서관)
   { code: "MB", name: "수지도서관" },
@@ -176,6 +178,7 @@ async function search(opt, getBook) {
 
 module.exports = {
   search,
+  homeUrl,
   getLibraryNames: function () {
     return getLibraryNames(libraryList);
   },

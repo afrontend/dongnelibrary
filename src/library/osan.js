@@ -2,6 +2,8 @@ const getLibraryNames = require("../util.js").getLibraryNames;
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
+const homeUrl = "https://www.osanlibrary.go.kr";
+
 const libraryList = [
   { code: "MA", name: "오산중앙도서관" },
   { code: "MG", name: "꿈두레도서관" },
@@ -139,6 +141,7 @@ async function search(opt, getBook) {
 
 module.exports = {
   search,
+  homeUrl,
   getLibraryNames: function () {
     return getLibraryNames(libraryList);
   },
