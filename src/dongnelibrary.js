@@ -42,7 +42,7 @@ const getLibArray = (libraryName) => {
 
 const getSortedBooks = (books) =>
   books
-    .map(({ libraryName, title, exist }) => ({ libraryName, title, exist }))
+    .map(({ libraryName, title, exist, bookUrl }) => ({ libraryName, title, exist, bookUrl }))
     .sort((a, b) => (a.exist === b.exist ? 0 : a.exist ? -1 : 1));
 
 const searchLibrary = (lib, title) =>
