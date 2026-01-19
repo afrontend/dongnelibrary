@@ -30,7 +30,7 @@
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
-## Using with docker
+## Use Docker Hub image
 
     docker pull frontendwordpress/dongnelibrary
     docker run --rm frontendwordpress/dongnelibrary dongnelibrary -i
@@ -50,6 +50,29 @@ dongne () {
     dongne -a
     dongne -l 여주,판교 -t 자바
     dongne -l 여주도서관 -t 자바
+
+## Build and Run Docker Locally
+
+    docker build -t dongnelibrary .
+    docker run -it dongnelibrary -i
+    docker run dongnelibrary -t "javascript" -l "군포"
+    docker run dongnelibrary -a
+    docker run -it -v ~/.config/configstore:/root/.config/configstore dongnelibrary -i
+
+## Deploy to Docker Hub
+
+    # Log in to Docker Hub
+    docker login
+
+    # Build and tag
+    docker build -t <dockerhub-username>/dongnelibrary:latest .
+
+    # Push to Docker Hub
+    docker push <dockerhub-username>/dongnelibrary:latest
+
+    # Optional: tag with version
+    docker tag <dockerhub-username>/dongnelibrary:latest <dockerhub-username>/dongnelibrary:0.2.12
+    docker push <dockerhub-username>/dongnelibrary:0.2.12
 
 ## Using with JavaScript
 

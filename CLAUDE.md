@@ -81,3 +81,22 @@ Tests in `test/` mirror the library modules and use Node.js built-in test runner
 - **snlib.js**: `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do`
 - **suwon.js**: `https://search.suwonlib.go.kr/getSearchResult/normal` (requires session init)
 - **yongin.js**: `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultList.do`
+
+## Docker
+
+The project includes a `Dockerfile` in the root directory using Node 20 Alpine.
+
+```bash
+# Build locally
+docker build -t dongnelibrary .
+
+# Run
+docker run -it dongnelibrary -i
+
+# Deploy to Docker Hub
+docker login
+docker build -t <username>/dongnelibrary:latest .
+docker push <username>/dongnelibrary:latest
+```
+
+Docker Hub image: `frontendwordpress/dongnelibrary`
