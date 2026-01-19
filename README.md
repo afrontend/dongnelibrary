@@ -33,20 +33,18 @@
 ## Use Docker Hub image
 
     docker pull frontendwordpress/dongnelibrary
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -i
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -a
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주,판교 -t 자바
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary -l 여주도서관 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary -a
+    docker run --rm frontendwordpress/dongnelibrary -l 여주,판교 -t 자바
+    docker run --rm frontendwordpress/dongnelibrary -l 수지 -t 자바
 
 아래 함수를 `~/.bashrc` 파일에 추가하여 사용할 수 있다.
 
 ```bash
 dongne () {
-    docker run --rm frontendwordpress/dongnelibrary dongnelibrary "$@"
+    docker run --rm frontendwordpress/dongnelibrary "$@"
 }
 ```
 
-    dongne -i
     dongne -a
     dongne -l 여주,판교 -t 자바
     dongne -l 여주도서관 -t 자바
