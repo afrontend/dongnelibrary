@@ -36,10 +36,4 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-aa.html
-apple.cast
-files.txt
-gg.sh
-osan.rest
-osan.sh
 .npmrc
