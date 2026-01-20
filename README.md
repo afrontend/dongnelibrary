@@ -32,29 +32,23 @@
 
 ## Use Docker Hub image
 
+### install
+
     docker pull frontendwordpress/dongnelibrary
+
+### run examples
+
+    docker run -it --rm frontendwordpress/dongnelibrary -i
     docker run --rm frontendwordpress/dongnelibrary -a
     docker run --rm frontendwordpress/dongnelibrary -l 여주,판교 -t 자바
     docker run --rm frontendwordpress/dongnelibrary -l 수지 -t 자바
-
-아래 함수를 `~/.bashrc` 파일에 추가하여 사용할 수 있다.
-
-```bash
-dongne () {
-    docker run --rm frontendwordpress/dongnelibrary "$@"
-}
-```
-
-    dongne -a
-    dongne -l 여주,판교 -t 자바
-    dongne -l 여주도서관 -t 자바
 
 ## Build and Run Docker Locally
 
     docker build -t dongnelibrary .
     docker run -it dongnelibrary -i
-    docker run dongnelibrary -t "javascript" -l "군포"
     docker run dongnelibrary -a
+    docker run dongnelibrary -t "javascript" -l "군포"
     docker run -it -v ~/.config/configstore:/root/.config/configstore dongnelibrary -i
 
 ## Deploy to Docker Hub
