@@ -113,7 +113,10 @@ function createLibraryTestSuite(lib, description) {
         );
       });
 
-      assert.ok(book.booklist.length > 0, "Need at least one book to test bookUrl");
+      assert.ok(
+        book.booklist.length > 0,
+        "Need at least one book to test bookUrl",
+      );
 
       const bookWithUrl = book.booklist.find((b) => b.bookUrl);
       assert.ok(bookWithUrl, "At least one book should have a bookUrl");
@@ -153,61 +156,112 @@ function createLibraryTestSuite(lib, description) {
       console.log(`  ✓ bookUrl format verified: ${bookUrl}`);
     });
 
-    it("Make sure the book is searchable in each library", { timeout: 60000 }, () => {
-      return new Promise((resolve) => {
-        let completed = 0;
-        const failures = [];
-        let successCount = 0;
+    it(
+      "Search with Korean titles (산, 자바, 소설)",
+      { timeout: 60000 },
+      async () => {
+        const koreanTitles = ["산", "자바", "소설"];
+        let anySuccess = false;
+        const results = [];
 
-        libraryNames.forEach((libraryName) => {
-          lib.search(
-            {
-              title: "javascript",
-              libraryName: libraryName,
-              startPage: 1,
-            },
-            (err, book) => {
-              completed++;
+        for (const title of koreanTitles) {
+          try {
+            const book = await new Promise((resolve, reject) => {
+              lib.search(
+                { title, libraryName: firstLibraryName, startPage: 1 },
+                (err, result) => {
+                  if (err) reject(new Error(err.msg));
+                  else resolve(result);
+                },
+              );
+            });
 
-              if (err) {
-                console.log(`  ✗ ${libraryName}: ${err.msg}`);
-                failures.push(libraryName);
-              } else {
-                assert.ok(
-                  book.booklist !== undefined,
-                  `${libraryName} should return a booklist`,
-                );
-                if (book.totalBookCount > 0) {
-                  console.log(
-                    `  ✓ ${libraryName}: ${book.totalBookCount} books found`,
-                  );
-                  successCount++;
+            const count = book.booklist?.length || 0;
+            results.push({ title, count, success: count > 0 });
+
+            if (count > 0) {
+              anySuccess = true;
+              console.log(`  ✓ "${title}": ${count} books found`);
+            } else {
+              console.log(`  - "${title}": 0 books found`);
+            }
+          } catch (err) {
+            results.push({
+              title,
+              count: 0,
+              success: false,
+              error: err.message,
+            });
+            console.log(`  ✗ "${title}": ${err.message}`);
+          }
+        }
+
+        assert.ok(
+          anySuccess,
+          `At least one Korean title should return results. Tried: ${results.map((r) => `"${r.title}"(${r.count})`).join(", ")}`,
+        );
+      },
+    );
+
+    it(
+      "Make sure the book is searchable in each library",
+      { timeout: 60000 },
+      () => {
+        return new Promise((resolve) => {
+          let completed = 0;
+          const failures = [];
+          let successCount = 0;
+
+          libraryNames.forEach((libraryName) => {
+            lib.search(
+              {
+                title: "javascript",
+                libraryName: libraryName,
+                startPage: 1,
+              },
+              (err, book) => {
+                completed++;
+
+                if (err) {
+                  console.log(`  ✗ ${libraryName}: ${err.msg}`);
+                  failures.push(libraryName);
                 } else {
-                  console.log(
-                    `  - ${libraryName}: 0 books found (may be expected for small collections)`,
+                  assert.ok(
+                    book.booklist !== undefined,
+                    `${libraryName} should return a booklist`,
                   );
+                  if (book.totalBookCount > 0) {
+                    console.log(
+                      `  ✓ ${libraryName}: ${book.totalBookCount} books found`,
+                    );
+                    successCount++;
+                  } else {
+                    console.log(
+                      `  - ${libraryName}: 0 books found (may be expected for small collections)`,
+                    );
+                  }
                 }
-              }
 
-              if (completed === libraryNames.length) {
-                console.log(
-                  `  Summary: ${successCount} libraries with results, ${failures.length} errors`,
-                );
-                assert.ok(
-                  failures.length < libraryNames.length,
-                  "At least one library should be searchable",
-                );
-                assert.ok(
-                  successCount > 0,
-                  "At least one library should return results",
-                );
-                resolve();
-              }
-            },
-          );
+                if (completed === libraryNames.length) {
+                  console.log(
+                    `  Summary: ${successCount} libraries with results, ${failures.length} errors`,
+                  );
+                  assert.ok(
+                    failures.length < libraryNames.length,
+                    "At least one library should be searchable",
+                  );
+                  assert.ok(
+                    successCount > 0,
+                    "At least one library should return results",
+                  );
+                  resolve();
+                }
+              },
+            );
+          });
         });
-      });
-    });
+      },
+    );
   });
 }
 
