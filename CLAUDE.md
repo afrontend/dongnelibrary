@@ -38,9 +38,10 @@ The project uses a modular plugin architecture where each library system has its
 **Core Flow:**
 
 1. `src/cli.js` - CLI entry point using Commander.js for args, @inquirer/prompts for interactive menus
-2. `src/dongnelibrary.js` - Main orchestrator that routes searches to library modules and runs them in parallel via `async.parallel`
+2. `src/dongnelibrary.js` - Main orchestrator that routes searches to library modules and aggregates results
 3. `src/library/*.js` - Individual library scrapers (one per library system)
-4. `src/util.js` - Shared utilities for HTML parsing and CSV handling
+4. `src/http.js` - HTTP wrapper around `undici` with `get()`, `post()`, and `createSession()` for cookie-based requests
+5. `src/util.js` - Shared utilities for HTML parsing and CSV handling
 
 **Library Modules** (`src/library/`):
 
@@ -52,7 +53,10 @@ The project uses a modular plugin architecture where each library system has its
 - `suwon.js` - 수원시도서관 (Suwon City)
 - `yongin.js` - 용인시도서관 (Yongin City)
 
-Each library module scrapes its respective library website using `undici` for HTTP and `jsdom` for DOM parsing, then returns standardized book availability results.
+Each library module must export:
+- `search(opt, callback)` - Main search function taking `{title, libraryName}` and returning book results via callback
+- `getLibraryNames()` - Returns array of branch names supported by this module
+- `homeUrl` - Base URL of the library system website
 
 **Note:** Library websites change periodically, requiring scraper updates. When a scraper breaks:
 
@@ -71,6 +75,13 @@ Each library module scrapes its respective library website using `undici` for HT
 ## Test Structure
 
 Tests in `test/` mirror the library modules and use Node.js built-in test runner (`node:test`). Each test file has a 20-second timeout to accommodate network requests to library websites. No external test framework dependencies are required.
+
+All library tests use the shared `test/helpers/libraryTestSuite.js` helper which provides standard test cases (empty title, invalid title, Korean title search, multi-library search, bookUrl validation).
+
+To run a specific test within a file, use the `--test-name-pattern` flag:
+```bash
+node --test --test-name-pattern="Korean titles" test/gunpo.spec.js
+```
 
 ## Current API Endpoints
 
