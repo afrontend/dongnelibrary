@@ -31,22 +31,25 @@ function getLibraryCode(libraryName) {
   return found ? found.code : "";
 }
 
-async function search(opt, getBook) {
-  let title = opt.title;
-  let libraryName = opt.libraryName;
+async function search(opt, callback) {
+  const { title, libraryName } = opt;
 
   if (!title) {
-    if (getBook) {
-      getBook({ msg: "Need a book name" });
+    const error = { msg: "Need a book name" };
+    if (callback) {
+      callback(error);
+      return;
     }
-    return;
+    throw new Error(error.msg);
   }
 
   if (!libraryName) {
-    if (getBook) {
-      getBook({ msg: "Need a library name" });
+    const error = { msg: "Need a library name" };
+    if (callback) {
+      callback(error);
+      return;
     }
-    return;
+    throw new Error(error.msg);
   }
 
   const lcode = getLibraryCode(libraryName);
@@ -71,10 +74,12 @@ async function search(opt, getBook) {
     );
 
     if (statusCode !== 200) {
-      if (getBook) {
-        getBook({ msg: `HTTP ${statusCode}` });
+      const error = { msg: `HTTP ${statusCode}` };
+      if (callback) {
+        callback(error);
+        return;
       }
-      return;
+      throw new Error(error.msg);
     }
 
     const dom = new JSDOM(body);
@@ -84,7 +89,7 @@ async function search(opt, getBook) {
     if (count) {
       $(".resultList > li").each((_, a) => {
         const titleElement = $(a).find(".tit a");
-        const title = titleElement.text().trim();
+        const bookTitle = titleElement.text().trim();
         const onclick = titleElement.attr("onclick") || "";
         const match = onclick.match(
           /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
@@ -96,11 +101,11 @@ async function search(opt, getBook) {
         }
         const rented = $(a).find(".bookStateBar .txt b").text();
         const b = $(a).find(".site > span:first-child").text().split(":");
-        const libraryName = b && b[1] ? b[1].trim() : "";
-        if (title) {
+        const libName = b && b[1] ? b[1].trim() : "";
+        if (bookTitle) {
           booklist.push({
-            libraryName,
-            title,
+            libraryName: libName,
+            title: bookTitle,
             bookUrl,
             maxoffset: count,
             exist: rented.includes("대출가능"),
@@ -108,15 +113,25 @@ async function search(opt, getBook) {
         }
       });
     }
-    getBook(null, {
+
+    const result = {
       startPage: opt.startPage,
       totalBookCount: count,
       booklist,
-    });
-  } catch (err) {
-    if (getBook) {
-      getBook({ msg: err.toString() });
+    };
+
+    if (callback) {
+      callback(null, result);
+      return;
     }
+    return result;
+  } catch (err) {
+    const error = { msg: err.message || err.toString() };
+    if (callback) {
+      callback(error);
+      return;
+    }
+    throw err;
   }
 }
 

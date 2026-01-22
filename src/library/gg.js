@@ -24,22 +24,25 @@ function getLibraryCode(libraryName) {
   return found ? found.code : "";
 }
 
-async function search(opt, getBook) {
-  let title = opt.title;
-  let libraryName = opt.libraryName;
+async function search(opt, callback) {
+  const { title, libraryName } = opt;
 
   if (!title) {
-    if (getBook) {
-      getBook({ msg: "Need a book name" });
+    const error = { msg: "Need a book name" };
+    if (callback) {
+      callback(error);
+      return;
     }
-    return;
+    throw new Error(error.msg);
   }
 
   if (!libraryName) {
-    if (getBook) {
-      getBook({ msg: "Need a library name" });
+    const error = { msg: "Need a library name" };
+    if (callback) {
+      callback(error);
+      return;
     }
-    return;
+    throw new Error(error.msg);
   }
 
   const lcode = getLibraryCode(libraryName);
@@ -59,10 +62,12 @@ async function search(opt, getBook) {
     );
 
     if (statusCode !== 200) {
-      if (getBook) {
-        getBook({ msg: `HTTP ${statusCode}` });
+      const error = { msg: `HTTP ${statusCode}` };
+      if (callback) {
+        callback(error);
+        return;
       }
-      return;
+      throw new Error(error.msg);
     }
 
     const dom = new JSDOM(body);
@@ -96,15 +101,25 @@ async function search(opt, getBook) {
         });
       }
     });
-    getBook(null, {
+
+    const result = {
       startPage: opt.startPage,
       totalBookCount: count,
       booklist,
-    });
-  } catch (err) {
-    if (getBook) {
-      getBook({ msg: err.toString() });
+    };
+
+    if (callback) {
+      callback(null, result);
+      return;
     }
+    return result;
+  } catch (err) {
+    const error = { msg: err.message || err.toString() };
+    if (callback) {
+      callback(error);
+      return;
+    }
+    throw err;
   }
 }
 
