@@ -7,7 +7,22 @@ const suwon = require("./library/suwon");
 const yongin = require("./library/yongin");
 const util = require("./util.js");
 
+// =============================================================================
+// Configuration
+// =============================================================================
+
 const LIBRARY_MODULES = [gg, gunpo, hscity, osan, snlib, suwon, yongin];
+
+const UNKNOWN_LIBRARY_ERROR = { msg: "Unknown library name" };
+
+const UNKNOWN_LIBRARY = {
+  name: "Unknown",
+  search: (opt, onResult) => onResult?.(UNKNOWN_LIBRARY_ERROR),
+};
+
+// =============================================================================
+// Library Registry
+// =============================================================================
 
 const libraryList = LIBRARY_MODULES.flatMap((module) =>
   module.getLibraryNames().map((name) => ({
@@ -19,12 +34,7 @@ const libraryList = LIBRARY_MODULES.flatMap((module) =>
 
 const getLibraryNames = () => util.getLibraryNames(libraryList);
 
-const UNKNOWN_LIBRARY = {
-  name: "Unknown",
-  search: (opt, getBook) => getBook?.({ msg: "Unknown library name" }),
-};
-
-const getLibraryFunction = (libraryName) =>
+const getLibraryByName = (libraryName) =>
   libraryList.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
 
 const completeLibraryName = (str) =>
@@ -33,18 +43,33 @@ const completeLibraryName = (str) =>
 const isValidLibraryName = (libraryName) =>
   libraryList.some((lib) => lib.name === libraryName);
 
-const getLibArray = (libraryName) => {
+const resolveLibraries = (libraryName) => {
   const names = Array.isArray(libraryName) ? libraryName : [libraryName];
   return names
     .map((name) => completeLibraryName(name))
     .filter((fullName) => isValidLibraryName(fullName))
-    .map((fullName) => getLibraryFunction(fullName));
+    .map((fullName) => getLibraryByName(fullName));
 };
 
-const getSortedBooks = (books) =>
-  books
-    .map(({ libraryName, title, exist, bookUrl }) => ({ libraryName, title, exist, bookUrl }))
-    .sort((a, b) => (a.exist === b.exist ? 0 : a.exist ? -1 : 1));
+// =============================================================================
+// Book Result Helpers
+// =============================================================================
+
+const normalizeBook = ({ libraryName, title, exist, bookUrl }) => ({
+  libraryName,
+  title,
+  exist,
+  bookUrl,
+});
+
+const sortByAvailability = (books) =>
+  books.sort((a, b) => (a.exist === b.exist ? 0 : a.exist ? -1 : 1));
+
+const processBooklist = (books) => sortByAvailability(books.map(normalizeBook));
+
+// =============================================================================
+// Search Logic
+// =============================================================================
 
 const searchLibrary = (lib, title) =>
   new Promise((resolve) => {
@@ -64,36 +89,40 @@ const searchLibrary = (lib, title) =>
           homeUrl: lib.homeUrl,
           totalBookCount: data.totalBookCount,
           startPage: data.startPage,
-          booklist: getSortedBooks(data.booklist),
+          booklist: processBooklist(data.booklist),
         },
       });
     });
   });
 
-const search = (opt, getBook, getAllBooks) => {
-  if (!opt || (!getBook && !getAllBooks)) {
+const search = (opt, onResult, onComplete) => {
+  if (!opt || (!onResult && !onComplete)) {
     console.log("invalid search options");
     return;
   }
 
   const { title, libraryName } = opt;
-  const libraries = getLibArray(libraryName);
+  const libraries = resolveLibraries(libraryName);
 
   const promises = libraries.map(async (lib) => {
     const { error, result } = await searchLibrary(lib, title);
     if (error) {
-      getBook?.(error);
+      onResult?.(error);
       return null;
     }
-    getBook?.(null, result);
+    onResult?.(null, result);
     return result;
   });
 
   Promise.all(promises).then((results) => {
     const validResults = results.filter(Boolean);
-    getAllBooks?.(null, validResults);
+    onComplete?.(null, validResults);
   });
 };
+
+// =============================================================================
+// Exports
+// =============================================================================
 
 module.exports = {
   search,
