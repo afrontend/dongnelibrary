@@ -1,6 +1,10 @@
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
+const { request } = require("undici");
 const util = require("../../src/util.js");
+
+const DEFAULT_USER_AGENT =
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 /**
  * Creates a standard test suite for library modules that use libraryNames[0]
@@ -154,6 +158,95 @@ function createLibraryTestSuite(lib, description) {
       }
 
       console.log(`  ✓ bookUrl format verified: ${bookUrl}`);
+    });
+
+    it("Verify bookUrl is accessible", { timeout: 30000 }, async () => {
+      const book = await new Promise((resolve, reject) => {
+        lib.search(
+          {
+            title: "javascript",
+            libraryName: firstLibraryName,
+            startPage: 1,
+          },
+          (err, result) => {
+            if (err) reject(new Error(err.msg));
+            else resolve(result);
+          },
+        );
+      });
+
+      assert.ok(
+        book.booklist.length > 0,
+        "Need at least one book to test bookUrl accessibility",
+      );
+
+      const bookWithUrl = book.booklist.find((b) => b.bookUrl);
+      assert.ok(bookWithUrl, "At least one book should have a bookUrl");
+
+      const bookUrl = bookWithUrl.bookUrl;
+
+      // Skip hash-only URLs (e.g., gunpo uses client-side routing)
+      const urlWithoutHash = bookUrl.split("#")[0];
+      if (urlWithoutHash !== bookUrl && !urlWithoutHash.includes("?")) {
+        console.log(`  ⊘ Skipping accessibility check for hash-based URL: ${bookUrl}`);
+        return;
+      }
+
+      const urlObj = new URL(bookUrl);
+
+      // Skip domains that require session-based access
+      const sessionRequiredDomains = ["lib.goe.go.kr"];
+      if (sessionRequiredDomains.includes(urlObj.hostname)) {
+        console.log(`  ⊘ Skipping accessibility check (session required): ${bookUrl}`);
+        return;
+      }
+
+      try {
+        // Extract origin for Referer header (some sites require it)
+        const referer = urlObj.origin + "/";
+
+        const response = await request(bookUrl, {
+          method: "GET",
+          maxRedirections: 5,
+          headersTimeout: 20000,
+          bodyTimeout: 20000,
+          headers: {
+            "User-Agent": DEFAULT_USER_AGENT,
+            Referer: referer,
+          },
+        });
+
+        const body = await response.body.text();
+
+        assert.ok(
+          response.statusCode < 400,
+          `bookUrl returns error status ${response.statusCode}: ${bookUrl}`,
+        );
+
+        // Check for common Korean error page indicators
+        const errorIndicators = [
+          "페이지를 찾을 수 없습니다",
+          "존재하지 않는 페이지",
+          "잘못된 접근",
+          "요청하신 페이지를 찾을 수 없습니다",
+        ];
+
+        const hasErrorContent = errorIndicators.some((indicator) =>
+          body.includes(indicator),
+        );
+
+        assert.ok(
+          !hasErrorContent,
+          `bookUrl appears to be a soft 404 (error page content detected): ${bookUrl}`,
+        );
+
+        console.log(`  ✓ bookUrl is accessible (status ${response.statusCode}): ${bookUrl}`);
+      } catch (error) {
+        if (error.code === "ERR_ASSERTION") {
+          throw error;
+        }
+        assert.fail(`bookUrl is not accessible (network error: ${error.message}): ${bookUrl}`);
+      }
     });
 
     it(
