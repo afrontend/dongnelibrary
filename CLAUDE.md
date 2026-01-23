@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 DongneLibrary is a Korean public library book availability checker. It searches across 100+ library branches in Gyeonggi Province (경기도) to check if books can be borrowed. The project provides a CLI tool, JavaScript API, and Docker support.
 
+## Requirements
+
+- Node.js >= 18.0.0
+
 ## Commands
 
 ```bash
@@ -41,7 +45,7 @@ The project uses a modular plugin architecture where each library system has its
 2. `src/dongnelibrary.js` - Main orchestrator that routes searches to library modules and aggregates results
 3. `src/library/*.js` - Individual library scrapers (one per library system)
 4. `src/http.js` - HTTP wrapper around `undici` with `get()`, `post()`, and `createSession()` for cookie-based requests
-5. `src/util.js` - Shared utilities for HTML parsing and CSV handling
+5. `src/util.js` - Shared utilities: `validateSearchOptions()`, `createLibraryCodeLookup()`, HTML parsing with JSDOM, and CSV handling
 
 **Library Modules** (`src/library/`):
 
@@ -54,7 +58,7 @@ The project uses a modular plugin architecture where each library system has its
 - `yongin.js` - 용인시도서관 (Yongin City)
 
 Each library module must export:
-- `search(opt, callback)` - Main search function taking `{title, libraryName}` and returning book results via callback
+- `search(opt, callback)` - Main search function taking `{title, libraryName}`. Supports both callback style and Promise returns
 - `getLibraryNames()` - Returns array of branch names supported by this module
 - `homeUrl` - Base URL of the library system website
 
