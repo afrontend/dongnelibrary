@@ -1,11 +1,24 @@
+/**
+ * Strip HTML tags from a string.
+ * @param {string} str - Input string containing HTML tags.
+ * @returns {string} String with HTML tags removed.
+ */
 function stripTags(str) {
   return str.replace(/<\/?[^>]+(>|$)/g, "");
 }
 
+/**
+ * Print book list as formatted JSON to console.
+ * @param {Array<Object>} booklist - Array of book objects.
+ */
 function printBookList(booklist) {
   console.log(JSON.stringify(booklist, null, 2));
 }
 
+/**
+ * Print total book count and current page information.
+ * @param {Object} book - Book result object with totalBookCount and optional startPage.
+ */
 function printTotalBookCount(book) {
   if (book.totalBookCount) {
     console.log("TotalCount: " + book.totalBookCount);
@@ -18,8 +31,9 @@ function printTotalBookCount(book) {
 }
 
 /**
- * Convert comma separated strings to Array
- * @param {string} libs - "str1,str2,str3"
+ * Convert comma separated strings to Array.
+ * @param {string} libs - Comma-separated string like "str1,str2,str3".
+ * @returns {Array<string>} Array of trimmed strings.
  */
 function getArrayFromCommaSeparatedString(libs) {
   if (!libs) return [];
@@ -36,16 +50,68 @@ function getArrayFromCommaSeparatedString(libs) {
   });
 }
 
+/**
+ * Extract library names from a library list.
+ * @param {Array<{code: string, name: string}>} lst - Array of library objects.
+ * @returns {Array<string>} Array of library names.
+ */
 function getLibraryNames(lst) {
   return lst.map(function (item) {
     return item.name;
   });
 }
 
+/**
+ * Create a library code lookup function for a given library list.
+ * Factory pattern to avoid duplicating getLibraryCode() in each module.
+ * @param {Array<{code: string, name: string}>} libraryList - Array of library objects.
+ * @returns {function(string): string} Function that takes a library name and returns its code.
+ */
+function createLibraryCodeLookup(libraryList) {
+  return function getLibraryCode(libraryName) {
+    const found = libraryList.find((lib) => lib.name === libraryName);
+    return found ? found.code : "";
+  };
+}
+
+/**
+ * Validate search options and handle errors via callback or throw.
+ * @param {Object} opt - Search options object.
+ * @param {string} opt.title - Book title to search for.
+ * @param {string} opt.libraryName - Library name to search in.
+ * @param {function} [callback] - Optional callback function for error handling.
+ * @returns {{valid: boolean, error?: Object}} Validation result with optional error.
+ */
+function validateSearchOptions(opt, callback) {
+  const { title, libraryName } = opt;
+
+  if (!title) {
+    const error = { msg: "Need a book name" };
+    if (callback) {
+      callback(error);
+      return { valid: false, error };
+    }
+    throw new Error(error.msg);
+  }
+
+  if (!libraryName) {
+    const error = { msg: "Need a library name" };
+    if (callback) {
+      callback(error);
+      return { valid: false, error };
+    }
+    throw new Error(error.msg);
+  }
+
+  return { valid: true };
+}
+
 module.exports = {
-  stripTags: stripTags,
-  printBookList: printBookList,
-  printTotalBookCount: printTotalBookCount,
-  getArrayFromCommaSeparatedString: getArrayFromCommaSeparatedString,
-  getLibraryNames: getLibraryNames,
+  stripTags,
+  printBookList,
+  printTotalBookCount,
+  getArrayFromCommaSeparatedString,
+  getLibraryNames,
+  createLibraryCodeLookup,
+  validateSearchOptions,
 };

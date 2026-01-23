@@ -1,4 +1,8 @@
-const getLibraryNames = require("../util.js").getLibraryNames;
+const {
+  getLibraryNames,
+  createLibraryCodeLookup,
+  validateSearchOptions,
+} = require("../util.js");
 const jquery = require("jquery");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -26,31 +30,22 @@ const libraryList = [
   { code: "PK", name: "판교어린이도서관" },
 ];
 
-function getLibraryCode(libraryName) {
-  const found = libraryList.find((lib) => lib.name === libraryName);
-  return found ? found.code : "";
-}
+const getLibraryCode = createLibraryCodeLookup(libraryList);
 
+/**
+ * Search for books in Seongnam City Libraries.
+ * @param {Object} opt - Search options.
+ * @param {string} opt.title - Book title to search for.
+ * @param {string} opt.libraryName - Library name to search in.
+ * @param {number} [opt.startPage] - Starting page number for pagination.
+ * @param {function} [callback] - Optional callback(error, result).
+ * @returns {Promise<Object>} Search result with totalBookCount and booklist.
+ */
 async function search(opt, callback) {
   const { title, libraryName } = opt;
 
-  if (!title) {
-    const error = { msg: "Need a book name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
-
-  if (!libraryName) {
-    const error = { msg: "Need a library name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
+  const validation = validateSearchOptions(opt, callback);
+  if (!validation.valid) return;
 
   const lcode = getLibraryCode(libraryName);
 
@@ -99,16 +94,23 @@ async function search(opt, callback) {
           const [, recKey, bookKey, publishFormCode] = match;
           bookUrl = `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
         }
-        const rented = $(a).find(".bookStateBar .txt b").text();
-        const b = $(a).find(".site > span:first-child").text().split(":");
-        const libName = b && b[1] ? b[1].trim() : "";
+        const availability = $(a).find(".bookStateBar .txt b").text();
+        // Format: "소장처:도서관이름" - split by colon to extract library name
+        const libraryNameParts = $(a)
+          .find(".site > span:first-child")
+          .text()
+          .split(":");
+        const libName =
+          libraryNameParts && libraryNameParts[1]
+            ? libraryNameParts[1].trim()
+            : "";
         if (bookTitle) {
           booklist.push({
             libraryName: libName,
             title: bookTitle,
             bookUrl,
             maxoffset: count,
-            exist: rented.includes("대출가능"),
+            exist: availability.includes("대출가능"),
           });
         }
       });

@@ -1,4 +1,8 @@
-const getLibraryNames = require("../util.js").getLibraryNames;
+const {
+  getLibraryNames,
+  createLibraryCodeLookup,
+  validateSearchOptions,
+} = require("../util.js");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
@@ -51,31 +55,22 @@ const libraryList = [
   { code: "MV", name: "이동천리작은도서관" },
 ];
 
-function getLibraryCode(libraryName) {
-  const found = libraryList.find((lib) => lib.name === libraryName);
-  return found ? found.code : "";
-}
+const getLibraryCode = createLibraryCodeLookup(libraryList);
 
+/**
+ * Search for books in Yongin City Libraries.
+ * @param {Object} opt - Search options.
+ * @param {string} opt.title - Book title to search for.
+ * @param {string} opt.libraryName - Library name to search in.
+ * @param {number} [opt.startPage] - Starting page number for pagination.
+ * @param {function} [callback] - Optional callback(error, result).
+ * @returns {Promise<Object>} Search result with totalBookCount and booklist.
+ */
 async function search(opt, callback) {
   const { title, libraryName } = opt;
 
-  if (!title) {
-    const error = { msg: "Need a book name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
-
-  if (!libraryName) {
-    const error = { msg: "Need a library name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
+  const validation = validateSearchOptions(opt, callback);
+  if (!validation.valid) return;
 
   const lcode = getLibraryCode(libraryName);
 

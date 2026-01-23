@@ -1,4 +1,8 @@
-const getLibraryNames = require("../util.js").getLibraryNames;
+const {
+  getLibraryNames,
+  createLibraryCodeLookup,
+  validateSearchOptions,
+} = require("../util.js");
 const { createSession } = require("../http");
 
 const homeUrl = "https://www.suwonlib.go.kr";
@@ -29,10 +33,7 @@ const libraryList = [
   { code: "141107", name: "희망샘도서관" },
 ];
 
-function getLibraryCode(libraryName) {
-  const found = libraryList.find((lib) => lib.name === libraryName);
-  return found ? found.code : "";
-}
+const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 function stripHtml(str) {
   return str ? str.replace(/<[^>]*>/g, "") : "";
@@ -56,26 +57,19 @@ function getBookList(data) {
   });
 }
 
+/**
+ * Search for books in Suwon City Libraries.
+ * @param {Object} opt - Search options.
+ * @param {string} opt.title - Book title to search for.
+ * @param {string} opt.libraryName - Library name to search in.
+ * @param {function} [callback] - Optional callback(error, result).
+ * @returns {Promise<Object>} Search result with totalBookCount and booklist.
+ */
 async function search(opt, callback) {
   const { title, libraryName } = opt;
 
-  if (!title) {
-    const error = { msg: "Need a book name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
-
-  if (!libraryName) {
-    const error = { msg: "Need a library name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
+  const validation = validateSearchOptions(opt, callback);
+  if (!validation.valid) return;
 
   const lcode = getLibraryCode(libraryName);
 

@@ -1,6 +1,10 @@
 const { get } = require("../http");
 const _ = require("lodash");
-const getLibraryNames = require("../util.js").getLibraryNames;
+const {
+  getLibraryNames,
+  createLibraryCodeLookup,
+  validateSearchOptions,
+} = require("../util.js");
 
 const homeUrl = "https://www.gunpolib.go.kr";
 
@@ -31,10 +35,7 @@ const libraryList = [
   { code: "24", name: "여담작은도서관" },
 ];
 
-function getLibraryCode(libraryName) {
-  const found = libraryList.find((lib) => lib.name === libraryName);
-  return found ? found.code : "";
-}
+const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 function getBookList(json) {
   return _.map(json.data ? json.data.list : [], function (book) {
@@ -42,31 +43,26 @@ function getBookList(json) {
       title: book.titleStatement,
       exist: book.branchVolumes.some((vol) => vol.cState.includes("대출가능")),
       libraryName: book.branchVolumes.map((vol) => vol.name).join(","),
-      bookUrl: book.id ? `https://www.gunpolib.go.kr/#/search/detail/${book.id}` : "",
+      bookUrl: book.id
+        ? `https://www.gunpolib.go.kr/#/search/detail/${book.id}`
+        : "",
     };
   });
 }
 
+/**
+ * Search for books in Gunpo City Libraries.
+ * @param {Object} opt - Search options.
+ * @param {string} opt.title - Book title to search for.
+ * @param {string} opt.libraryName - Library name to search in.
+ * @param {function} [callback] - Optional callback(error, result).
+ * @returns {Promise<Object>} Search result with totalBookCount and booklist.
+ */
 async function search(opt, callback) {
   const { title, libraryName } = opt;
 
-  if (!title) {
-    const error = { msg: "Need a book name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
-
-  if (!libraryName) {
-    const error = { msg: "Need a library name" };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw new Error(error.msg);
-  }
+  const validation = validateSearchOptions(opt, callback);
+  if (!validation.valid) return;
 
   const branch = getLibraryCode(libraryName);
 
