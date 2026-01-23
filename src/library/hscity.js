@@ -2,6 +2,7 @@ const {
   getLibraryNames,
   createLibraryCodeLookup,
   validateSearchOptions,
+  extractNumber,
 } = require("../util.js");
 const { post } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -84,8 +85,7 @@ async function search(opt, callback) {
     const document = dom.window.document;
 
     const countText = document.querySelector("#totalCnt")?.textContent ?? "";
-    const countMatch = countText.match(/\d+/);
-    const count = countMatch ? countMatch[0] : "0";
+    const count = extractNumber(countText);
 
     const booklist = [];
     const bookItems = document.querySelectorAll(".bookArea");

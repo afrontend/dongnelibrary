@@ -2,6 +2,7 @@ const {
   getLibraryNames,
   createLibraryCodeLookup,
   validateSearchOptions,
+  extractNumber,
 } = require("../util.js");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -68,15 +69,8 @@ async function search(opt, callback) {
     const document = dom.window.document;
 
     // Extract total count from "총 <span class="highlight">44</span>건"
-    const highlightSpans = document.querySelectorAll("span.highlight");
-    let count = "0";
-    for (const span of highlightSpans) {
-      const text = span.textContent.trim();
-      if (/^\d+$/.test(text)) {
-        count = text;
-        break;
-      }
-    }
+    const highlightSpan = document.querySelector("span.highlight");
+    const count = extractNumber(highlightSpan?.textContent);
 
     const booklist = [];
     const bookItems = document.querySelectorAll(".bookList .listWrap > li");

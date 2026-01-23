@@ -75,6 +75,18 @@ function createLibraryCodeLookup(libraryList) {
 }
 
 /**
+ * Extract the first number from a string.
+ * Useful for parsing count values from text like "총 123건".
+ * @param {string} text - Input string containing a number.
+ * @param {string} [defaultValue="0"] - Default value if no number found.
+ * @returns {string} The extracted number as a string, or defaultValue.
+ */
+function extractNumber(text, defaultValue = "0") {
+  const match = (text ?? "").match(/\d+/);
+  return match ? match[0] : defaultValue;
+}
+
+/**
  * Validate search options and handle errors via callback or throw.
  * @param {Object} opt - Search options object.
  * @param {string} opt.title - Book title to search for.
@@ -113,5 +125,6 @@ module.exports = {
   getArrayFromCommaSeparatedString,
   getLibraryNames,
   createLibraryCodeLookup,
+  extractNumber,
   validateSearchOptions,
 };

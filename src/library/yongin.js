@@ -2,6 +2,7 @@ const {
   getLibraryNames,
   createLibraryCodeLookup,
   validateSearchOptions,
+  extractNumber,
 } = require("../util.js");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -102,15 +103,8 @@ async function search(opt, callback) {
     const document = dom.window.document;
 
     // Extract total count from "총<strong class="highlight">44</strong> 건"
-    const highlightElems = document.querySelectorAll(".highlight");
-    let count = "0";
-    for (const elem of highlightElems) {
-      const text = elem.textContent.trim();
-      if (/^\d+$/.test(text)) {
-        count = text;
-        break;
-      }
-    }
+    const highlightElem = document.querySelector(".highlight");
+    const count = extractNumber(highlightElem?.textContent);
 
     const booklist = [];
     const bookItems = document.querySelectorAll(".bookList .listWrap > li");
