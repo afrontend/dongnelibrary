@@ -3,6 +3,7 @@ const {
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
+  wrapWithCallback,
 } = require("../util.js");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -38,108 +39,88 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
  * @param {number} [opt.startPage] - Starting page number for pagination.
- * @param {function} [callback] - Optional callback(error, result).
  * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function search(opt, callback) {
+async function searchImpl(opt) {
   const { title, libraryName } = opt;
 
-  const validation = validateSearchOptions(opt, callback);
-  if (!validation.valid) return;
+  validateSearchOptions(opt);
 
   const lcode = getLibraryCode(libraryName);
 
-  try {
-    const { statusCode, body } = await get(
-      "https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do",
-      {
-        qs: {
-          currentPageNo: 1,
-          searchBookClass: "ALL",
-          searchCategory: "BOOK",
-          searchKey: "ALL",
-          searchKeyword: title,
-          searchLibraryArr: lcode,
-          searchOrder: "DESC",
-          searchRecordCount: 1000,
-          searchSort: "SIMILAR",
-          searchType: "SIMPLE",
-        },
+  const { statusCode, body } = await get(
+    "https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do",
+    {
+      qs: {
+        currentPageNo: 1,
+        searchBookClass: "ALL",
+        searchCategory: "BOOK",
+        searchKey: "ALL",
+        searchKeyword: title,
+        searchLibraryArr: lcode,
+        searchOrder: "DESC",
+        searchRecordCount: 1000,
+        searchSort: "SIMILAR",
+        searchType: "SIMPLE",
       },
-    );
+    },
+  );
 
-    if (statusCode !== 200) {
-      const error = { msg: `HTTP ${statusCode}` };
-      if (callback) {
-        callback(error);
-        return;
-      }
-      throw new Error(error.msg);
-    }
-
-    const dom = new JSDOM(body);
-    const document = dom.window.document;
-
-    const countText = document.querySelector("strong.themeFC")?.textContent ?? "";
-    const count = extractNumber(countText);
-
-    const booklist = [];
-    if (count) {
-      const bookItems = document.querySelectorAll(".resultList > li");
-      bookItems.forEach((item) => {
-        const titleElement = item.querySelector(".tit a");
-        const bookTitle = titleElement?.textContent?.trim() ?? "";
-        const onclick = titleElement?.getAttribute("onclick") ?? "";
-        const match = onclick.match(
-          /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
-        );
-        let bookUrl = "";
-        if (match) {
-          const [, recKey, bookKey, publishFormCode] = match;
-          bookUrl = `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
-        }
-        const availability =
-          item.querySelector(".bookStateBar .txt b")?.textContent ?? "";
-        // Format: "소장처:도서관이름" - split by colon to extract library name
-        const siteText =
-          item.querySelector(".site > span:first-child")?.textContent ?? "";
-        const libraryNameParts = siteText.split(":");
-        const libName =
-          libraryNameParts && libraryNameParts[1]
-            ? libraryNameParts[1].trim()
-            : "";
-        if (bookTitle) {
-          booklist.push({
-            libraryName: libName,
-            title: bookTitle,
-            bookUrl,
-            maxoffset: count,
-            exist: availability.includes("대출가능"),
-          });
-        }
-      });
-    }
-
-    const result = {
-      startPage: opt.startPage,
-      totalBookCount: count,
-      booklist,
-    };
-
-    if (callback) {
-      callback(null, result);
-      return;
-    }
-    return result;
-  } catch (err) {
-    const error = { msg: err.message || err.toString() };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw err;
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
   }
+
+  const dom = new JSDOM(body);
+  const document = dom.window.document;
+
+  const countText = document.querySelector("strong.themeFC")?.textContent ?? "";
+  const count = extractNumber(countText);
+
+  const booklist = [];
+  if (count) {
+    const bookItems = document.querySelectorAll(".resultList > li");
+    bookItems.forEach((item) => {
+      const titleElement = item.querySelector(".tit a");
+      const bookTitle = titleElement?.textContent?.trim() ?? "";
+      const onclick = titleElement?.getAttribute("onclick") ?? "";
+      const match = onclick.match(
+        /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
+      );
+      let bookUrl = "";
+      if (match) {
+        const [, recKey, bookKey, publishFormCode] = match;
+        bookUrl = `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
+      }
+      const availability =
+        item.querySelector(".bookStateBar .txt b")?.textContent ?? "";
+      // Format: "소장처:도서관이름" - split by colon to extract library name
+      const siteText =
+        item.querySelector(".site > span:first-child")?.textContent ?? "";
+      const libraryNameParts = siteText.split(":");
+      const libName =
+        libraryNameParts && libraryNameParts[1]
+          ? libraryNameParts[1].trim()
+          : "";
+      if (bookTitle) {
+        booklist.push({
+          libraryName: libName,
+          title: bookTitle,
+          bookUrl,
+          maxoffset: count,
+          exist: availability.includes("대출가능"),
+        });
+      }
+    });
+  }
+
+  return {
+    startPage: opt.startPage,
+    totalBookCount: count,
+    booklist,
+  };
 }
+
+const search = wrapWithCallback(searchImpl);
 
 module.exports = {
   search,

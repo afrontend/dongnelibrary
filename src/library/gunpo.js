@@ -4,6 +4,7 @@ const {
   getLibraryNames,
   createLibraryCodeLookup,
   validateSearchOptions,
+  wrapWithCallback,
 } = require("../util.js");
 
 const homeUrl = "https://www.gunpolib.go.kr";
@@ -55,58 +56,38 @@ function getBookList(json) {
  * @param {Object} opt - Search options.
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
- * @param {function} [callback] - Optional callback(error, result).
  * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function search(opt, callback) {
+async function searchImpl(opt) {
   const { title, libraryName } = opt;
 
-  const validation = validateSearchOptions(opt, callback);
-  if (!validation.valid) return;
+  validateSearchOptions(opt);
 
   const branch = getLibraryCode(libraryName);
 
-  try {
-    const { statusCode, body } = await get(
-      "https://www.gunpolib.go.kr/pyxis-api/1/collections/1/search",
-      {
-        qs: {
-          all: `k|a|${title}`,
-          branch,
-          max: 1000,
-        },
+  const { statusCode, body } = await get(
+    "https://www.gunpolib.go.kr/pyxis-api/1/collections/1/search",
+    {
+      qs: {
+        all: `k|a|${title}`,
+        branch,
+        max: 1000,
       },
-    );
+    },
+  );
 
-    if (statusCode !== 200) {
-      const error = { msg: `HTTP ${statusCode}` };
-      if (callback) {
-        callback(error);
-        return;
-      }
-      throw new Error(error.msg);
-    }
-
-    const booklist = getBookList(JSON.parse(body));
-    const result = {
-      totalBookCount: booklist.length,
-      booklist,
-    };
-
-    if (callback) {
-      callback(null, result);
-      return;
-    }
-    return result;
-  } catch (err) {
-    const error = { msg: err.message || err.toString() };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw err;
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
   }
+
+  const booklist = getBookList(JSON.parse(body));
+  return {
+    totalBookCount: booklist.length,
+    booklist,
+  };
 }
+
+const search = wrapWithCallback(searchImpl);
 
 module.exports = {
   search,

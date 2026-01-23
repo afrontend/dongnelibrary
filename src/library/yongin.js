@@ -3,6 +3,7 @@ const {
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
+  wrapWithCallback,
 } = require("../util.js");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -64,120 +65,100 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
  * @param {number} [opt.startPage] - Starting page number for pagination.
- * @param {function} [callback] - Optional callback(error, result).
  * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function search(opt, callback) {
+async function searchImpl(opt) {
   const { title, libraryName } = opt;
 
-  const validation = validateSearchOptions(opt, callback);
-  if (!validation.valid) return;
+  validateSearchOptions(opt);
 
   const lcode = getLibraryCode(libraryName);
 
-  try {
-    const { statusCode, body } = await get(
-      `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultList.do`,
-      {
-        qs: {
-          searchType: "SIMPLE",
-          searchCategory: "ALL",
-          searchLibraryArr: lcode,
-          searchKey: "ALL",
-          searchKeyword: title,
-          searchRecordCount: 1000,
-        },
+  const { statusCode, body } = await get(
+    `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultList.do`,
+    {
+      qs: {
+        searchType: "SIMPLE",
+        searchCategory: "ALL",
+        searchLibraryArr: lcode,
+        searchKey: "ALL",
+        searchKeyword: title,
+        searchRecordCount: 1000,
       },
-    );
+    },
+  );
 
-    if (statusCode !== 200) {
-      const error = { msg: `HTTP ${statusCode}` };
-      if (callback) {
-        callback(error);
-        return;
-      }
-      throw new Error(error.msg);
-    }
-
-    const dom = new JSDOM(body);
-    const document = dom.window.document;
-
-    // Extract total count from "총<strong class="highlight">44</strong> 건"
-    const highlightElem = document.querySelector(".highlight");
-    const count = extractNumber(highlightElem?.textContent);
-
-    const booklist = [];
-    const bookItems = document.querySelectorAll(".bookList .listWrap > li");
-    bookItems.forEach((li) => {
-      // Get title and book URL from .book_name link
-      const titleLink = li.querySelector(".book_name a");
-      // Title is the text content of the link, excluding the book_kind badge
-      let bookTitle = "";
-      if (titleLink) {
-        // Clone the node and remove the book_kind element to get clean title
-        const clone = titleLink.cloneNode(true);
-        const bookKind = clone.querySelector(".book_kind");
-        if (bookKind) bookKind.remove();
-        bookTitle = clone.textContent.trim();
-      }
-
-      // Extract book URL from onclick handler
-      let bookUrl = "";
-      const onclick = titleLink ? titleLink.getAttribute("onclick") || "" : "";
-      const urlMatch = onclick.match(
-        /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
-      );
-      if (urlMatch) {
-        const [, recKey, bookKey, publishFormCode] = urlMatch;
-        bookUrl = `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
-      }
-
-      // Get availability status from .status p
-      const statusEl = li.querySelector(".status p");
-      const statusText = statusEl ? statusEl.textContent.trim() : "";
-      const exist = statusText.includes("대출가능");
-
-      // Get library name from ".book_info.info03 p" (first p contains library name)
-      let libName = "";
-      const info03 = li.querySelector(".book_info.info03");
-      if (info03) {
-        const firstP = info03.querySelector("p");
-        if (firstP) {
-          libName = firstP.textContent.trim();
-        }
-      }
-
-      if (bookTitle) {
-        booklist.push({
-          libraryName: libName,
-          title: bookTitle,
-          bookUrl,
-          maxoffset: count,
-          exist: exist,
-        });
-      }
-    });
-
-    const result = {
-      startPage: opt.startPage,
-      totalBookCount: count,
-      booklist,
-    };
-
-    if (callback) {
-      callback(null, result);
-      return;
-    }
-    return result;
-  } catch (err) {
-    const error = { msg: err.message || err.toString() };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw err;
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
   }
+
+  const dom = new JSDOM(body);
+  const document = dom.window.document;
+
+  // Extract total count from "총<strong class="highlight">44</strong> 건"
+  const highlightElem = document.querySelector(".highlight");
+  const count = extractNumber(highlightElem?.textContent);
+
+  const booklist = [];
+  const bookItems = document.querySelectorAll(".bookList .listWrap > li");
+  bookItems.forEach((li) => {
+    // Get title and book URL from .book_name link
+    const titleLink = li.querySelector(".book_name a");
+    // Title is the text content of the link, excluding the book_kind badge
+    let bookTitle = "";
+    if (titleLink) {
+      // Clone the node and remove the book_kind element to get clean title
+      const clone = titleLink.cloneNode(true);
+      const bookKind = clone.querySelector(".book_kind");
+      if (bookKind) bookKind.remove();
+      bookTitle = clone.textContent.trim();
+    }
+
+    // Extract book URL from onclick handler
+    let bookUrl = "";
+    const onclick = titleLink ? titleLink.getAttribute("onclick") || "" : "";
+    const urlMatch = onclick.match(
+      /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
+    );
+    if (urlMatch) {
+      const [, recKey, bookKey, publishFormCode] = urlMatch;
+      bookUrl = `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
+    }
+
+    // Get availability status from .status p
+    const statusEl = li.querySelector(".status p");
+    const statusText = statusEl ? statusEl.textContent.trim() : "";
+    const exist = statusText.includes("대출가능");
+
+    // Get library name from ".book_info.info03 p" (first p contains library name)
+    let libName = "";
+    const info03 = li.querySelector(".book_info.info03");
+    if (info03) {
+      const firstP = info03.querySelector("p");
+      if (firstP) {
+        libName = firstP.textContent.trim();
+      }
+    }
+
+    if (bookTitle) {
+      booklist.push({
+        libraryName: libName,
+        title: bookTitle,
+        bookUrl,
+        maxoffset: count,
+        exist: exist,
+      });
+    }
+  });
+
+  return {
+    startPage: opt.startPage,
+    totalBookCount: count,
+    booklist,
+  };
 }
+
+const search = wrapWithCallback(searchImpl);
 
 module.exports = {
   search,

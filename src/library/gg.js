@@ -2,6 +2,7 @@ const {
   getLibraryNames,
   createLibraryCodeLookup,
   validateSearchOptions,
+  wrapWithCallback,
 } = require("../util.js");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -30,103 +31,83 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
  * @param {number} [opt.startPage] - Starting page number for pagination.
- * @param {function} [callback] - Optional callback(error, result).
  * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function search(opt, callback) {
+async function searchImpl(opt) {
   const { title, libraryName } = opt;
 
-  const validation = validateSearchOptions(opt, callback);
-  if (!validation.valid) return;
+  validateSearchOptions(opt);
 
   const lcode = getLibraryCode(libraryName);
 
-  try {
-    const { statusCode, body } = await get(
-      `https://lib.goe.go.kr/gg/intro/search/index.do`,
-      {
-        qs: {
-          booktype: "BOOKANDNONBOOK",
-          libraryCodes: lcode,
-          rowCount: 1000,
-          search_text: title,
-          viewPage: 1,
-        },
+  const { statusCode, body } = await get(
+    `https://lib.goe.go.kr/gg/intro/search/index.do`,
+    {
+      qs: {
+        booktype: "BOOKANDNONBOOK",
+        libraryCodes: lcode,
+        rowCount: 1000,
+        search_text: title,
+        viewPage: 1,
       },
-    );
+    },
+  );
 
-    if (statusCode !== 200) {
-      const error = { msg: `HTTP ${statusCode}` };
-      if (callback) {
-        callback(error);
-        return;
-      }
-      throw new Error(error.msg);
-    }
-
-    const dom = new JSDOM(body);
-    const document = dom.window.document;
-
-    const counterEl = document.querySelector(
-      "#search_result > div.research-box > div.search-info > b",
-    );
-    const count = counterEl ? Number(counterEl.innerHTML) : 0;
-
-    const booklist = [];
-    const bookItems = document.querySelectorAll(".bif");
-    bookItems.forEach((item) => {
-      const titleElement = item.querySelector(".book-title");
-      const bookTitle = titleElement?.querySelector("span")?.textContent?.trim() ?? "";
-      const bookPath = titleElement?.getAttribute("href") ?? "";
-      const bookUrl = bookPath
-        ? "https://lib.goe.go.kr/gg/intro/search/" + bookPath
-        : "";
-      const availability = item.querySelector(".state.typeC")?.textContent?.trim() ?? "";
-
-      // Find span containing "도서관" and get its next sibling's text
-      let libName = "";
-      const spans = item.querySelectorAll("span");
-      for (const span of spans) {
-        if (span.textContent?.includes("도서관")) {
-          const nextSibling = span.nextElementSibling;
-          if (nextSibling) {
-            libName = nextSibling.textContent?.split("|")[0]?.trim() ?? "";
-          }
-          break;
-        }
-      }
-
-      if (bookTitle) {
-        booklist.push({
-          libraryName: libName,
-          title: bookTitle,
-          bookUrl,
-          maxoffset: count,
-          exist: availability === "대출가능",
-        });
-      }
-    });
-
-    const result = {
-      startPage: opt.startPage,
-      totalBookCount: count,
-      booklist,
-    };
-
-    if (callback) {
-      callback(null, result);
-      return;
-    }
-    return result;
-  } catch (err) {
-    const error = { msg: err.message || err.toString() };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw err;
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
   }
+
+  const dom = new JSDOM(body);
+  const document = dom.window.document;
+
+  const counterEl = document.querySelector(
+    "#search_result > div.research-box > div.search-info > b",
+  );
+  const count = counterEl ? Number(counterEl.innerHTML) : 0;
+
+  const booklist = [];
+  const bookItems = document.querySelectorAll(".bif");
+  bookItems.forEach((item) => {
+    const titleElement = item.querySelector(".book-title");
+    const bookTitle = titleElement?.querySelector("span")?.textContent?.trim() ?? "";
+    const bookPath = titleElement?.getAttribute("href") ?? "";
+    const bookUrl = bookPath
+      ? "https://lib.goe.go.kr/gg/intro/search/" + bookPath
+      : "";
+    const availability = item.querySelector(".state.typeC")?.textContent?.trim() ?? "";
+
+    // Find span containing "도서관" and get its next sibling's text
+    let libName = "";
+    const spans = item.querySelectorAll("span");
+    for (const span of spans) {
+      if (span.textContent?.includes("도서관")) {
+        const nextSibling = span.nextElementSibling;
+        if (nextSibling) {
+          libName = nextSibling.textContent?.split("|")[0]?.trim() ?? "";
+        }
+        break;
+      }
+    }
+
+    if (bookTitle) {
+      booklist.push({
+        libraryName: libName,
+        title: bookTitle,
+        bookUrl,
+        maxoffset: count,
+        exist: availability === "대출가능",
+      });
+    }
+  });
+
+  return {
+    startPage: opt.startPage,
+    totalBookCount: count,
+    booklist,
+  };
 }
+
+const search = wrapWithCallback(searchImpl);
 
 module.exports = {
   search,

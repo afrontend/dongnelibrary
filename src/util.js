@@ -87,35 +87,41 @@ function extractNumber(text, defaultValue = "0") {
 }
 
 /**
- * Validate search options and handle errors via callback or throw.
+ * Validate search options. Throws an error if validation fails.
  * @param {Object} opt - Search options object.
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
- * @param {function} [callback] - Optional callback function for error handling.
- * @returns {{valid: boolean, error?: Object}} Validation result with optional error.
+ * @throws {Error} If title or libraryName is missing.
  */
-function validateSearchOptions(opt, callback) {
+function validateSearchOptions(opt) {
   const { title, libraryName } = opt;
 
   if (!title) {
-    const error = { msg: "Need a book name" };
-    if (callback) {
-      callback(error);
-      return { valid: false, error };
-    }
-    throw new Error(error.msg);
+    throw new Error("Need a book name");
   }
 
   if (!libraryName) {
-    const error = { msg: "Need a library name" };
-    if (callback) {
-      callback(error);
-      return { valid: false, error };
-    }
-    throw new Error(error.msg);
+    throw new Error("Need a library name");
   }
+}
 
-  return { valid: true };
+/**
+ * Wrap an async function to support both Promise and callback patterns.
+ * @param {function(Object): Promise<Object>} asyncFn - Async function that takes options and returns a Promise.
+ * @returns {function(Object, function?): Promise<Object>|void} Wrapped function supporting both patterns.
+ */
+function wrapWithCallback(asyncFn) {
+  return async function (opt, callback) {
+    if (!callback) {
+      return asyncFn(opt);
+    }
+    try {
+      const result = await asyncFn(opt);
+      callback(null, result);
+    } catch (err) {
+      callback({ msg: err.message || err.toString() });
+    }
+  };
 }
 
 module.exports = {
@@ -127,4 +133,5 @@ module.exports = {
   createLibraryCodeLookup,
   extractNumber,
   validateSearchOptions,
+  wrapWithCallback,
 };

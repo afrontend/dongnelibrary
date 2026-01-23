@@ -2,6 +2,7 @@ const {
   getLibraryNames,
   createLibraryCodeLookup,
   validateSearchOptions,
+  wrapWithCallback,
 } = require("../util.js");
 const { createSession } = require("../http");
 
@@ -62,95 +63,75 @@ function getBookList(data) {
  * @param {Object} opt - Search options.
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
- * @param {function} [callback] - Optional callback(error, result).
  * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function search(opt, callback) {
+async function searchImpl(opt) {
   const { title, libraryName } = opt;
 
-  const validation = validateSearchOptions(opt, callback);
-  if (!validation.valid) return;
+  validateSearchOptions(opt);
 
   const lcode = getLibraryCode(libraryName);
 
-  try {
-    // Create a session to maintain cookies
-    const session = createSession();
+  // Create a session to maintain cookies
+  const session = createSession();
 
-    // First, visit the search page to initialize session
-    await session.get("https://search.suwonlib.go.kr/search");
+  // First, visit the search page to initialize session
+  await session.get("https://search.suwonlib.go.kr/search");
 
-    // Now make the API call with the session cookies
-    const { statusCode, body } = await session.post(
-      "https://search.suwonlib.go.kr/getSearchResult/normal",
-      {
-        form: {
-          searchTxt: title,
-          kCid: "",
-          kdcValue: "",
-          searchKind: "book",
-          manageCode: lcode,
-          isInnerSearch: "F",
-          innerSearchTxt: "",
-          keywordSearch: false,
-          displayNo: "1000",
-          orderbyItem: "ACCURACY_SORT",
-          orderby: "DESC",
-          pageNo: "1",
-          facetLib: "",
-          facetLibName: "",
-          facetAuthor: "",
-          facetPublisher: "",
-          facetPubYear: "",
-          facetSubject: "",
-          facetSubjectName: "",
-          facetMedia: "",
-          facetMediaName: "",
-        },
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          Referer: "https://search.suwonlib.go.kr/search",
-          "X-Requested-With": "XMLHttpRequest",
-          ajax: "true",
-        },
+  // Now make the API call with the session cookies
+  const { statusCode, body } = await session.post(
+    "https://search.suwonlib.go.kr/getSearchResult/normal",
+    {
+      form: {
+        searchTxt: title,
+        kCid: "",
+        kdcValue: "",
+        searchKind: "book",
+        manageCode: lcode,
+        isInnerSearch: "F",
+        innerSearchTxt: "",
+        keywordSearch: false,
+        displayNo: "1000",
+        orderbyItem: "ACCURACY_SORT",
+        orderby: "DESC",
+        pageNo: "1",
+        facetLib: "",
+        facetLibName: "",
+        facetAuthor: "",
+        facetPublisher: "",
+        facetPubYear: "",
+        facetSubject: "",
+        facetSubjectName: "",
+        facetMedia: "",
+        facetMediaName: "",
       },
-    );
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        Referer: "https://search.suwonlib.go.kr/search",
+        "X-Requested-With": "XMLHttpRequest",
+        ajax: "true",
+      },
+    },
+  );
 
-    if (statusCode !== 200) {
-      const error = { msg: `HTTP ${statusCode}` };
-      if (callback) {
-        callback(error);
-        return;
-      }
-      throw new Error(error.msg);
-    }
-
-    const data = JSON.parse(body);
-    const booklist = getBookList(data);
-    const totalCount =
-      data.SEARCH_RESULT && data.SEARCH_RESULT.SEARCH_COUNT
-        ? data.SEARCH_RESULT.SEARCH_COUNT
-        : booklist.length;
-
-    const result = {
-      totalBookCount: totalCount,
-      booklist,
-    };
-
-    if (callback) {
-      callback(null, result);
-      return;
-    }
-    return result;
-  } catch (err) {
-    const error = { msg: err.message || err.toString() };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw err;
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
   }
+
+  const data = JSON.parse(body);
+  const booklist = getBookList(data);
+  const totalCount =
+    data.SEARCH_RESULT && data.SEARCH_RESULT.SEARCH_COUNT
+      ? data.SEARCH_RESULT.SEARCH_COUNT
+      : booklist.length;
+
+  return {
+    totalBookCount: totalCount,
+    booklist,
+  };
 }
+
+const search = wrapWithCallback(searchImpl);
 
 module.exports = {
   search,

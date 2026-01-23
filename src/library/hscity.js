@@ -3,6 +3,7 @@ const {
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
+  wrapWithCallback,
 } = require("../util.js");
 const { post } = require("../http");
 const { JSDOM } = require("jsdom");
@@ -50,88 +51,68 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * @param {string} opt.title - Book title to search for.
  * @param {string} opt.libraryName - Library name to search in.
  * @param {number} [opt.startPage] - Starting page number for pagination.
- * @param {function} [callback] - Optional callback(error, result).
  * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function search(opt, callback) {
+async function searchImpl(opt) {
   const { title, libraryName } = opt;
 
-  const validation = validateSearchOptions(opt, callback);
-  if (!validation.valid) return;
+  validateSearchOptions(opt);
 
   const lcode = getLibraryCode(libraryName);
   const url = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultList.do`;
 
-  try {
-    const { statusCode, body } = await post(url, {
-      form: {
-        searchType: "SIMPLE",
-        searchKeyword: title,
-        searchManageCodeArr: lcode,
-        searchDisplay: 1000,
-      },
-    });
+  const { statusCode, body } = await post(url, {
+    form: {
+      searchType: "SIMPLE",
+      searchKeyword: title,
+      searchManageCodeArr: lcode,
+      searchDisplay: 1000,
+    },
+  });
 
-    if (statusCode !== 200) {
-      const error = { msg: `HTTP ${statusCode}` };
-      if (callback) {
-        callback(error);
-        return;
-      }
-      throw new Error(error.msg);
-    }
-
-    const dom = new JSDOM(body);
-    const document = dom.window.document;
-
-    const countText = document.querySelector("#totalCnt")?.textContent ?? "";
-    const count = extractNumber(countText);
-
-    const booklist = [];
-    const bookItems = document.querySelectorAll(".bookArea");
-    bookItems.forEach((item) => {
-      const titleElement = item.querySelector("p.book_name.kor.on > a");
-      const bookTitle = titleElement?.getAttribute("title") ?? "";
-      const onclick = titleElement?.getAttribute("onclick") ?? "";
-      const match = onclick.match(
-        /fnDetail\('(\d+)',\s*'(\d+)',\s*'([^']*)',\s*'(\w+)'\)/,
-      );
-      let bookUrl = "";
-      if (match) {
-        const [, bookKey, speciesKey, isbn, pubFormCode] = match;
-        bookUrl = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultDetail.do?bookKey=${bookKey}&speciesKey=${speciesKey}&isbn=${isbn}&pubFormCode=${pubFormCode}`;
-      }
-      const availability = item.querySelector("span.emp8")?.textContent?.trim() ?? "";
-      const libName = item.querySelector("b.themeFC")?.textContent?.trim() ?? "";
-      booklist.push({
-        libraryName: libName.replace(/[\[\]]/g, ""),
-        title: bookTitle,
-        bookUrl,
-        maxoffset: count,
-        exist: availability.includes("대출가능"),
-      });
-    });
-
-    const result = {
-      startPage: opt.startPage,
-      totalBookCount: count,
-      booklist,
-    };
-
-    if (callback) {
-      callback(null, result);
-      return;
-    }
-    return result;
-  } catch (err) {
-    const error = { msg: err.message || err.toString() };
-    if (callback) {
-      callback(error);
-      return;
-    }
-    throw err;
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
   }
+
+  const dom = new JSDOM(body);
+  const document = dom.window.document;
+
+  const countText = document.querySelector("#totalCnt")?.textContent ?? "";
+  const count = extractNumber(countText);
+
+  const booklist = [];
+  const bookItems = document.querySelectorAll(".bookArea");
+  bookItems.forEach((item) => {
+    const titleElement = item.querySelector("p.book_name.kor.on > a");
+    const bookTitle = titleElement?.getAttribute("title") ?? "";
+    const onclick = titleElement?.getAttribute("onclick") ?? "";
+    const match = onclick.match(
+      /fnDetail\('(\d+)',\s*'(\d+)',\s*'([^']*)',\s*'(\w+)'\)/,
+    );
+    let bookUrl = "";
+    if (match) {
+      const [, bookKey, speciesKey, isbn, pubFormCode] = match;
+      bookUrl = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultDetail.do?bookKey=${bookKey}&speciesKey=${speciesKey}&isbn=${isbn}&pubFormCode=${pubFormCode}`;
+    }
+    const availability = item.querySelector("span.emp8")?.textContent?.trim() ?? "";
+    const libName = item.querySelector("b.themeFC")?.textContent?.trim() ?? "";
+    booklist.push({
+      libraryName: libName.replace(/[\[\]]/g, ""),
+      title: bookTitle,
+      bookUrl,
+      maxoffset: count,
+      exist: availability.includes("대출가능"),
+    });
+  });
+
+  return {
+    startPage: opt.startPage,
+    totalBookCount: count,
+    booklist,
+  };
 }
+
+const search = wrapWithCallback(searchImpl);
 
 module.exports = {
   search,
