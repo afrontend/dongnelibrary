@@ -3,7 +3,6 @@ const {
   createLibraryCodeLookup,
   validateSearchOptions,
 } = require("../util.js");
-const jquery = require("jquery");
 const { post } = require("../http");
 const { JSDOM } = require("jsdom");
 
@@ -82,13 +81,18 @@ async function search(opt, callback) {
     }
 
     const dom = new JSDOM(body);
-    const $ = jquery(dom.window);
-    const count = $("#totalCnt").text().match(/\d+/)[0];
+    const document = dom.window.document;
+
+    const countText = document.querySelector("#totalCnt")?.textContent ?? "";
+    const countMatch = countText.match(/\d+/);
+    const count = countMatch ? countMatch[0] : "0";
+
     const booklist = [];
-    $(".bookArea").each((_, a) => {
-      const titleElement = $(a).find("p.book_name.kor.on > a");
-      const title = titleElement.attr("title");
-      const onclick = titleElement.attr("onclick") || "";
+    const bookItems = document.querySelectorAll(".bookArea");
+    bookItems.forEach((item) => {
+      const titleElement = item.querySelector("p.book_name.kor.on > a");
+      const bookTitle = titleElement?.getAttribute("title") ?? "";
+      const onclick = titleElement?.getAttribute("onclick") ?? "";
       const match = onclick.match(
         /fnDetail\('(\d+)',\s*'(\d+)',\s*'([^']*)',\s*'(\w+)'\)/,
       );
@@ -97,11 +101,11 @@ async function search(opt, callback) {
         const [, bookKey, speciesKey, isbn, pubFormCode] = match;
         bookUrl = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultDetail.do?bookKey=${bookKey}&speciesKey=${speciesKey}&isbn=${isbn}&pubFormCode=${pubFormCode}`;
       }
-      const availability = $(a).find("span.emp8").text().trim();
-      const libName = $(a).find("b.themeFC").text().trim();
+      const availability = item.querySelector("span.emp8")?.textContent?.trim() ?? "";
+      const libName = item.querySelector("b.themeFC")?.textContent?.trim() ?? "";
       booklist.push({
         libraryName: libName.replace(/[\[\]]/g, ""),
-        title,
+        title: bookTitle,
         bookUrl,
         maxoffset: count,
         exist: availability.includes("대출가능"),

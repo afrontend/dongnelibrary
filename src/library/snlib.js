@@ -3,7 +3,6 @@ const {
   createLibraryCodeLookup,
   validateSearchOptions,
 } = require("../util.js");
-const jquery = require("jquery");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
@@ -78,14 +77,19 @@ async function search(opt, callback) {
     }
 
     const dom = new JSDOM(body);
-    const $ = jquery(dom.window);
-    const count = $("strong.themeFC").text().match(/\d+/)[0];
+    const document = dom.window.document;
+
+    const countText = document.querySelector("strong.themeFC")?.textContent ?? "";
+    const countMatch = countText.match(/\d+/);
+    const count = countMatch ? countMatch[0] : "0";
+
     const booklist = [];
     if (count) {
-      $(".resultList > li").each((_, a) => {
-        const titleElement = $(a).find(".tit a");
-        const bookTitle = titleElement.text().trim();
-        const onclick = titleElement.attr("onclick") || "";
+      const bookItems = document.querySelectorAll(".resultList > li");
+      bookItems.forEach((item) => {
+        const titleElement = item.querySelector(".tit a");
+        const bookTitle = titleElement?.textContent?.trim() ?? "";
+        const onclick = titleElement?.getAttribute("onclick") ?? "";
         const match = onclick.match(
           /fnSearchResultDetail\((\d+),(\d+),'(\w+)'\)/,
         );
@@ -94,12 +98,12 @@ async function search(opt, callback) {
           const [, recKey, bookKey, publishFormCode] = match;
           bookUrl = `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultDetail.do?recKey=${recKey}&bookKey=${bookKey}&publishFormCode=${publishFormCode}`;
         }
-        const availability = $(a).find(".bookStateBar .txt b").text();
+        const availability =
+          item.querySelector(".bookStateBar .txt b")?.textContent ?? "";
         // Format: "소장처:도서관이름" - split by colon to extract library name
-        const libraryNameParts = $(a)
-          .find(".site > span:first-child")
-          .text()
-          .split(":");
+        const siteText =
+          item.querySelector(".site > span:first-child")?.textContent ?? "";
+        const libraryNameParts = siteText.split(":");
         const libName =
           libraryNameParts && libraryNameParts[1]
             ? libraryNameParts[1].trim()

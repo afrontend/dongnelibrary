@@ -3,7 +3,6 @@ const {
   createLibraryCodeLookup,
   validateSearchOptions,
 } = require("../util.js");
-const jquery = require("jquery");
 const { get } = require("../http");
 const { JSDOM } = require("jsdom");
 
@@ -66,30 +65,41 @@ async function search(opt, callback) {
     }
 
     const dom = new JSDOM(body);
-    const $counter = dom.window.document.querySelector(
+    const document = dom.window.document;
+
+    const counterEl = document.querySelector(
       "#search_result > div.research-box > div.search-info > b",
     );
-    const count = $counter ? Number($counter.innerHTML) : 0;
-    const $ = jquery(dom.window);
+    const count = counterEl ? Number(counterEl.innerHTML) : 0;
+
     const booklist = [];
-    $(".bif").each((_, a) => {
-      const titleElement = $(a).find(".book-title");
-      const title = titleElement.find("> span").text().trim();
-      const bookPath = titleElement.attr("href");
+    const bookItems = document.querySelectorAll(".bif");
+    bookItems.forEach((item) => {
+      const titleElement = item.querySelector(".book-title");
+      const bookTitle = titleElement?.querySelector("span")?.textContent?.trim() ?? "";
+      const bookPath = titleElement?.getAttribute("href") ?? "";
       const bookUrl = bookPath
         ? "https://lib.goe.go.kr/gg/intro/search/" + bookPath
         : "";
-      const availability = $(a).find(".state.typeC").text().trim();
-      const libraryName = $(a)
-        .find("span:contains('도서관')")
-        .next()
-        .text()
-        .split("|")[0]
-        .trim();
-      if (title) {
+      const availability = item.querySelector(".state.typeC")?.textContent?.trim() ?? "";
+
+      // Find span containing "도서관" and get its next sibling's text
+      let libName = "";
+      const spans = item.querySelectorAll("span");
+      for (const span of spans) {
+        if (span.textContent?.includes("도서관")) {
+          const nextSibling = span.nextElementSibling;
+          if (nextSibling) {
+            libName = nextSibling.textContent?.split("|")[0]?.trim() ?? "";
+          }
+          break;
+        }
+      }
+
+      if (bookTitle) {
         booklist.push({
-          libraryName,
-          title,
+          libraryName: libName,
+          title: bookTitle,
           bookUrl,
           maxoffset: count,
           exist: availability === "대출가능",
