@@ -1,12 +1,15 @@
 #!/usr/bin/env node
-const Configstore = require("configstore");
-const colors = require("colors");
-const figlet = require("figlet");
-const { select, input } = require("@inquirer/prompts");
-const program = require("commander");
-const dl = require("./dongnelibrary");
-const util = require("./util");
-const pkg = require("../package.json");
+import Configstore from "configstore";
+import colors from "colors";
+import figlet from "figlet";
+import { select, input } from "@inquirer/prompts";
+import program from "commander";
+import * as dl from "./dongnelibrary";
+import * as util from "./util";
+import type { SearchResult } from "./types";
+
+// Read package.json
+const pkg = require("../package.json") as { name: string; version: string };
 
 // Constants
 const DEFAULT_TITLE = "javascript";
@@ -16,17 +19,16 @@ const conf = new Configstore(pkg.name, {});
 
 /** Configuration helpers for persistent storage */
 const config = {
-  getLibrary: () => conf.get("library"),
-  setLibrary: (name) => conf.set("library", name),
-  getTitle: () => conf.get("title") ?? DEFAULT_TITLE,
-  setTitle: (title) => conf.set("title", title),
+  getLibrary: (): string | undefined => conf.get("library") as string | undefined,
+  setLibrary: (name: string): void => conf.set("library", name),
+  getTitle: (): string => (conf.get("title") as string | undefined) ?? DEFAULT_TITLE,
+  setTitle: (title: string): void => conf.set("title", title),
 };
 
 /**
  * Display ASCII art intro message using figlet.
- * @param {string} msg - Message to display.
  */
-const introMessage = (msg) => {
+const introMessage = (msg: string): void => {
   console.log(
     figlet.textSync(msg, {
       font: "Standard",
@@ -46,11 +48,8 @@ program
 
 /**
  * Truncate string at first occurrence of substring.
- * @param {string} str - Input string.
- * @param {string} substring - Where to truncate.
- * @returns {string} Truncated string, or original if substring not found.
  */
-const truncateAt = (str, substring) => {
+const truncateAt = (str: string, substring: string): string => {
   const index = str.indexOf(substring);
   return index === -1 ? str : str.substring(0, index);
 };
@@ -63,11 +62,8 @@ const MARKS = {
 
 /**
  * Print book search results to console.
- * @param {Object} param - Book result object.
- * @param {Array} param.booklist - List of books found.
- * @param {string} [param.homeUrl] - Library home URL.
  */
-const printBooks = ({ booklist, homeUrl }) => {
+const printBooks = ({ booklist, homeUrl }: SearchResult): void => {
   if (homeUrl) {
     console.log(colors.yellow(`[${homeUrl}]`));
   }
@@ -81,7 +77,7 @@ const printBooks = ({ booklist, homeUrl }) => {
 };
 
 /** Print all available library names to console */
-const printAllLibraryNames = () => {
+const printAllLibraryNames = (): void => {
   const libs = dl.getLibraryNames();
   libs.forEach((name) => console.log(name));
   console.log(colors.green(`모두 ${libs.length} 개의 도서관`));
@@ -89,54 +85,42 @@ const printAllLibraryNames = () => {
 
 /**
  * Find full library name from partial string.
- * @param {string} str - Partial library name.
- * @returns {string|undefined} Full library name if found.
  */
-const getFullLibraryName = (str) =>
+const getFullLibraryName = (str: string): string | undefined =>
   dl.getLibraryNames().find((name) => name.includes(str));
 
 /**
  * Count total books across all search results.
- * @param {Array} results - Array of search result objects.
- * @returns {number} Total book count.
  */
-const getBookCount = (results) =>
+const getBookCount = (results: SearchResult[]): number =>
   results.reduce((sum, book) => sum + (book?.booklist?.length ?? 0), 0);
 
 /**
  * Convert comma-separated library names to full name list.
- * @param {string} libraryName - Comma-separated library names.
- * @returns {Array<string>} Array of full library names.
  */
-const getLibraryFullNameList = (libraryName) =>
+const getLibraryFullNameList = (libraryName: string): string[] =>
   util
     .getArrayFromCommaSeparatedString(libraryName)
     .filter((name) => getFullLibraryName(name));
 
 /**
  * Get library names to search - either specified or all.
- * @param {string} [libraryName] - Optional comma-separated library names.
- * @returns {Array<string>} Array of library names to search.
  */
-const getLibraries = (libraryName) =>
+const getLibraries = (libraryName?: string): string[] =>
   libraryName ? getLibraryFullNameList(libraryName) : dl.getLibraryNames();
 
 /**
  * Search libraries for books and print results.
- * @param {Object} options - Search options.
- * @param {string} options.title - Book title to search.
- * @param {string} [options.libraryName] - Optional library filter.
- * @returns {Promise<Array>} Search results.
  */
-const searchLibraries = ({ title, libraryName }) =>
+const searchLibraries = ({ title, libraryName }: { title: string; libraryName?: string }): Promise<SearchResult[]> =>
   new Promise((resolve) => {
-    const results = [];
+    const results: SearchResult[] = [];
     dl.search(
       { title, libraryName: getLibraries(libraryName) },
       (err, book) => {
         if (err) {
           console.log(err.msg ?? "Unknown Error");
-        } else {
+        } else if (book) {
           printBooks(book);
           results.push(book);
         }
@@ -146,7 +130,7 @@ const searchLibraries = ({ title, libraryName }) =>
           console.log("Error, Can't access detail information");
           resolve([]);
         } else {
-          resolve(allBooks);
+          resolve(allBooks ?? []);
         }
       },
     );
@@ -154,9 +138,8 @@ const searchLibraries = ({ title, libraryName }) =>
 
 /**
  * Print search summary with library and book counts.
- * @param {Array} results - Array of search result objects.
  */
-const printSearchSummary = (results) => {
+const printSearchSummary = (results: SearchResult[]): void => {
   const bookCount = getBookCount(results);
   console.log(
     colors.green(`${results.length} 개의 도서관에서  ${bookCount} 권 검색됨`),
@@ -165,9 +148,8 @@ const printSearchSummary = (results) => {
 
 /**
  * Interactive prompt for search options using inquirer.
- * @returns {Promise<{libraryName: string, title: string}>} Selected search options.
  */
-const promptForSearchOptions = async () => {
+const promptForSearchOptions = async (): Promise<{ libraryName: string; title: string }> => {
   introMessage("Dongne Library");
 
   const library = await select({
@@ -187,9 +169,16 @@ const promptForSearchOptions = async () => {
   return { libraryName: library, title };
 };
 
+interface ProgramOptions {
+  libraryList?: boolean;
+  interactive?: boolean;
+  libraryName?: string;
+  title?: string;
+}
+
 /** Main entry point - parse CLI options and execute search */
-const activate = async () => {
-  const opts = program.opts();
+const activate = async (): Promise<void> => {
+  const opts = program.opts() as ProgramOptions;
   const { libraryList, interactive, libraryName, title } = opts;
 
   if (libraryList) {
@@ -197,7 +186,7 @@ const activate = async () => {
     return;
   }
 
-  let searchOptions;
+  let searchOptions: { libraryName?: string; title: string } | undefined;
 
   if (interactive) {
     searchOptions = await promptForSearchOptions();

@@ -1,15 +1,16 @@
-const {
-  getLibraryNames,
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   wrapWithCallback,
-} = require("../util.js");
-const { get } = require("../http");
-const { JSDOM } = require("jsdom");
+} from "../util";
+import { get } from "../http";
+import { JSDOM } from "jsdom";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://lib.goe.go.kr";
+export const homeUrl = "https://lib.goe.go.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   { code: "MA", name: "경기중앙교육도서관" },
   { code: "MB", name: "경기평택교육도서관" },
   { code: "MC", name: "경기광주교육도서관" },
@@ -27,13 +28,8 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 /**
  * Search for books in Gyeonggi Provincial Educational Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @param {number} [opt.startPage] - Starting page number for pagination.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -65,7 +61,7 @@ async function searchImpl(opt) {
   );
   const count = counterEl ? Number(counterEl.innerHTML) : 0;
 
-  const booklist = [];
+  const booklist: Book[] = [];
   const bookItems = document.querySelectorAll(".bif");
   bookItems.forEach((item) => {
     const titleElement = item.querySelector(".book-title");
@@ -107,12 +103,8 @@ async function searchImpl(opt) {
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}

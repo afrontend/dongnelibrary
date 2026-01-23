@@ -5,20 +5,24 @@
   },
   "version": "0.2.12",
   "description": "책을 빌릴 수 있는지 확인한다.",
-  "main": "src/dongnelibrary.js",
+  "main": "dist/dongnelibrary.js",
+  "types": "dist/dongnelibrary.d.ts",
   "bin": {
-    "dongnelibrary": "src/cli.js"
+    "dongnelibrary": "dist/cli.js"
   },
   "scripts": {
-    "test": "node --test test/*.spec.js",
-    "dongne": "node --test test/dongne.spec.js",
-    "gg": "node --test test/gg.spec.js",
-    "gunpo": "node --test test/gunpo.spec.js",
-    "hscity": "node --test test/hscity.spec.js",
-    "osan": "node --test test/osan.spec.js",
-    "snlib": "node --test test/snlib.spec.js",
-    "suwon": "node --test test/suwon.spec.js",
-    "yongin": "node --test test/yongin.spec.js"
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && node --test test/*.spec.js",
+    "dongne": "npm run build && node --test test/dongne.spec.js",
+    "gg": "npm run build && node --test test/gg.spec.js",
+    "gunpo": "npm run build && node --test test/gunpo.spec.js",
+    "hscity": "npm run build && node --test test/hscity.spec.js",
+    "osan": "npm run build && node --test test/osan.spec.js",
+    "snlib": "npm run build && node --test test/snlib.spec.js",
+    "suwon": "npm run build && node --test test/suwon.spec.js",
+    "yongin": "npm run build && node --test test/yongin.spec.js"
   },
   "repository": {
     "type": "git",
@@ -43,8 +47,14 @@
   },
   "homepage": "https://github.com/afrontend/dongnelibrary#readme",
   "devDependencies": {
+    "@types/configstore": "^6.0.2",
+    "@types/figlet": "^1.7.0",
+    "@types/jsdom": "^27.0.0",
+    "@types/lodash": "^4.17.23",
+    "@types/node": "^20.19.30",
     "acorn": ">=5.7.4",
-    "minimist": ">=1.2.2"
+    "minimist": ">=1.2.2",
+    "typescript": "^5.9.3"
   },
   "tonicExampleFilename": "src/example.js",
   "dependencies": {

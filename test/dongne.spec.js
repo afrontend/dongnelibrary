@@ -1,5 +1,5 @@
 const { describe, it } = require("node:test");
-const dl = require("../src/dongnelibrary");
+const dl = require("../dist/dongnelibrary");
 const assert = require("assert");
 
 describe("dongnelibrary test", () => {

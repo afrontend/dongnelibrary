@@ -1,5 +1,5 @@
 const { describe, it } = require("node:test");
-const util = require("../src/util");
+const util = require("../dist/util");
 const assert = require("assert");
 
 describe("util", () => {

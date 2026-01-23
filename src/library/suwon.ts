@@ -1,14 +1,15 @@
-const {
-  getLibraryNames,
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   wrapWithCallback,
-} = require("../util.js");
-const { createSession } = require("../http");
+} from "../util";
+import { createSession } from "../http";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://www.suwonlib.go.kr";
+export const homeUrl = "https://www.suwonlib.go.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   { code: "141025", name: "선경도서관" },
   { code: "141024", name: "수원중앙도서관" },
   { code: "141549", name: "창룡도서관" },
@@ -36,15 +37,31 @@ const libraryList = [
 
 const getLibraryCode = createLibraryCodeLookup(libraryList);
 
-function stripHtml(str) {
+function stripHtml(str: string | undefined): string {
   return str ? str.replace(/<[^>]*>/g, "") : "";
 }
 
-function getBookList(data) {
+interface SuwonBook {
+  TITLE_INFO?: string;
+  LOAN_CODE?: string;
+  LIB_NAME?: string;
+  MANAGE_CODE?: string;
+  ISBN?: string;
+  BOOK_KEY?: string;
+}
+
+interface SuwonApiResponse {
+  SEARCH_RESULT?: {
+    SEARCH_LIST?: SuwonBook[];
+    SEARCH_COUNT?: number;
+  };
+}
+
+function getBookList(data: SuwonApiResponse): Book[] {
   if (!data.SEARCH_RESULT || !data.SEARCH_RESULT.SEARCH_LIST) {
     return [];
   }
-  return data.SEARCH_RESULT.SEARCH_LIST.map(function (book) {
+  return data.SEARCH_RESULT.SEARCH_LIST.map(function (book: SuwonBook): Book {
     let bookUrl = "";
     if (book.MANAGE_CODE && book.ISBN && book.BOOK_KEY) {
       bookUrl = `https://search.suwonlib.go.kr/detail/${book.MANAGE_CODE}/${book.ISBN}/${book.BOOK_KEY}`;
@@ -60,12 +77,8 @@ function getBookList(data) {
 
 /**
  * Search for books in Suwon City Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -118,7 +131,7 @@ async function searchImpl(opt) {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const data = JSON.parse(body);
+  const data = JSON.parse(body) as SuwonApiResponse;
   const booklist = getBookList(data);
   const totalCount =
     data.SEARCH_RESULT && data.SEARCH_RESULT.SEARCH_COUNT
@@ -131,12 +144,8 @@ async function searchImpl(opt) {
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}

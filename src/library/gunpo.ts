@@ -1,15 +1,16 @@
-const { get } = require("../http");
-const _ = require("lodash");
-const {
-  getLibraryNames,
+import { get } from "../http";
+import _ from "lodash";
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   wrapWithCallback,
-} = require("../util.js");
+} from "../util";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://www.gunpolib.go.kr";
+export const homeUrl = "https://www.gunpolib.go.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   { code: "1", name: "산본도서관" },
   { code: "2", name: "당동도서관" },
   { code: "3", name: "대야도서관" },
@@ -38,8 +39,25 @@ const libraryList = [
 
 const getLibraryCode = createLibraryCodeLookup(libraryList);
 
-function getBookList(json) {
-  return _.map(json.data ? json.data.list : [], function (book) {
+interface GunpoVolume {
+  name: string;
+  cState: string;
+}
+
+interface GunpoBook {
+  titleStatement: string;
+  branchVolumes: GunpoVolume[];
+  id?: string;
+}
+
+interface GunpoApiResponse {
+  data?: {
+    list: GunpoBook[];
+  };
+}
+
+function getBookList(json: GunpoApiResponse): Book[] {
+  return _.map(json.data ? json.data.list : [], function (book: GunpoBook): Book {
     return {
       title: book.titleStatement,
       exist: book.branchVolumes.some((vol) => vol.cState.includes("대출가능")),
@@ -53,12 +71,8 @@ function getBookList(json) {
 
 /**
  * Search for books in Gunpo City Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -80,19 +94,15 @@ async function searchImpl(opt) {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const booklist = getBookList(JSON.parse(body));
+  const booklist = getBookList(JSON.parse(body) as GunpoApiResponse);
   return {
     totalBookCount: booklist.length,
     booklist,
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}

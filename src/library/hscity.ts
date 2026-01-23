@@ -1,16 +1,17 @@
-const {
-  getLibraryNames,
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
   wrapWithCallback,
-} = require("../util.js");
-const { post } = require("../http");
-const { JSDOM } = require("jsdom");
+} from "../util";
+import { post } from "../http";
+import { JSDOM } from "jsdom";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://hscitylib.or.kr";
+export const homeUrl = "https://hscitylib.or.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   { code: "MA", name: "남양도서관" },
   { code: "MB", name: "태안도서관" },
   { code: "MC", name: "삼괴도서관" },
@@ -47,13 +48,8 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 /**
  * Search for books in Hwaseong City Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @param {number} [opt.startPage] - Starting page number for pagination.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -80,7 +76,7 @@ async function searchImpl(opt) {
   const countText = document.querySelector("#totalCnt")?.textContent ?? "";
   const count = extractNumber(countText);
 
-  const booklist = [];
+  const booklist: Book[] = [];
   const bookItems = document.querySelectorAll(".bookArea");
   bookItems.forEach((item) => {
     const titleElement = item.querySelector("p.book_name.kor.on > a");
@@ -112,12 +108,8 @@ async function searchImpl(opt) {
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}

@@ -1,16 +1,17 @@
-const {
-  getLibraryNames,
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
   wrapWithCallback,
-} = require("../util.js");
-const { get } = require("../http");
-const { JSDOM } = require("jsdom");
+} from "../util";
+import { get } from "../http";
+import { JSDOM } from "jsdom";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://lib.yongin.go.kr";
+export const homeUrl = "https://lib.yongin.go.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   // Public libraries (시립도서관)
   { code: "MB", name: "수지도서관" },
   { code: "MI", name: "구갈희망누리도서관" },
@@ -61,13 +62,8 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 /**
  * Search for books in Yongin City Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @param {number} [opt.startPage] - Starting page number for pagination.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -99,7 +95,7 @@ async function searchImpl(opt) {
   const highlightElem = document.querySelector(".highlight");
   const count = extractNumber(highlightElem?.textContent);
 
-  const booklist = [];
+  const booklist: Book[] = [];
   const bookItems = document.querySelectorAll(".bookList .listWrap > li");
   bookItems.forEach((li) => {
     // Get title and book URL from .book_name link
@@ -108,10 +104,10 @@ async function searchImpl(opt) {
     let bookTitle = "";
     if (titleLink) {
       // Clone the node and remove the book_kind element to get clean title
-      const clone = titleLink.cloneNode(true);
+      const clone = titleLink.cloneNode(true) as Element;
       const bookKind = clone.querySelector(".book_kind");
       if (bookKind) bookKind.remove();
-      bookTitle = clone.textContent.trim();
+      bookTitle = clone.textContent?.trim() ?? "";
     }
 
     // Extract book URL from onclick handler
@@ -127,7 +123,7 @@ async function searchImpl(opt) {
 
     // Get availability status from .status p
     const statusEl = li.querySelector(".status p");
-    const statusText = statusEl ? statusEl.textContent.trim() : "";
+    const statusText = statusEl ? statusEl.textContent?.trim() ?? "" : "";
     const exist = statusText.includes("대출가능");
 
     // Get library name from ".book_info.info03 p" (first p contains library name)
@@ -136,7 +132,7 @@ async function searchImpl(opt) {
     if (info03) {
       const firstP = info03.querySelector("p");
       if (firstP) {
-        libName = firstP.textContent.trim();
+        libName = firstP.textContent?.trim() ?? "";
       }
     }
 
@@ -158,12 +154,8 @@ async function searchImpl(opt) {
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}

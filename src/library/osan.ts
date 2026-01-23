@@ -1,16 +1,17 @@
-const {
-  getLibraryNames,
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
   wrapWithCallback,
-} = require("../util.js");
-const { get } = require("../http");
-const { JSDOM } = require("jsdom");
+} from "../util";
+import { get } from "../http";
+import { JSDOM } from "jsdom";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://www.osanlibrary.go.kr";
+export const homeUrl = "https://www.osanlibrary.go.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   { code: "MA", name: "오산중앙도서관" },
   { code: "MG", name: "꿈두레도서관" },
   { code: "ME", name: "초평도서관" },
@@ -27,13 +28,8 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 /**
  * Search for books in Osan City Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @param {number} [opt.startPage] - Starting page number for pagination.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -65,13 +61,13 @@ async function searchImpl(opt) {
   const highlightSpan = document.querySelector("span.highlight");
   const count = extractNumber(highlightSpan?.textContent);
 
-  const booklist = [];
+  const booklist: Book[] = [];
   const bookItems = document.querySelectorAll(".bookList .listWrap > li");
   bookItems.forEach((li) => {
     // Get title and book URL from .book_name link
     const titleLink = li.querySelector(".book_name");
     const titleEl = titleLink ? titleLink.querySelector("span") : null;
-    const bookTitle = titleEl ? titleEl.textContent.trim() : "";
+    const bookTitle = titleEl ? titleEl.textContent?.trim() ?? "" : "";
 
     // Extract book URL from onclick handler
     let bookUrl = "";
@@ -86,7 +82,7 @@ async function searchImpl(opt) {
 
     // Get availability status from .status p
     const statusEl = li.querySelector(".status p");
-    const statusText = statusEl ? statusEl.textContent.trim() : "";
+    const statusText = statusEl ? statusEl.textContent?.trim() ?? "" : "";
     const exist = statusText.includes("대출가능");
 
     // Get library name from ".book_info .fb p" containing "소장도서관"
@@ -94,7 +90,7 @@ async function searchImpl(opt) {
     const fbParagraphs = li.querySelectorAll(".book_info .fb p");
     fbParagraphs.forEach((p) => {
       const text = p.textContent;
-      if (text.includes("소장도서관")) {
+      if (text?.includes("소장도서관")) {
         // Format: "[공공]오산시중앙도서관" - extract library name after "]"
         const match = text.match(/\](.+)$/);
         if (match) {
@@ -121,12 +117,8 @@ async function searchImpl(opt) {
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}

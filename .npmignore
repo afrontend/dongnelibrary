@@ -3,3 +3,14 @@
 
 # Claude Code instructions
 CLAUDE.md
+
+# TypeScript source files (publish compiled JS only)
+src/**/*.ts
+tsconfig.json
+*.tsbuildinfo
+
+# Test files
+test/
+
+# Development files
+.github/

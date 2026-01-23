@@ -1,16 +1,17 @@
-const {
-  getLibraryNames,
+import {
+  getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
   extractNumber,
   wrapWithCallback,
-} = require("../util.js");
-const { get } = require("../http");
-const { JSDOM } = require("jsdom");
+} from "../util";
+import { get } from "../http";
+import { JSDOM } from "jsdom";
+import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
-const homeUrl = "https://www.snlib.go.kr";
+export const homeUrl = "https://www.snlib.go.kr";
 
-const libraryList = [
+const libraryList: LibraryInfo[] = [
   { code: "BF", name: "논골도서관" },
   { code: "CK", name: "중원어린이도서관" },
   { code: "MA", name: "성남중앙도서관" },
@@ -35,13 +36,8 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 /**
  * Search for books in Seongnam City Libraries.
- * @param {Object} opt - Search options.
- * @param {string} opt.title - Book title to search for.
- * @param {string} opt.libraryName - Library name to search in.
- * @param {number} [opt.startPage] - Starting page number for pagination.
- * @returns {Promise<Object>} Search result with totalBookCount and booklist.
  */
-async function searchImpl(opt) {
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { title, libraryName } = opt;
 
   validateSearchOptions(opt);
@@ -76,7 +72,7 @@ async function searchImpl(opt) {
   const countText = document.querySelector("strong.themeFC")?.textContent ?? "";
   const count = extractNumber(countText);
 
-  const booklist = [];
+  const booklist: Book[] = [];
   if (count) {
     const bookItems = document.querySelectorAll(".resultList > li");
     bookItems.forEach((item) => {
@@ -120,12 +116,8 @@ async function searchImpl(opt) {
   };
 }
 
-const search = wrapWithCallback(searchImpl);
+export const search = wrapWithCallback(searchImpl);
 
-module.exports = {
-  search,
-  homeUrl,
-  getLibraryNames: function () {
-    return getLibraryNames(libraryList);
-  },
-};
+export function getLibraryNames(): string[] {
+  return getLibNames(libraryList);
+}
