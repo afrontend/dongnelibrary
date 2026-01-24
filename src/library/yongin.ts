@@ -92,8 +92,9 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const document = dom.window.document;
 
   // Extract total count from "총<strong class="highlight">44</strong> 건"
-  const highlightElem = document.querySelector(".highlight");
-  const count = extractNumber(highlightElem?.textContent);
+  // Note: First .highlight element contains search term, second contains the count
+  const highlightElems = document.querySelectorAll(".highlight");
+  const count = extractNumber(highlightElems[1]?.textContent);
 
   const booklist: Book[] = [];
   const bookItems = document.querySelectorAll(".bookList .listWrap > li");
