@@ -65,12 +65,22 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const bookItems = document.querySelectorAll(".bif");
   bookItems.forEach((item) => {
     const titleElement = item.querySelector(".book-title");
-    const bookTitle = titleElement?.querySelector("span")?.textContent?.trim() ?? "";
+    const bookTitle =
+      titleElement?.querySelector("span")?.textContent?.trim() ?? "";
     const bookPath = titleElement?.getAttribute("href") ?? "";
-    const bookUrl = bookPath
+    const tmpUrl = bookPath
       ? "https://lib.goe.go.kr/gg/intro/search/" + bookPath
       : "";
-    const availability = item.querySelector(".state.typeC")?.textContent?.trim() ?? "";
+
+    const url = new URL(tmpUrl);
+    const regNo = url.searchParams.get("regNo");
+    const manageCode = url.searchParams.get("manageCode");
+    const booktype = url.searchParams.get("booktype");
+
+    const bookUrl = `https://lib.goe.go.kr/gg/intro/search/detail.do?regNo=${regNo}&manageCode=${manageCode}&booktype=${booktype}`;
+
+    const availability =
+      item.querySelector(".state.typeC")?.textContent?.trim() ?? "";
 
     // Find span containing "도서관" and get its next sibling's text
     let libName = "";
