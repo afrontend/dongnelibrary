@@ -28,16 +28,8 @@ describe("경기교육도서관 bookUrl content verification", () => {
       const book = result.booklist.find((b) => b.bookUrl);
       assert.ok(book, "At least one book should have a bookUrl");
 
-      // Build clean URL (avoid ISBN encoding issues with spaces)
-      const url = new URL(book.bookUrl);
-      const regNo = url.searchParams.get("regNo");
-      const manageCode = url.searchParams.get("manageCode");
-      const booktype = url.searchParams.get("booktype");
-
-      const cleanUrl = `https://lib.goe.go.kr/gg/intro/search/detail.do?regNo=${regNo}&manageCode=${manageCode}&booktype=${booktype}`;
-
       // Fetch the detail page
-      const response = await request(cleanUrl, {
+      const response = await request(book.bookUrl, {
         method: "GET",
         maxRedirections: 5,
         headersTimeout: 20000,
