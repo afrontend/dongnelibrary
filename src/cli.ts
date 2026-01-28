@@ -65,10 +65,7 @@ const MARKS = {
 /**
  * Print book search results to console.
  */
-const printBooks = ({ booklist, homeUrl }: SearchResult): void => {
-  if (homeUrl) {
-    console.log(colors.yellow(`[${homeUrl}]`));
-  }
+const printBooks = ({ booklist }: SearchResult): void => {
   for (const { libraryName, exist, title, bookUrl } of booklist) {
     const mark = exist ? ` ${MARKS.ok} ` : ` ${colors.red(MARKS.notOk)} `;
     console.log(`${truncateAt(libraryName, LIBRARY_SUFFIX)}${mark}${title}`);
@@ -197,12 +194,14 @@ const activate = async (): Promise<void> => {
     return;
   }
 
-  let searchOptions: { libraryName: string; title: string } | undefined;
+  let searchOptions: { title: string; libraryName: string } | undefined;
 
   if (interactive) {
     searchOptions = await promptForSearchOptions();
   } else if (libraryName && title) {
-    searchOptions = { libraryName, title };
+    searchOptions = { title, libraryName };
+  } else if (title) {
+    searchOptions = { title, libraryName: "" };
   } else {
     return;
   }

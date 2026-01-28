@@ -65,7 +65,12 @@ const isValidLibraryName = (libraryName: string): boolean =>
 const resolveLibraries = (
   libraryName: string | string[],
 ): LibraryRegistryEntry[] => {
-  const names = Array.isArray(libraryName) ? libraryName : [libraryName];
+  const names =
+    libraryName === ""
+      ? getLibraryNames()
+      : Array.isArray(libraryName)
+        ? libraryName
+        : [libraryName];
   return names
     .map((name) => completeLibraryName(name))
     .filter((fullName) => isValidLibraryName(fullName))
