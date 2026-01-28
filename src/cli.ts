@@ -119,12 +119,12 @@ const searchBooks = ({
   libraryName,
 }: {
   title: string;
-  libraryName?: string;
+  libraryName: string;
 }): Promise<SearchResult[]> =>
   new Promise((resolve) => {
     const results: SearchResult[] = [];
     dl.search(
-      { title, libraryName: getLibraries(libraryName) },
+      { title, libraryName },
       (err, book) => {
         if (err) {
           console.log(err.msg ?? "Unknown Error");
@@ -197,7 +197,7 @@ const activate = async (): Promise<void> => {
     return;
   }
 
-  let searchOptions: { libraryName?: string; title: string } | undefined;
+  let searchOptions: { libraryName: string; title: string } | undefined;
 
   if (interactive) {
     searchOptions = await promptForSearchOptions();
