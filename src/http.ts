@@ -1,11 +1,14 @@
 import { request } from "undici";
 import type { HttpOptions, HttpResponse, HttpSession } from "./types";
 
-const DEFAULT_TIMEOUT = 20000;
+const DEFAULT_TIMEOUT = 30000;
 const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-export async function get(url: string, options: HttpOptions = {}): Promise<HttpResponse> {
+export async function get(
+  url: string,
+  options: HttpOptions = {},
+): Promise<HttpResponse> {
   const { qs, headers = {}, timeout = DEFAULT_TIMEOUT } = options;
 
   let fullUrl = url;
@@ -27,7 +30,10 @@ export async function get(url: string, options: HttpOptions = {}): Promise<HttpR
   return { statusCode: res.statusCode, body: await res.body.text() };
 }
 
-export async function post(url: string, options: HttpOptions = {}): Promise<HttpResponse> {
+export async function post(
+  url: string,
+  options: HttpOptions = {},
+): Promise<HttpResponse> {
   const { form, headers = {}, timeout = DEFAULT_TIMEOUT } = options;
 
   const formData = new URLSearchParams();
