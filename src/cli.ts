@@ -19,9 +19,11 @@ const conf = new Configstore(pkg.name, {});
 
 /** Configuration helpers for persistent storage */
 const config = {
-  getLibrary: (): string | undefined => conf.get("library") as string | undefined,
+  getLibrary: (): string | undefined =>
+    conf.get("library") as string | undefined,
   setLibrary: (name: string): void => conf.set("library", name),
-  getTitle: (): string => (conf.get("title") as string | undefined) ?? DEFAULT_TITLE,
+  getTitle: (): string =>
+    (conf.get("title") as string | undefined) ?? DEFAULT_TITLE,
   setTitle: (title: string): void => conf.set("title", title),
 };
 
@@ -112,7 +114,13 @@ const getLibraries = (libraryName?: string): string[] =>
 /**
  * Search libraries for books and print results.
  */
-const searchLibraries = ({ title, libraryName }: { title: string; libraryName?: string }): Promise<SearchResult[]> =>
+const searchBooks = ({
+  title,
+  libraryName,
+}: {
+  title: string;
+  libraryName?: string;
+}): Promise<SearchResult[]> =>
   new Promise((resolve) => {
     const results: SearchResult[] = [];
     dl.search(
@@ -149,7 +157,10 @@ const printSearchSummary = (results: SearchResult[]): void => {
 /**
  * Interactive prompt for search options using inquirer.
  */
-const promptForSearchOptions = async (): Promise<{ libraryName: string; title: string }> => {
+const promptForSearchOptions = async (): Promise<{
+  libraryName: string;
+  title: string;
+}> => {
   introMessage("Dongne Library");
 
   const library = await select({
@@ -196,7 +207,7 @@ const activate = async (): Promise<void> => {
     return;
   }
 
-  const results = await searchLibraries(searchOptions);
+  const results = await searchBooks(searchOptions);
   printSearchSummary(results);
 };
 
