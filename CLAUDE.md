@@ -8,7 +8,7 @@ DongneLibrary is a Korean public library book availability checker. It searches 
 
 ## Requirements
 
-- Node.js >= 18.0.0
+- Node.js >= 22.22.0
 
 ## Commands
 
