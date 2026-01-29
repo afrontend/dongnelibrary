@@ -53,6 +53,11 @@ const libraryList: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap((module) =>
 export const getLibraryNames = (): string[] =>
   libraryList.map((lib) => lib.name);
 
+export const getModuleHomeUrls = (): Record<string, string> =>
+  Object.fromEntries(
+    LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]),
+  );
+
 const getLibraryByName = (libraryName: string): LibraryRegistryEntry =>
   libraryList.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
 

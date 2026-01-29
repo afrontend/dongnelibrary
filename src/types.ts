@@ -84,6 +84,7 @@ export interface HttpSession {
  * Library module interface - each library scraper must export these
  */
 export interface LibraryModule {
+  moduleName: string;
   search: (opt: SearchOptions, callback?: SearchCallback) => Promise<SearchResult | void>;
   getLibraryNames: () => string[];
   homeUrl: string;

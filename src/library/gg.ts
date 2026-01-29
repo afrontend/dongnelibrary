@@ -8,6 +8,7 @@ import { get } from "../http";
 import { JSDOM } from "jsdom";
 import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
+export const moduleName = "경기교육통합도서관";
 export const homeUrl = "https://lib.goe.go.kr";
 
 const libraryList: LibraryInfo[] = [

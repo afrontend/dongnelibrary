@@ -8,6 +8,7 @@ import {
 } from "../util";
 import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
+export const moduleName = "군포시도서관";
 export const homeUrl = "https://www.gunpolib.go.kr";
 
 const libraryList: LibraryInfo[] = [

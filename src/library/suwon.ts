@@ -7,6 +7,7 @@ import {
 import { createSession } from "../http";
 import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
+export const moduleName = "수원시도서관";
 export const homeUrl = "https://www.suwonlib.go.kr";
 
 const libraryList: LibraryInfo[] = [

@@ -9,6 +9,7 @@ import { post } from "../http";
 import { JSDOM } from "jsdom";
 import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
 
+export const moduleName = "화성시립도서관";
 export const homeUrl = "https://hscitylib.or.kr";
 
 const libraryList: LibraryInfo[] = [
