@@ -1,10 +1,10 @@
 {
   "name": "dongnelibrary",
+  "version": "0.3.1",
+  "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=22.22.0"
   },
-  "version": "0.3.1",
-  "description": "책을 빌릴 수 있는지 확인한다.",
   "main": "dist/dongnelibrary.js",
   "types": "dist/dongnelibrary.d.ts",
   "bin": {
@@ -46,17 +46,6 @@
     "url": "https://github.com/afrontend/dongnelibrary/issues"
   },
   "homepage": "https://github.com/afrontend/dongnelibrary#readme",
-  "devDependencies": {
-    "@types/configstore": "^6.0.2",
-    "@types/figlet": "^1.7.0",
-    "@types/jsdom": "^27.0.0",
-    "@types/lodash": "^4.17.23",
-    "@types/node": "^20.19.30",
-    "acorn": ">=5.7.4",
-    "minimist": ">=1.2.2",
-    "typescript": "^5.9.3"
-  },
-  "tonicExampleFilename": "src/example.js",
   "dependencies": {
     "@inquirer/prompts": "^7.0.0",
     "async": "^2.5.0",
@@ -67,5 +56,18 @@
     "jsdom": "^21.1.1",
     "lodash": "^4.17.20",
     "undici": "^6.23.0"
-  }
+  },
+  "devDependencies": {
+    "@types/configstore": "^6.0.2",
+    "@types/figlet": "^1.7.0",
+    "@types/jsdom": "^27.0.0",
+    "@types/lodash": "^4.17.23",
+    "@types/node": "^20.19.30",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "acorn": ">=5.7.4",
+    "minimist": ">=1.2.2"
+  },
+  "tonicExampleFilename": "src/example.js"
 }
