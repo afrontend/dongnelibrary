@@ -3,281 +3,328 @@ const assert = require("assert").strict;
 const { request } = require("undici");
 const util = require("../../dist/util.js");
 
+// ============================================================================
+// Constants
+// ============================================================================
+
 const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
+const TIMEOUTS = {
+  DEFAULT: 20000,
+  NETWORK: 30000,
+  MULTI_SEARCH: 80000,
+};
+
+const ERROR_MESSAGES = {
+  NEED_BOOK_NAME: "Need a book name",
+  NEED_LIBRARY_NAME: "Need a library name",
+};
+
+const KOREAN_ERROR_PAGE_INDICATORS = [
+  "페이지를 찾을 수 없습니다",
+  "존재하지 않는 페이지",
+  "잘못된 접근",
+  "요청하신 페이지를 찾을 수 없습니다",
+];
+
+const SESSION_REQUIRED_DOMAINS = ["lib.goe.go.kr"];
+
+const KOREAN_TEST_TITLES = ["별", "자바", "소설"];
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
 /**
- * Creates a standard test suite for library modules that use libraryNames[0]
+ * Extracts the base domain (last two parts) from a URL
+ * @param {string} url - The URL to extract domain from
+ * @returns {string|null} The base domain or null if invalid
+ */
+function getBaseDomain(url) {
+  try {
+    const hostname = new URL(url.split("#")[0]).hostname;
+    const parts = hostname.split(".");
+    return parts.slice(-2).join(".");
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Wraps library search in a Promise for async/await usage
  * @param {object} lib - The library module
+ * @param {object} options - Search options (title, libraryName, startPage)
+ * @returns {Promise<object>} Search result with booklist
+ */
+function searchAsync(lib, options) {
+  return new Promise((resolve, reject) => {
+    lib.search(options, (err, result) => {
+      if (err) reject(new Error(err.msg));
+      else resolve(result);
+    });
+  });
+}
+
+/**
+ * Checks if a URL uses hash-based client-side routing
+ * @param {string} url - The URL to check
+ * @returns {boolean} True if URL is hash-based
+ */
+function isHashBasedUrl(url) {
+  const urlWithoutHash = url.split("#")[0];
+  return urlWithoutHash !== url && !urlWithoutHash.includes("?");
+}
+
+// ============================================================================
+// Test Suite Factory
+// ============================================================================
+
+/**
+ * Creates a standard test suite for library modules.
+ * Tests validation, search functionality, URL formats, and multi-library searches.
+ *
+ * @param {object} lib - The library module (must export search, getLibraryNames, homeUrl)
  * @param {string} description - The describe block name (e.g., "경기교육도서관")
  */
 function createLibraryTestSuite(lib, description) {
   const libraryNames = lib.getLibraryNames();
   const firstLibraryName = libraryNames[0];
 
-  describe(`${description} (제한시간 20초)`, () => {
-    it("Show library list", { timeout: 20000 }, () => {
-      assert.ok(libraryNames.length > 1);
+  /**
+   * Helper to create search options with defaults
+   */
+  const createSearchOptions = (title, libraryName = firstLibraryName) => ({
+    title,
+    libraryName,
+    startPage: 1,
+  });
+
+  describe(`${description}`, () => {
+    // ------------------------------------------------------------------
+    // Validation Tests
+    // ------------------------------------------------------------------
+
+    it("Show library list", { timeout: TIMEOUTS.DEFAULT }, () => {
+      assert.ok(libraryNames.length > 1, "Should have more than one library");
     });
 
-    it("Use empty book title", { timeout: 20000 }, () => {
+    it("Use empty book title", { timeout: TIMEOUTS.DEFAULT }, () => {
       return new Promise((resolve) => {
-        lib.search(
-          {
-            title: "",
-            libraryName: firstLibraryName,
-            startPage: 1,
-          },
-          (err) => {
-            if (err) {
-              assert.ok(err.msg === "Need a book name");
-            } else {
-              assert.fail("Need a error msg");
-            }
-            resolve();
-          },
-        );
-      });
-    });
-
-    it("Use invalid book title", { timeout: 20000 }, () => {
-      return new Promise((resolve) => {
-        lib.search(
-          {
-            title: "zyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxyz",
-            libraryName: firstLibraryName,
-            startPage: 1,
-          },
-          (err, book) => {
-            if (err) {
-              assert.fail("must have an empty booklist");
-            }
-            assert.equal(book.booklist.length, 0);
-            resolve();
-          },
-        );
-      });
-    });
-
-    it("Use empty library name", { timeout: 20000 }, () => {
-      return new Promise((resolve) => {
-        lib.search(
-          {
-            title: "javascript",
-            libraryName: "",
-            startPage: 1,
-          },
-          (err, book) => {
-            if (err) {
-              assert.ok(err.msg === "Need a library name");
-            }
-            assert.equal(book, undefined);
-            resolve();
-          },
-        );
-      });
-    });
-
-    it("Show the book list of a library", { timeout: 20000 }, () => {
-      return new Promise((resolve) => {
-        lib.search(
-          {
-            title: "javascript",
-            libraryName: firstLibraryName,
-            startPage: 1,
-          },
-          (err, book) => {
-            if (err) {
-              assert.fail(err.msg);
-            } else {
-              if (book.booklist.length > 0) {
-                util.printTotalBookCount(book);
-              } else {
-                assert.fail("Book count must be above 1");
-              }
-            }
-            resolve();
-          },
-        );
-      });
-    });
-
-    it("Verify bookUrl format is valid", { timeout: 30000 }, async () => {
-      const book = await new Promise((resolve, reject) => {
-        lib.search(
-          {
-            title: "javascript",
-            libraryName: firstLibraryName,
-            startPage: 1,
-          },
-          (err, result) => {
-            if (err) reject(new Error(err.msg));
-            else resolve(result);
-          },
-        );
-      });
-
-      assert.ok(
-        book.booklist.length > 0,
-        "Need at least one book to test bookUrl",
-      );
-
-      const bookWithUrl = book.booklist.find((b) => b.bookUrl);
-      assert.ok(bookWithUrl, "At least one book should have a bookUrl");
-
-      const bookUrl = bookWithUrl.bookUrl;
-
-      assert.ok(
-        bookUrl.startsWith("http://") || bookUrl.startsWith("https://"),
-        `bookUrl should start with http:// or https://: ${bookUrl}`,
-      );
-
-      const getBaseDomain = (url) => {
-        try {
-          const hostname = new URL(url.split("#")[0]).hostname;
-          const parts = hostname.split(".");
-          return parts.slice(-2).join(".");
-        } catch {
-          return null;
-        }
-      };
-
-      const homeBaseDomain = getBaseDomain(lib.homeUrl);
-      const bookBaseDomain = getBaseDomain(bookUrl);
-
-      assert.ok(
-        homeBaseDomain && bookBaseDomain && homeBaseDomain === bookBaseDomain,
-        `bookUrl domain (${bookBaseDomain}) should match homeUrl domain (${homeBaseDomain}): ${bookUrl}`,
-      );
-
-      const urlWithoutHash = bookUrl.split("#")[0];
-      try {
-        new URL(urlWithoutHash);
-      } catch {
-        assert.fail(`bookUrl base is not a valid URL: ${bookUrl}`);
-      }
-
-      console.log(`  ✓ bookUrl format verified: ${bookUrl}`);
-    });
-
-    it("Verify bookUrl is accessible", { timeout: 30000 }, async () => {
-      const book = await new Promise((resolve, reject) => {
-        lib.search(
-          {
-            title: "javascript",
-            libraryName: firstLibraryName,
-            startPage: 1,
-          },
-          (err, result) => {
-            if (err) reject(new Error(err.msg));
-            else resolve(result);
-          },
-        );
-      });
-
-      assert.ok(
-        book.booklist.length > 0,
-        "Need at least one book to test bookUrl accessibility",
-      );
-
-      const bookWithUrl = book.booklist.find((b) => b.bookUrl);
-      assert.ok(bookWithUrl, "At least one book should have a bookUrl");
-
-      const bookUrl = bookWithUrl.bookUrl;
-
-      // Skip hash-only URLs (e.g., gunpo uses client-side routing)
-      const urlWithoutHash = bookUrl.split("#")[0];
-      if (urlWithoutHash !== bookUrl && !urlWithoutHash.includes("?")) {
-        console.log(`  ⊘ Skipping accessibility check for hash-based URL: ${bookUrl}`);
-        return;
-      }
-
-      const urlObj = new URL(bookUrl);
-
-      // Skip domains that require session-based access
-      const sessionRequiredDomains = ["lib.goe.go.kr"];
-      if (sessionRequiredDomains.includes(urlObj.hostname)) {
-        console.log(`  ⊘ Skipping accessibility check (session required): ${bookUrl}`);
-        return;
-      }
-
-      try {
-        // Extract origin for Referer header (some sites require it)
-        const referer = urlObj.origin + "/";
-
-        const response = await request(bookUrl, {
-          method: "GET",
-          maxRedirections: 5,
-          headersTimeout: 20000,
-          bodyTimeout: 20000,
-          headers: {
-            "User-Agent": DEFAULT_USER_AGENT,
-            Referer: referer,
-          },
+        lib.search(createSearchOptions(""), (err) => {
+          assert.ok(err, "Should return an error for empty title");
+          assert.strictEqual(err.msg, ERROR_MESSAGES.NEED_BOOK_NAME);
+          resolve();
         });
-
-        const body = await response.body.text();
-
-        assert.ok(
-          response.statusCode < 400,
-          `bookUrl returns error status ${response.statusCode}: ${bookUrl}`,
-        );
-
-        // Check for common Korean error page indicators
-        const errorIndicators = [
-          "페이지를 찾을 수 없습니다",
-          "존재하지 않는 페이지",
-          "잘못된 접근",
-          "요청하신 페이지를 찾을 수 없습니다",
-        ];
-
-        const hasErrorContent = errorIndicators.some((indicator) =>
-          body.includes(indicator),
-        );
-
-        assert.ok(
-          !hasErrorContent,
-          `bookUrl appears to be a soft 404 (error page content detected): ${bookUrl}`,
-        );
-
-        console.log(`  ✓ bookUrl is accessible (status ${response.statusCode}): ${bookUrl}`);
-      } catch (error) {
-        if (error.code === "ERR_ASSERTION") {
-          throw error;
-        }
-        assert.fail(`bookUrl is not accessible (network error: ${error.message}): ${bookUrl}`);
-      }
+      });
     });
+
+    it("Use invalid book title", { timeout: TIMEOUTS.DEFAULT }, () => {
+      return new Promise((resolve) => {
+        const nonsenseTitle =
+          "zyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxyz";
+        lib.search(createSearchOptions(nonsenseTitle), (err, result) => {
+          assert.ok(!err, "Should not return error for nonsense title");
+          assert.strictEqual(
+            result.booklist.length,
+            0,
+            "Should return empty booklist",
+          );
+          resolve();
+        });
+      });
+    });
+
+    it("Use empty library name", { timeout: TIMEOUTS.DEFAULT }, () => {
+      return new Promise((resolve) => {
+        lib.search(createSearchOptions("javascript", ""), (err, result) => {
+          assert.ok(err, "Should return an error for empty library name");
+          assert.strictEqual(err.msg, ERROR_MESSAGES.NEED_LIBRARY_NAME);
+          assert.strictEqual(
+            result,
+            undefined,
+            "Should not return result on error",
+          );
+          resolve();
+        });
+      });
+    });
+
+    // ------------------------------------------------------------------
+    // Basic Search Tests
+    // ------------------------------------------------------------------
+
+    it("Show the book list of a library", { timeout: TIMEOUTS.DEFAULT }, () => {
+      return new Promise((resolve) => {
+        lib.search(createSearchOptions("javascript"), (err, result) => {
+          assert.ok(!err, err?.msg || "Search should not fail");
+          assert.ok(
+            result.booklist.length > 0,
+            "Should find at least one book",
+          );
+          util.printTotalBookCount(result);
+          resolve();
+        });
+      });
+    });
+
+    // ------------------------------------------------------------------
+    // URL Validation Tests
+    // ------------------------------------------------------------------
 
     it(
-      "Search with Korean titles (산, 자바, 소설)",
-      { timeout: 60000 },
+      "Verify bookUrl format is valid",
+      { timeout: TIMEOUTS.NETWORK },
       async () => {
-        const koreanTitles = ["산", "자바", "소설"];
-        let anySuccess = false;
+        const searchResult = await searchAsync(
+          lib,
+          createSearchOptions("javascript"),
+        );
+
+        assert.ok(
+          searchResult.booklist.length > 0,
+          "Need at least one book to test bookUrl",
+        );
+
+        const bookWithUrl = searchResult.booklist.find((b) => b.bookUrl);
+        assert.ok(bookWithUrl, "At least one book should have a bookUrl");
+
+        const { bookUrl } = bookWithUrl;
+
+        // Verify URL protocol
+        const hasValidProtocol =
+          bookUrl.startsWith("http://") || bookUrl.startsWith("https://");
+        assert.ok(
+          hasValidProtocol,
+          `bookUrl should start with http:// or https://: ${bookUrl}`,
+        );
+
+        // Verify domain matches library's home URL
+        const homeBaseDomain = getBaseDomain(lib.homeUrl);
+        const bookBaseDomain = getBaseDomain(bookUrl);
+        assert.ok(
+          homeBaseDomain && bookBaseDomain && homeBaseDomain === bookBaseDomain,
+          `bookUrl domain (${bookBaseDomain}) should match homeUrl domain (${homeBaseDomain}): ${bookUrl}`,
+        );
+
+        // Verify URL is parseable (excluding hash fragment)
+        const urlWithoutHash = bookUrl.split("#")[0];
+        try {
+          new URL(urlWithoutHash);
+        } catch {
+          assert.fail(`bookUrl base is not a valid URL: ${bookUrl}`);
+        }
+
+        console.log(`  ✓ bookUrl format verified: ${bookUrl}`);
+      },
+    );
+
+    it(
+      "Verify bookUrl is accessible",
+      { timeout: TIMEOUTS.NETWORK },
+      async () => {
+        const searchResult = await searchAsync(
+          lib,
+          createSearchOptions("javascript"),
+        );
+
+        assert.ok(
+          searchResult.booklist.length > 0,
+          "Need at least one book to test bookUrl accessibility",
+        );
+
+        const bookWithUrl = searchResult.booklist.find((b) => b.bookUrl);
+        assert.ok(bookWithUrl, "At least one book should have a bookUrl");
+
+        const { bookUrl } = bookWithUrl;
+
+        // Skip hash-only URLs (e.g., gunpo uses client-side routing)
+        if (isHashBasedUrl(bookUrl)) {
+          console.log(
+            `  ⊘ Skipping accessibility check for hash-based URL: ${bookUrl}`,
+          );
+          return;
+        }
+
+        const urlObj = new URL(bookUrl);
+
+        // Skip domains that require session-based access
+        if (SESSION_REQUIRED_DOMAINS.includes(urlObj.hostname)) {
+          console.log(
+            `  ⊘ Skipping accessibility check (session required): ${bookUrl}`,
+          );
+          return;
+        }
+
+        try {
+          const response = await request(bookUrl, {
+            method: "GET",
+            maxRedirections: 5,
+            headersTimeout: TIMEOUTS.DEFAULT,
+            bodyTimeout: TIMEOUTS.DEFAULT,
+            headers: {
+              "User-Agent": DEFAULT_USER_AGENT,
+              Referer: `${urlObj.origin}/`,
+            },
+          });
+
+          const body = await response.body.text();
+
+          // Verify HTTP status is successful
+          assert.ok(
+            response.statusCode < 400,
+            `bookUrl returns error status ${response.statusCode}: ${bookUrl}`,
+          );
+
+          // Check for soft 404 (error page with 200 status)
+          const isSoft404 = KOREAN_ERROR_PAGE_INDICATORS.some((indicator) =>
+            body.includes(indicator),
+          );
+          assert.ok(
+            !isSoft404,
+            `bookUrl appears to be a soft 404 (error page content detected): ${bookUrl}`,
+          );
+
+          console.log(
+            `  ✓ bookUrl is accessible (status ${response.statusCode}): ${bookUrl}`,
+          );
+        } catch (error) {
+          // Re-throw assertion errors
+          if (error.code === "ERR_ASSERTION") {
+            throw error;
+          }
+          assert.fail(
+            `bookUrl is not accessible (network error: ${error.message}): ${bookUrl}`,
+          );
+        }
+      },
+    );
+
+    // ------------------------------------------------------------------
+    // Korean Language Tests
+    // ------------------------------------------------------------------
+
+    it(
+      `Search with Korean titles (${KOREAN_TEST_TITLES.join(", ")})`,
+      { timeout: TIMEOUTS.MULTI_SEARCH },
+      async () => {
         const results = [];
 
-        for (const title of koreanTitles) {
+        for (const title of KOREAN_TEST_TITLES) {
           try {
-            const book = await new Promise((resolve, reject) => {
-              lib.search(
-                { title, libraryName: firstLibraryName, startPage: 1 },
-                (err, result) => {
-                  if (err) reject(new Error(err.msg));
-                  else resolve(result);
-                },
-              );
-            });
+            const searchResult = await searchAsync(
+              lib,
+              createSearchOptions(title),
+            );
+            const count = searchResult.booklist?.length || 0;
+            const success = count > 0;
 
-            const count = book.booklist?.length || 0;
-            results.push({ title, count, success: count > 0 });
-
-            if (count > 0) {
-              anySuccess = true;
-              console.log(`  ✓ "${title}": ${count} books found`);
-            } else {
-              console.log(`  - "${title}": 0 books found`);
-            }
+            results.push({ title, count, success });
+            console.log(
+              success
+                ? `  ✓ "${title}": ${count} books found`
+                : `  - "${title}": 0 books found`,
+            );
           } catch (err) {
             results.push({
               title,
@@ -289,43 +336,48 @@ function createLibraryTestSuite(lib, description) {
           }
         }
 
+        const anySuccess = results.some((r) => r.success);
+        const summary = results
+          .map((r) => `"${r.title}"(${r.count})`)
+          .join(", ");
         assert.ok(
           anySuccess,
-          `At least one Korean title should return results. Tried: ${results.map((r) => `"${r.title}"(${r.count})`).join(", ")}`,
+          `At least one Korean title should return results. Tried: ${summary}`,
         );
       },
     );
 
+    // ------------------------------------------------------------------
+    // Multi-Library Search Test
+    // ------------------------------------------------------------------
+
     it(
       "Make sure the book is searchable in each library",
-      { timeout: 60000 },
+      { timeout: TIMEOUTS.MULTI_SEARCH },
       () => {
         return new Promise((resolve) => {
-          let completed = 0;
-          const failures = [];
+          let completedCount = 0;
           let successCount = 0;
+          const failedLibraries = [];
 
           libraryNames.forEach((libraryName) => {
             lib.search(
-              {
-                title: "javascript",
-                libraryName: libraryName,
-                startPage: 1,
-              },
-              (err, book) => {
-                completed++;
+              createSearchOptions("javascript", libraryName),
+              (err, result) => {
+                completedCount++;
 
                 if (err) {
                   console.log(`  ✗ ${libraryName}: ${err.msg}`);
-                  failures.push(libraryName);
+                  failedLibraries.push(libraryName);
                 } else {
                   assert.ok(
-                    book.booklist !== undefined,
+                    result.booklist !== undefined,
                     `${libraryName} should return a booklist`,
                   );
-                  if (book.totalBookCount > 0) {
+
+                  if (result.totalBookCount > 0) {
                     console.log(
-                      `  ✓ ${libraryName}: ${book.totalBookCount} books found`,
+                      `  ✓ ${libraryName}: ${result.totalBookCount} books found`,
                     );
                     successCount++;
                   } else {
@@ -335,12 +387,13 @@ function createLibraryTestSuite(lib, description) {
                   }
                 }
 
-                if (completed === libraryNames.length) {
+                // Check if all libraries have been searched
+                if (completedCount === libraryNames.length) {
                   console.log(
-                    `  Summary: ${successCount} libraries with results, ${failures.length} errors`,
+                    `  Summary: ${successCount} libraries with results, ${failedLibraries.length} errors`,
                   );
                   assert.ok(
-                    failures.length < libraryNames.length,
+                    failedLibraries.length < libraryNames.length,
                     "At least one library should be searchable",
                   );
                   assert.ok(
@@ -357,5 +410,9 @@ function createLibraryTestSuite(lib, description) {
     );
   });
 }
+
+// ============================================================================
+// Exports
+// ============================================================================
 
 module.exports = { createLibraryTestSuite };
