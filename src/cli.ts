@@ -110,6 +110,7 @@ const getLibraries = (libraryName?: string): string[] =>
 
 /**
  * Search libraries for books and print results.
+ * Supports graceful cancellation with Ctrl+C.
  */
 const searchBooks = ({
   title,
@@ -119,24 +120,32 @@ const searchBooks = ({
   libraryName: string;
 }): Promise<SearchResult[]> =>
   new Promise((resolve) => {
+    const controller = new AbortController();
     const results: SearchResult[] = [];
+
+    // Handle Ctrl+C for graceful cancellation
+    const handleSigint = (): void => {
+      console.log("\n" + colors.yellow("검색 취소 중..."));
+      controller.abort();
+    };
+    process.once("SIGINT", handleSigint);
+
     dl.search(
-      { title, libraryName },
+      { title, libraryName, signal: controller.signal },
       (err, book) => {
         if (err) {
+          // Silently ignore abort errors
+          if (err.msg?.toLowerCase().includes("abort")) return;
           console.log(err.msg ?? "Unknown Error");
         } else if (book) {
           printBooks(book);
           results.push(book);
         }
       },
-      (err, allBooks) => {
-        if (err) {
-          console.log("Error, Can't access detail information");
-          resolve([]);
-        } else {
-          resolve(allBooks ?? []);
-        }
+      () => {
+        // Clean up SIGINT listener
+        process.removeListener("SIGINT", handleSigint);
+        resolve(results);
       },
     );
   });
