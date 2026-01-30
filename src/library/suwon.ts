@@ -80,7 +80,7 @@ function getBookList(data: SuwonApiResponse): Book[] {
  * Search for books in Suwon City Libraries.
  */
 async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
-  const { title, libraryName } = opt;
+  const { title, libraryName, signal } = opt;
 
   validateSearchOptions(opt);
 
@@ -90,7 +90,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const session = createSession();
 
   // First, visit the search page to initialize session
-  await session.get("https://search.suwonlib.go.kr/search");
+  await session.get("https://search.suwonlib.go.kr/search", { signal });
 
   // Now make the API call with the session cookies
   const { statusCode, body } = await session.post(
@@ -125,6 +125,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
         "X-Requested-With": "XMLHttpRequest",
         ajax: "true",
       },
+      signal,
     },
   );
 

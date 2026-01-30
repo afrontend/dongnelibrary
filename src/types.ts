@@ -17,6 +17,7 @@ export interface SearchOptions {
   title: string;
   libraryName: string;
   startPage?: number;
+  signal?: AbortSignal;
 }
 
 /**
@@ -70,6 +71,7 @@ export interface HttpOptions {
   form?: Record<string, string | number | boolean>;
   headers?: Record<string, string>;
   timeout?: number;
+  signal?: AbortSignal;
 }
 
 /**

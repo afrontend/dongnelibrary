@@ -74,7 +74,7 @@ function getBookList(json: GunpoApiResponse): Book[] {
  * Search for books in Gunpo City Libraries.
  */
 async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
-  const { title, libraryName } = opt;
+  const { title, libraryName, signal } = opt;
 
   validateSearchOptions(opt);
 
@@ -88,6 +88,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
         branch,
         max: 1000,
       },
+      signal,
     },
   );
 

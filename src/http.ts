@@ -9,7 +9,7 @@ export async function get(
   url: string,
   options: HttpOptions = {},
 ): Promise<HttpResponse> {
-  const { qs, headers = {}, timeout = DEFAULT_TIMEOUT } = options;
+  const { qs, headers = {}, timeout = DEFAULT_TIMEOUT, signal } = options;
 
   let fullUrl = url;
   if (qs && Object.keys(qs).length > 0) {
@@ -25,6 +25,7 @@ export async function get(
     headersTimeout: timeout,
     bodyTimeout: timeout,
     headers: { "User-Agent": DEFAULT_USER_AGENT, ...headers },
+    signal,
   });
 
   return { statusCode: res.statusCode, body: await res.body.text() };
@@ -34,7 +35,7 @@ export async function post(
   url: string,
   options: HttpOptions = {},
 ): Promise<HttpResponse> {
-  const { form, headers = {}, timeout = DEFAULT_TIMEOUT } = options;
+  const { form, headers = {}, timeout = DEFAULT_TIMEOUT, signal } = options;
 
   const formData = new URLSearchParams();
   if (form) {
@@ -53,6 +54,7 @@ export async function post(
       ...headers,
     },
     body: formData.toString(),
+    signal,
   });
 
   return { statusCode: res.statusCode, body: await res.body.text() };
@@ -63,7 +65,7 @@ export function createSession(): HttpSession {
 
   return {
     async get(url: string, options: HttpOptions = {}): Promise<HttpResponse> {
-      const { headers = {}, timeout = DEFAULT_TIMEOUT } = options;
+      const { headers = {}, timeout = DEFAULT_TIMEOUT, signal } = options;
 
       const res = await request(url, {
         method: "GET",
@@ -74,6 +76,7 @@ export function createSession(): HttpSession {
           Cookie: cookies.join("; "),
           ...headers,
         },
+        signal,
       });
 
       const setCookie = res.headers["set-cookie"];
@@ -86,7 +89,7 @@ export function createSession(): HttpSession {
     },
 
     async post(url: string, options: HttpOptions = {}): Promise<HttpResponse> {
-      const { form, headers = {}, timeout = DEFAULT_TIMEOUT } = options;
+      const { form, headers = {}, timeout = DEFAULT_TIMEOUT, signal } = options;
 
       const formData = new URLSearchParams();
       if (form) {
@@ -106,6 +109,7 @@ export function createSession(): HttpSession {
           ...headers,
         },
         body: formData.toString(),
+        signal,
       });
 
       return { statusCode: res.statusCode, body: await res.body.text() };

@@ -111,9 +111,10 @@ interface SearchLibraryResult {
 const searchLibrary = (
   lib: LibraryRegistryEntry,
   title: string,
+  signal?: AbortSignal,
 ): Promise<SearchLibraryResult> =>
   new Promise((resolve) => {
-    lib.search({ title, libraryName: lib.name }, (err, data) => {
+    lib.search({ title, libraryName: lib.name, signal }, (err, data) => {
       if (err) {
         resolve({ error: err });
         return;
@@ -147,6 +148,7 @@ export type SearchCompleteCallback = (
 export interface SearchOptionsMain {
   title: string;
   libraryName: string | string[];
+  signal?: AbortSignal;
 }
 
 export const search = (
@@ -159,11 +161,14 @@ export const search = (
     return;
   }
 
-  const { title, libraryName } = opt;
+  const { title, libraryName, signal } = opt;
   const libraries = resolveLibraries(libraryName);
 
   const promises = libraries.map(async (lib) => {
-    const { error, result } = await searchLibrary(lib, title);
+    if (signal?.aborted) {
+      return null;
+    }
+    const { error, result } = await searchLibrary(lib, title, signal);
     if (error) {
       onResult?.(error);
       return null;

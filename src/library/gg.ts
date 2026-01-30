@@ -31,7 +31,7 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * Search for books in Gyeonggi Provincial Educational Libraries.
  */
 async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
-  const { title, libraryName } = opt;
+  const { title, libraryName, signal } = opt;
 
   validateSearchOptions(opt);
 
@@ -47,6 +47,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
         search_text: title,
         viewPage: 1,
       },
+      signal,
     },
   );
 

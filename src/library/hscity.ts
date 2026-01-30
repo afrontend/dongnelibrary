@@ -51,7 +51,7 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * Search for books in Hwaseong City Libraries.
  */
 async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
-  const { title, libraryName } = opt;
+  const { title, libraryName, signal } = opt;
 
   validateSearchOptions(opt);
 
@@ -65,6 +65,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
       searchManageCodeArr: lcode,
       searchDisplay: 1000,
     },
+    signal,
   });
 
   if (statusCode !== 200) {

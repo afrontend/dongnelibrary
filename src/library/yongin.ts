@@ -65,7 +65,7 @@ const getLibraryCode = createLibraryCodeLookup(libraryList);
  * Search for books in Yongin City Libraries.
  */
 async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
-  const { title, libraryName } = opt;
+  const { title, libraryName, signal } = opt;
 
   validateSearchOptions(opt);
 
@@ -82,6 +82,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
         searchKeyword: title,
         searchRecordCount: 1000,
       },
+      signal,
     },
   );
 
