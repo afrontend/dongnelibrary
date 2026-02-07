@@ -65,6 +65,7 @@ src/library/*.ts  →  (tsc)  →  dist/library/*.js + dist/library/*.d.ts
 - `osan.ts` - 오산시도서관 (Osan City)
 - `snlib.ts` - 성남시도서관 (Seongnam City)
 - `suwon.ts` - 수원시도서관 (Suwon City)
+- `yjlib.ts` - 여주시립도서관 (Yeoju City)
 - `yongin.ts` - 용인시도서관 (Yongin City)
 
 Each library module must export:
@@ -125,6 +126,7 @@ npm run build && node --test --test-name-pattern="Korean titles" test/gunpo.spec
 - **osan.ts**: `https://www.osanlibrary.go.kr/intro/menu/10003/program/30004/plusSearchResultList.do`
 - **snlib.ts**: `https://www.snlib.go.kr/intro/menu/10041/program/30009/plusSearchResultList.do`
 - **suwon.ts**: `https://search.suwonlib.go.kr/getSearchResult/normal` (requires session init)
+- **yjlib.ts**: `https://www.yjlib.go.kr/web/menu/10036/program/30001/searchResultList.do`
 - **yongin.ts**: `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultList.do`
 
 ## Docker

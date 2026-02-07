@@ -22,6 +22,7 @@
     "osan": "npm run build && node --test test/osan.spec.js",
     "snlib": "npm run build && node --test test/snlib.spec.js",
     "suwon": "npm run build && node --test test/suwon.spec.js",
+    "yjlib": "npm run build && node --test test/yjlib.spec.js",
     "yongin": "npm run build && node --test test/yongin.spec.js",
     "cli": "npm run build && node --test test/cli.spec.js"
   },

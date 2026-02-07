@@ -214,6 +214,7 @@ type SearchCompleteCallback = (
 | `osan`   | 오산시도서관       | Osan City         |
 | `snlib`  | 성남시도서관       | Seongnam City     |
 | `suwon`  | 수원시도서관       | Suwon City        |
+| `yjlib`  | 여주시립도서관     | Yeoju City        |
 | `yongin` | 용인시도서관       | Yongin City       |
 
 Use `getLibraryNames()` to see all 100+ individual branch names.

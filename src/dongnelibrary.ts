@@ -4,6 +4,7 @@ import * as hscity from "./library/hscity";
 import * as osan from "./library/osan";
 import * as snlib from "./library/snlib";
 import * as suwon from "./library/suwon";
+import * as yjlib from "./library/yjlib";
 import * as yongin from "./library/yongin";
 import * as util from "./util";
 import type {
@@ -25,6 +26,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   osan,
   snlib,
   suwon,
+  yjlib,
   yongin,
 ];
 

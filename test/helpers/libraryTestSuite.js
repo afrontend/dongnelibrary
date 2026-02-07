@@ -28,7 +28,7 @@ const KOREAN_ERROR_PAGE_INDICATORS = [
   "요청하신 페이지를 찾을 수 없습니다",
 ];
 
-const SESSION_REQUIRED_DOMAINS = ["lib.goe.go.kr"];
+const SESSION_REQUIRED_DOMAINS = ["lib.goe.go.kr", "search.suwonlib.go.kr"];
 
 const KOREAN_TEST_TITLES = ["별", "자바", "소설"];
 
@@ -295,6 +295,81 @@ function createLibraryTestSuite(lib, description) {
           }
           assert.fail(
             `bookUrl is not accessible (network error: ${error.message}): ${bookUrl}`,
+          );
+        }
+      },
+    );
+
+    it(
+      "Verify bookUrl page contains book title",
+      { timeout: TIMEOUTS.NETWORK },
+      async () => {
+        const searchResult = await searchAsync(
+          lib,
+          createSearchOptions("javascript"),
+        );
+
+        assert.ok(
+          searchResult.booklist.length > 0,
+          "Need at least one book to test bookUrl content",
+        );
+
+        const bookWithUrl = searchResult.booklist.find(
+          (b) => b.bookUrl && b.title,
+        );
+        assert.ok(bookWithUrl, "At least one book should have bookUrl and title");
+
+        const { bookUrl, title } = bookWithUrl;
+
+        // Skip hash-based URLs (client-side routing)
+        if (isHashBasedUrl(bookUrl)) {
+          console.log(
+            `  ⊘ Skipping title check for hash-based URL: ${bookUrl}`,
+          );
+          return;
+        }
+
+        const urlObj = new URL(bookUrl);
+
+        // Skip domains that require session-based access
+        if (SESSION_REQUIRED_DOMAINS.includes(urlObj.hostname)) {
+          console.log(
+            `  ⊘ Skipping title check (session required): ${bookUrl}`,
+          );
+          return;
+        }
+
+        try {
+          const response = await request(bookUrl, {
+            method: "GET",
+            maxRedirections: 5,
+            headersTimeout: TIMEOUTS.DEFAULT,
+            bodyTimeout: TIMEOUTS.DEFAULT,
+            headers: {
+              "User-Agent": DEFAULT_USER_AGENT,
+              Referer: `${urlObj.origin}/`,
+            },
+          });
+
+          const body = await response.body.text();
+
+          // Extract first few words from title for partial matching
+          // (handles cases where page shows slightly different formatting)
+          const titleWords = title.split(/\s+/).slice(0, 3).join(" ");
+          const hasTitle = body.includes(title) || body.includes(titleWords);
+
+          assert.ok(
+            hasTitle,
+            `bookUrl page should contain book title "${title}": ${bookUrl}`,
+          );
+
+          console.log(`  ✓ bookUrl page contains title "${title}": ${bookUrl}`);
+        } catch (error) {
+          if (error.code === "ERR_ASSERTION") {
+            throw error;
+          }
+          assert.fail(
+            `bookUrl title check failed (network error: ${error.message}): ${bookUrl}`,
           );
         }
       },
