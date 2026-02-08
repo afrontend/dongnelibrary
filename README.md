@@ -7,17 +7,21 @@
 
 도서관 이름을 생략하면 모든 도서관을 검색한다.
 
+## Requirements
+
+- Node.js >= 22.22.0
+
 ## install with git
 
     git clone https://github.com/afrontend/dongnelibrary
     cd dongnelibrary
     npm ci
-    chmod a+x src/cli.js
+    npm run build
 
-    node ./src/cli.js -i
-    node ./src/cli.js -a
-    node ./src/cli.js -t javascript -l 남양
-    node ./src/cli.js -t javascript -l 남양,판교
+    node ./dist/cli.js -i
+    node ./dist/cli.js -a
+    node ./dist/cli.js -t javascript -l 남양
+    node ./dist/cli.js -t javascript -l 남양,판교
     npm test
 
 ## install with NPM
@@ -63,8 +67,8 @@
     docker push <dockerhub-username>/dongnelibrary:latest
 
     # Optional: tag with version
-    docker tag <dockerhub-username>/dongnelibrary:latest <dockerhub-username>/dongnelibrary:0.2.12
-    docker push <dockerhub-username>/dongnelibrary:0.2.12
+    docker tag <dockerhub-username>/dongnelibrary:latest <dockerhub-username>/dongnelibrary:0.3.4
+    docker push <dockerhub-username>/dongnelibrary:0.3.4
 
 ## Using with JavaScript
 
@@ -120,6 +124,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 - [화성시립도서관][hscity-url] (남양도서관,태안도서관,삼괴도서관,병점도서관,샘내도서관,두빛나래어린이도서관,봉담도서관,둥지나래어린이도서관,목동이음터도서관,기아행복마루도서관,화성동탄중앙도서관,송산도서관,정남도서관,비봉도서관,진안도서관,중앙이음터도서관,양감도서관,다원이음터도서관,송린이음터도서관,팔탄도서관,마도도서관,봉담커피앤북도서관,왕배푸른숲도서관,노을빛도서관,서연이음터도서관,호연이음터도서관,향남복합문화센터도서관,봉담와우도서관,늘봄이음터도서관,달빛나래어린이도서관)
 - [수원시도서관][suwon-url] (선경도서관,수원중앙도서관,창룡도서관,화서다산도서관,호매실도서관,서수원도서관,한림도서관,버드내도서관,북수원도서관,대추골도서관,일월도서관,광교홍재도서관,태장마루도서관,광교푸른숲도서관,매여울도서관,망포글빛도서관,슬기샘도서관,지혜샘어린이도서관,바른샘어린이도서관,한아름도서관,반달어린이도서관,사랑샘도서관,희망샘도서관)
 - [용인시도서관][yongin-url] (수지도서관,구성도서관,기흥도서관,남사도서관,동백도서관,동천도서관,모현도서관,보라도서관,상현도서관,서농도서관,성복도서관,용인중앙도서관,양지해밀도서관,영덕도서관,죽전도서관,청덕도서관,포곡도서관,흥덕도서관)
+- [여주시립도서관][yjlib-url] (여주도서관,세종도서관,점동도서관,여주기적의도서관,흥천도서관,금사도서관,대신도서관,산북작은도서관,북내작은도서관,여주역스마트도서관,이마트스마트도서관)
 
 ## 마무리
 
@@ -136,6 +141,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
     npm run osan    # 오산시 도서관
     npm run snlib   # 성남시 도서관
     npm run suwon   # 수원시 도서관
+    npm run yjlib   # 여주시 도서관
     npm run yongin  # 용인시 도서관
 
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
@@ -150,4 +156,5 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 [snlib-url]: https://www.snlib.go.kr
 [suwon-url]: https://www.suwonlib.go.kr
 [yongin-url]: https://lib.yongin.go.kr
+[yjlib-url]: https://www.yjlib.go.kr
 [sample-url]: https://npm.runkit.com/dongnelibrary
