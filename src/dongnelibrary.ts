@@ -56,9 +56,7 @@ export const getLibraryNames = (): string[] =>
   libraryList.map((lib) => lib.name);
 
 export const getModuleHomeUrls = (): Record<string, string> =>
-  Object.fromEntries(
-    LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]),
-  );
+  Object.fromEntries(LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]));
 
 const getLibraryByName = (libraryName: string): LibraryRegistryEntry =>
   libraryList.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
@@ -182,6 +180,39 @@ export const search = (
   Promise.all(promises).then((results) => {
     const validResults = results.filter((r): r is SearchResult => r !== null);
     onComplete?.(null, validResults);
+  });
+};
+
+export const searchAsync = (
+  opt: SearchOptionsMain,
+  onResult?: SearchCallback,
+): Promise<SearchResult[]> => {
+  return new Promise((resolve, reject) => {
+    if (!opt) {
+      reject(new Error("invalid search options"));
+      return;
+    }
+
+    const { title, libraryName, signal } = opt;
+    const libraries = resolveLibraries(libraryName);
+
+    const promises = libraries.map(async (lib) => {
+      if (signal?.aborted) {
+        return null;
+      }
+      const { error, result } = await searchLibrary(lib, title, signal);
+      if (error) {
+        onResult?.(error);
+        return null;
+      }
+      onResult?.(null, result);
+      return result;
+    });
+
+    Promise.all(promises).then((results) => {
+      const validResults = results.filter((r): r is SearchResult => r !== null);
+      resolve(validResults);
+    });
   });
 };
 

@@ -109,6 +109,83 @@ setTimeout(() => controller.abort(), 5000);
 
 ---
 
+### searchAsync(options, onResult?)
+
+Promise-based search for books across one or more libraries.
+
+#### Parameters
+
+| Parameter  | Type                | Required | Description                       |
+| ---------- | ------------------- | -------- | --------------------------------- |
+| `options`  | `SearchOptionsMain` | Yes      | Search configuration              |
+| `onResult` | `SearchCallback`    | No       | Called for each library's results |
+
+#### Returns
+
+`Promise<SearchResult[]>` - Array of search results from all libraries
+
+#### Example: Basic Usage
+
+```javascript
+const results = await dongnelibrary.searchAsync({
+  title: "해리포터",
+  libraryName: "판교도서관",
+});
+
+results.forEach((result) => {
+  console.log(`${result.libraryName}: ${result.totalBookCount} books`);
+});
+```
+
+#### Example: Search All Libraries
+
+```javascript
+const results = await dongnelibrary.searchAsync({
+  title: "코스모스",
+  libraryName: "",
+});
+
+console.log(`Found results in ${results.length} libraries`);
+```
+
+#### Example: With Streaming Callback
+
+```javascript
+const results = await dongnelibrary.searchAsync(
+  { title: "해리포터", libraryName: "" },
+  (err, result) => {
+    // Called as each library completes
+    if (result) {
+      console.log(`${result.libraryName}: ${result.booklist.length} books`);
+    }
+  },
+);
+
+// Final results available after all searches complete
+console.log(`Total: ${results.length} libraries searched`);
+```
+
+#### Example: With AbortSignal
+
+```javascript
+const controller = new AbortController();
+
+// Cancel after 5 seconds
+setTimeout(() => controller.abort(), 5000);
+
+try {
+  const results = await dongnelibrary.searchAsync({
+    title: "해리포터",
+    libraryName: "",
+    signal: controller.signal,
+  });
+} catch (err) {
+  console.log("Search was cancelled");
+}
+```
+
+---
+
 ### getLibraryNames()
 
 Returns an array of all supported library branch names.

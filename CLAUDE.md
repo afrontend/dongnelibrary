@@ -95,8 +95,11 @@ The project exports TypeScript types for library consumers:
 ```typescript
 import dongnelibrary, { SearchOptions, SearchResult, Book, SearchError } from 'dongnelibrary';
 
-// Types are available for IDE autocomplete and type checking
+// Callback-style API
 dongnelibrary.search({ title: '책', libraryName: '도서관' }, callback);
+
+// Promise-style API
+const results = await dongnelibrary.searchAsync({ title: '책', libraryName: '도서관' });
 ```
 
 Key types in `src/types.ts`:

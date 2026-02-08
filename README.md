@@ -70,6 +70,8 @@
 
     npm install dongnelibrary
 
+### Callback Style
+
 ```javascript
 const dl = require("dongnelibrary");
 dl.search(
@@ -87,6 +89,26 @@ dl.search(
     console.log(books.length + " 개의 도서관을 검색했습니다.");
   },
 );
+```
+
+### Promise Style (async/await)
+
+```javascript
+const dl = require("dongnelibrary");
+
+const results = await dl.searchAsync({
+  title: "javascript",
+  libraryName: ["여주", "판교"],
+});
+
+results.forEach((result) => {
+  console.log(result.libraryName + ' "' + result.title + '"');
+  result.booklist.forEach((book) => {
+    console.log((book.exist ? " ✓  " : " ✖  ") + " " + book.title);
+  });
+});
+
+console.log(results.length + " 개의 도서관을 검색했습니다.");
 ```
 
 ## 검색 가능한 도서관
