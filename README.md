@@ -34,18 +34,18 @@
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
-## Use Docker Hub image
+## Use GitHub Container Registry image
 
 ### install
 
-    docker pull frontendwordpress/dongnelibrary
+    docker pull ghcr.io/afrontend/dongnelibrary
 
 ### run examples
 
-    docker run -it --rm frontendwordpress/dongnelibrary -i
-    docker run --rm frontendwordpress/dongnelibrary -a
-    docker run --rm frontendwordpress/dongnelibrary -l 여주,판교 -t 자바
-    docker run --rm frontendwordpress/dongnelibrary -l 수지 -t 자바
+    docker run -it --rm ghcr.io/afrontend/dongnelibrary -i
+    docker run --rm ghcr.io/afrontend/dongnelibrary -a
+    docker run --rm ghcr.io/afrontend/dongnelibrary -l 여주,판교 -t 자바
+    docker run --rm ghcr.io/afrontend/dongnelibrary -l 수지 -t 자바
 
 ## Build and Run Docker Locally
 
@@ -55,20 +55,13 @@
     docker run dongnelibrary -t "javascript" -l "군포"
     docker run -it -v ~/.config/configstore:/root/.config/configstore dongnelibrary -i
 
-## Deploy to Docker Hub
+## Deploy to GitHub Container Registry
 
-    # Log in to Docker Hub
-    docker login
+Docker images are automatically published to GitHub Container Registry via GitHub Actions when:
+- Pushing to the `master` branch (tagged as `master`)
+- Creating version tags like `v1.0.0` (tagged with version number)
 
-    # Build and tag
-    docker build -t <dockerhub-username>/dongnelibrary:latest .
-
-    # Push to Docker Hub
-    docker push <dockerhub-username>/dongnelibrary:latest
-
-    # Optional: tag with version
-    docker tag <dockerhub-username>/dongnelibrary:latest <dockerhub-username>/dongnelibrary:0.3.4
-    docker push <dockerhub-username>/dongnelibrary:0.3.4
+No manual deployment steps are required. The workflow handles authentication using `GITHUB_TOKEN`.
 
 ## Using with JavaScript
 
