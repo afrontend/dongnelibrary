@@ -128,7 +128,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 
 ## 마무리
 
-[온라인에서][sample-url] 테스트 할 수 있으며 명령어가 불편하다면 [웹 서비스][web-ui-url]를 사용할 수 있다.
+설치 대신 [웹 서비스][web-ui-url]를 사용할 수 있다.
 [Web API 서비스][web-api]도 지원한다.
 
 ## Test
@@ -157,4 +157,3 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 [suwon-url]: https://www.suwonlib.go.kr
 [yongin-url]: https://lib.yongin.go.kr
 [yjlib-url]: https://www.yjlib.go.kr
-[sample-url]: https://npm.runkit.com/dongnelibrary
