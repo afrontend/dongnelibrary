@@ -44,15 +44,21 @@
 
     docker run -it --rm ghcr.io/afrontend/dongnelibrary -i
     docker run --rm ghcr.io/afrontend/dongnelibrary -a
-    docker run --rm ghcr.io/afrontend/dongnelibrary -l 여주,판교 -t 자바
+    docker run --rm ghcr.io/afrontend/dongnelibrary -l 흥천,판교 -t 자바
     docker run --rm ghcr.io/afrontend/dongnelibrary -l 수지 -t 자바
 
 ## Build and Run Docker Locally
 
+### build
+
     docker build -t dongnelibrary .
+
+### run examples
+
     docker run -it dongnelibrary -i
     docker run dongnelibrary -a
-    docker run dongnelibrary -t "javascript" -l "군포"
+    docker run dongnelibrary -l "흥천,판교" -t 자바
+    docker run dongnelibrary -l "수지" -t 자바
     docker run -it -v ~/.config/configstore:/root/.config/configstore dongnelibrary -i
 
 ## Deploy to GitHub Container Registry
