@@ -15,6 +15,17 @@ const pkg = require("../package.json") as { name: string; version: string };
 const DEFAULT_TITLE = "javascript";
 const LIBRARY_SUFFIX = "도서관";
 
+/** UI messages */
+const MESSAGES = {
+  cancelSearch: "검색 취소 중...",
+  libraryCount: (count: number) => `모두 ${count} 개의 도서관`,
+  searchSummary: (libs: number, books: number) =>
+    `${libs} 개의 도서관에서  ${books} 권 검색됨`,
+  promptLibrary: "도서관 이름은?",
+  promptTitle: "책 이름은?",
+  unknownError: "Unknown Error",
+};
+
 const conf = new Configstore(pkg.name, {});
 
 /** Configuration helpers for persistent storage */
@@ -79,7 +90,7 @@ const printBooks = ({ booklist }: SearchResult): void => {
 const printAllLibraryNames = (): void => {
   const libs = dl.getLibraryNames();
   libs.forEach((name) => console.log(name));
-  console.log(colors.green(`모두 ${libs.length} 개의 도서관`));
+  console.log(colors.green(MESSAGES.libraryCount(libs.length)));
 };
 
 /**
@@ -104,6 +115,21 @@ const getLibraryFullNameList = (libraryName: string): string[] =>
     .filter((name) => name);
 
 /**
+ * Set up SIGINT handler for graceful cancellation.
+ * Returns cleanup function to remove the listener.
+ */
+const setupCancellation = (
+  onCancel: () => void,
+): (() => void) => {
+  const handler = (): void => {
+    console.log("\n" + colors.yellow(MESSAGES.cancelSearch));
+    onCancel();
+  };
+  process.once("SIGINT", handler);
+  return () => process.removeListener("SIGINT", handler);
+};
+
+/**
  * Search libraries for books and print results.
  * Supports graceful cancellation with Ctrl+C.
  */
@@ -117,29 +143,21 @@ const searchBooks = ({
   new Promise((resolve) => {
     const controller = new AbortController();
     const results: SearchResult[] = [];
-
-    // Handle Ctrl+C for graceful cancellation
-    const handleSigint = (): void => {
-      console.log("\n" + colors.yellow("검색 취소 중..."));
-      controller.abort();
-    };
-    process.once("SIGINT", handleSigint);
+    const cleanup = setupCancellation(() => controller.abort());
 
     dl.search(
       { title, libraryName, signal: controller.signal },
       (err, book) => {
         if (err) {
-          // Silently ignore abort errors
           if (err.msg?.toLowerCase().includes("abort")) return;
-          console.log(err.msg ?? "Unknown Error");
+          console.log(err.msg ?? MESSAGES.unknownError);
         } else if (book) {
           printBooks(book);
           results.push(book);
         }
       },
       () => {
-        // Clean up SIGINT listener
-        process.removeListener("SIGINT", handleSigint);
+        cleanup();
         resolve(results);
       },
     );
@@ -150,9 +168,7 @@ const searchBooks = ({
  */
 const printSearchSummary = (results: SearchResult[]): void => {
   const bookCount = getBookCount(results);
-  console.log(
-    colors.green(`${results.length} 개의 도서관에서  ${bookCount} 권 검색됨`),
-  );
+  console.log(colors.green(MESSAGES.searchSummary(results.length, bookCount)));
 };
 
 /**
@@ -165,13 +181,13 @@ const promptForSearchOptions = async (): Promise<{
   introMessage("Dongne Library");
 
   const library = await select({
-    message: "도서관 이름은?",
+    message: MESSAGES.promptLibrary,
     choices: dl.getLibraryNames().map((name) => ({ name, value: name })),
     default: config.getLibrary(),
   });
 
   const title = await input({
-    message: "책 이름은?",
+    message: MESSAGES.promptTitle,
     default: config.getTitle(),
   });
 
