@@ -58,6 +58,7 @@
 ## Deploy to GitHub Container Registry
 
 Docker images are automatically published to GitHub Container Registry via GitHub Actions when:
+
 - Pushing to the `master` branch (tagged as `master`)
 - Creating version tags like `v1.0.0` (tagged with version number)
 

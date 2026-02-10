@@ -100,13 +100,8 @@ const getBookCount = (results: SearchResult[]): number =>
 const getLibraryFullNameList = (libraryName: string): string[] =>
   util
     .getArrayFromCommaSeparatedString(libraryName)
-    .filter((name) => getFullLibraryName(name));
-
-/**
- * Get library names to search - either specified or all.
- */
-const getLibraries = (libraryName?: string): string[] =>
-  libraryName ? getLibraryFullNameList(libraryName) : dl.getLibraryNames();
+    .map((name) => getFullLibraryName(name) || "")
+    .filter((name) => name);
 
 /**
  * Search libraries for books and print results.
@@ -117,7 +112,7 @@ const searchBooks = ({
   libraryName,
 }: {
   title: string;
-  libraryName: string;
+  libraryName: string | string[];
 }): Promise<SearchResult[]> =>
   new Promise((resolve) => {
     const controller = new AbortController();
@@ -203,12 +198,14 @@ const activate = async (): Promise<void> => {
     return;
   }
 
-  let searchOptions: { title: string; libraryName: string } | undefined;
+  let searchOptions:
+    | { title: string; libraryName: string | string[] }
+    | undefined;
 
   if (interactive) {
     searchOptions = await promptForSearchOptions();
   } else if (libraryName && title) {
-    searchOptions = { title, libraryName };
+    searchOptions = { title, libraryName: getLibraryFullNameList(libraryName) };
   } else if (title) {
     searchOptions = { title, libraryName: "" };
   } else {
