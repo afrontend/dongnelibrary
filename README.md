@@ -11,7 +11,7 @@
 
 - Node.js >= 22.22.0
 
-## install with git
+## Install with git and Run
 
     git clone https://github.com/afrontend/dongnelibrary
     cd dongnelibrary
@@ -20,19 +20,26 @@
 
     node ./dist/cli.js -i
     node ./dist/cli.js -a
-    node ./dist/cli.js -t javascript -l 남양
-    node ./dist/cli.js -t javascript -l 남양,판교
+    node ./dist/cli.js -t 별 -l 남양
+    node ./dist/cli.js -t 별 -l 흥천,판교
     npm test
 
-## install with NPM
+## Install with npm and Run
 
     npm install dongnelibrary -g
     dongnelibrary -i
     dongnelibrary -a
-    dongnelibrary -t javascript -l 남양도서관
-    dongnelibrary -t javascript -l 남양,판교
+    dongnelibrary -t 별 -l 남양
+    dongnelibrary -t 별 -l 흥천,판교
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
+
+## Run with npx
+
+    npx dongnelibrary -i
+    npx dongnelibrary -a
+    npx dongnelibrary -t 별 -l 남양
+    npx dongnelibrary -t 별 -l 흥천,판교
 
 ## Use GitHub Container Registry image
 
@@ -44,8 +51,8 @@
 
     docker run -it --rm ghcr.io/afrontend/dongnelibrary -i
     docker run --rm ghcr.io/afrontend/dongnelibrary -a
-    docker run --rm ghcr.io/afrontend/dongnelibrary -l 흥천,판교 -t 자바
-    docker run --rm ghcr.io/afrontend/dongnelibrary -l 수지 -t 자바
+    docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 남양
+    docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 흥천,판교
 
 ## Build and Run Docker Locally
 
@@ -57,8 +64,8 @@
 
     docker run -it dongnelibrary -i
     docker run dongnelibrary -a
-    docker run dongnelibrary -l "흥천,판교" -t 자바
-    docker run dongnelibrary -l "수지" -t 자바
+    docker run dongnelibrary -t 별 -l "남양"
+    docker run dongnelibrary -t 별 -l "흥천,판교"
     docker run -it -v ~/.config/configstore:/root/.config/configstore dongnelibrary -i
 
 ## Deploy to GitHub Container Registry
