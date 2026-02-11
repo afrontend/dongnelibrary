@@ -26,7 +26,7 @@
 
 ## Install with npm and Run
 
-    npm install dongnelibrary -g
+    npm install dongnelibrary@latest -g
     dongnelibrary -i
     dongnelibrary -a
     dongnelibrary -t 별 -l 남양
