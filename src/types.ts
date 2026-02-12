@@ -53,7 +53,10 @@ export interface SearchError {
 /**
  * Callback function signature for search operations
  */
-export type SearchCallback = (err: SearchError | null, result?: SearchResult) => void;
+export type SearchCallback = (
+  err: SearchError | null,
+  result?: SearchResult,
+) => void;
 
 /**
  * HTTP response structure
@@ -87,7 +90,10 @@ export interface HttpSession {
  */
 export interface LibraryModule {
   moduleName: string;
-  search: (opt: SearchOptions, callback?: SearchCallback) => Promise<SearchResult | void>;
+  search: (
+    opt: SearchOptions,
+    callback?: SearchCallback,
+  ) => Promise<SearchResult | void>;
   getLibraryNames: () => string[];
   homeUrl: string;
 }
@@ -97,6 +103,6 @@ export interface LibraryModule {
  */
 export interface LibraryRegistryEntry {
   name: string;
-  search: LibraryModule['search'];
+  search: LibraryModule["search"];
   homeUrl: string;
 }

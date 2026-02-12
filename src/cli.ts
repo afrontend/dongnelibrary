@@ -88,7 +88,7 @@ const printBooks = ({ booklist }: SearchResult): void => {
 
 /** Print all available library names to console */
 const printAllLibraryNames = (): void => {
-  const libs = dl.getLibraryNames();
+  const libs = dl.getAllLibraryNames();
   libs.forEach((name) => console.log(name));
   console.log(colors.green(MESSAGES.libraryCount(libs.length)));
 };
@@ -97,7 +97,7 @@ const printAllLibraryNames = (): void => {
  * Find full library name from partial string.
  */
 const getFullLibraryName = (str: string): string | undefined =>
-  dl.getLibraryNames().find((name) => name.includes(str));
+  dl.getAllLibraryNames().find((name) => name.includes(str));
 
 /**
  * Count total books across all search results.
@@ -118,9 +118,7 @@ const getLibraryFullNameList = (libraryName: string): string[] =>
  * Set up SIGINT handler for graceful cancellation.
  * Returns cleanup function to remove the listener.
  */
-const setupCancellation = (
-  onCancel: () => void,
-): (() => void) => {
+const setupCancellation = (onCancel: () => void): (() => void) => {
   const handler = (): void => {
     console.log("\n" + colors.yellow(MESSAGES.cancelSearch));
     onCancel();
@@ -182,7 +180,7 @@ const promptForSearchOptions = async (): Promise<{
 
   const library = await select({
     message: MESSAGES.promptLibrary,
-    choices: dl.getLibraryNames().map((name) => ({ name, value: name })),
+    choices: dl.getAllLibraryNames().map((name) => ({ name, value: name })),
     default: config.getLibrary(),
   });
 

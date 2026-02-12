@@ -6,7 +6,6 @@ import * as snlib from "./library/snlib";
 import * as suwon from "./library/suwon";
 import * as yjlib from "./library/yjlib";
 import * as yongin from "./library/yongin";
-import * as util from "./util";
 import type {
   Book,
   LibraryModule,
@@ -44,42 +43,54 @@ const UNKNOWN_LIBRARY: LibraryRegistryEntry = {
 // Library Registry
 // =============================================================================
 
-const libraryList: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap((module) =>
-  module.getLibraryNames().map((name) => ({
-    name,
-    search: module.search,
-    homeUrl: module.homeUrl,
-  })),
+const allLibraryList: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap(
+  (module) =>
+    module.getLibraryNames().map((name) => ({
+      name,
+      search: module.search,
+      homeUrl: module.homeUrl,
+    })),
 );
 
-export const getLibraryNames = (): string[] =>
-  libraryList.map((lib) => lib.name);
+export const getAllLibraryNames = (): string[] =>
+  allLibraryList.map((lib) => lib.name);
 
 export const getModuleHomeUrls = (): Record<string, string> =>
   Object.fromEntries(LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]));
 
-const getLibraryByName = (libraryName: string): LibraryRegistryEntry =>
-  libraryList.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
+const isModuleName = (name: string): boolean =>
+  LIBRARY_MODULES.some((m) => m.moduleName === name);
+
+const getLibraryNamesInModule = (moduleName: string): string[] =>
+  LIBRARY_MODULES.find((m) => m.moduleName === moduleName)?.getLibraryNames() ??
+  [];
+
+const getLibraryRegistryEntryByName = (
+  libraryName: string,
+): LibraryRegistryEntry =>
+  allLibraryList.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
 
 const completeLibraryName = (str: string): string =>
-  getLibraryNames().find((name) => name.includes(str)) ?? "";
+  getAllLibraryNames().find((name) => name.includes(str)) ?? "";
 
 const isValidLibraryName = (libraryName: string): boolean =>
-  libraryList.some((lib) => lib.name === libraryName);
+  allLibraryList.some((lib) => lib.name === libraryName);
 
-const resolveLibraries = (
+const resolveLibraryRegistryEntry = (
   libraryName: string | string[],
 ): LibraryRegistryEntry[] => {
   const names =
     libraryName === ""
-      ? getLibraryNames()
+      ? getAllLibraryNames()
       : Array.isArray(libraryName)
         ? libraryName
-        : [libraryName];
+        : isModuleName(libraryName)
+          ? getLibraryNamesInModule(libraryName)
+          : [libraryName];
   return names
     .map((name) => completeLibraryName(name))
     .filter((fullName) => isValidLibraryName(fullName))
-    .map((fullName) => getLibraryByName(fullName));
+    .map((fullName) => getLibraryRegistryEntryByName(fullName));
 };
 
 // =============================================================================
@@ -140,6 +151,7 @@ export type SearchCallback = (
   err: SearchError | null,
   result?: SearchResult,
 ) => void;
+
 export type SearchCompleteCallback = (
   err: SearchError | null,
   results?: SearchResult[],
@@ -162,7 +174,7 @@ export const search = (
   }
 
   const { title, libraryName, signal } = opt;
-  const libraries = resolveLibraries(libraryName);
+  const libraries = resolveLibraryRegistryEntry(libraryName);
 
   const promises = libraries.map(async (lib) => {
     if (signal?.aborted) {
@@ -194,7 +206,7 @@ export const searchAsync = (
     }
 
     const { title, libraryName, signal } = opt;
-    const libraries = resolveLibraries(libraryName);
+    const libraries = resolveLibraryRegistryEntry(libraryName);
 
     const promises = libraries.map(async (lib) => {
       if (signal?.aborted) {

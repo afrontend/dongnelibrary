@@ -1,4 +1,11 @@
-import type { Book, LibraryInfo, SearchCallback, SearchError, SearchOptions, SearchResult } from "./types";
+import type {
+  Book,
+  LibraryInfo,
+  SearchCallback,
+  SearchError,
+  SearchOptions,
+  SearchResult,
+} from "./types";
 
 /**
  * Strip HTML tags from a string.
@@ -31,7 +38,9 @@ export function printTotalBookCount(book: SearchResult): void {
 /**
  * Convert comma separated strings to Array.
  */
-export function getArrayFromCommaSeparatedString(libs: string | undefined | null): string[] {
+export function getArrayFromCommaSeparatedString(
+  libs: string | undefined | null,
+): string[] {
   if (!libs) return [];
   const a = libs.split(",").filter(function (lib) {
     if (lib && lib.length > 0) {
@@ -59,7 +68,9 @@ export function getLibraryNames(lst: LibraryInfo[]): string[] {
  * Create a library code lookup function for a given library list.
  * Factory pattern to avoid duplicating getLibraryCode() in each module.
  */
-export function createLibraryCodeLookup(libraryList: LibraryInfo[]): (libraryName: string) => string {
+export function createLibraryCodeLookup(
+  libraryList: LibraryInfo[],
+): (libraryName: string) => string {
   return function getLibraryCode(libraryName: string): string {
     const found = libraryList.find((lib) => lib.name === libraryName);
     return found ? found.code : "";
@@ -70,7 +81,10 @@ export function createLibraryCodeLookup(libraryList: LibraryInfo[]): (libraryNam
  * Extract the first number from a string.
  * Useful for parsing count values from text like "총 123건".
  */
-export function extractNumber(text: string | undefined | null, defaultValue: string = "0"): string {
+export function extractNumber(
+  text: string | undefined | null,
+  defaultValue: string = "0",
+): string {
   const match = (text ?? "").match(/\d+/);
   return match ? match[0] : defaultValue;
 }
@@ -94,9 +108,12 @@ export function validateSearchOptions(opt: SearchOptions): void {
  * Wrap an async function to support both Promise and callback patterns.
  */
 export function wrapWithCallback<T extends SearchOptions>(
-  asyncFn: (opt: T) => Promise<SearchResult>
+  asyncFn: (opt: T) => Promise<SearchResult>,
 ): (opt: T, callback?: SearchCallback) => Promise<SearchResult | void> {
-  return async function (opt: T, callback?: SearchCallback): Promise<SearchResult | void> {
+  return async function (
+    opt: T,
+    callback?: SearchCallback,
+  ): Promise<SearchResult | void> {
     if (!callback) {
       return asyncFn(opt);
     }
