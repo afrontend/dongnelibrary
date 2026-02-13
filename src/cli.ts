@@ -19,6 +19,7 @@ const LIBRARY_SUFFIX = "도서관";
 const MESSAGES = {
   cancelSearch: "검색 취소 중...",
   libraryCount: (count: number) => `모두 ${count} 개의 도서관`,
+  moduleCount: (count: number) => `모두 ${count} 개의 통합 도서관`,
   searchSummary: (libs: number, books: number) =>
     `${libs} 개의 도서관에서  ${books} 권 검색됨`,
   promptLibrary: "도서관 이름은?",
@@ -54,6 +55,7 @@ const introMessage = (msg: string): void => {
 program
   .version(pkg.version)
   .option("-a, --library-list", "Show libraries")
+  .option("-m, --module-list", "Show modules")
   .option("-i, --interactive", "Use menu")
   .option("-l, --library-name [name,name]", "library name")
   .option("-t, --title [title]", "a part of book title")
@@ -91,6 +93,13 @@ const printAllLibraryNames = (): void => {
   const libs = dl.getAllLibraryNames();
   libs.forEach((name) => console.log(name));
   console.log(colors.green(MESSAGES.libraryCount(libs.length)));
+};
+
+/** Print all available module names to console */
+const printAllModuleNames = (): void => {
+  const modules = dl.getAllModuleNames();
+  modules.forEach((name) => console.log(name));
+  console.log(colors.green(MESSAGES.moduleCount(modules.length)));
 };
 
 /**
@@ -197,6 +206,7 @@ const promptForSearchOptions = async (): Promise<{
 
 interface ProgramOptions {
   libraryList?: boolean;
+  moduleList?: boolean;
   interactive?: boolean;
   libraryName?: string;
   title?: string;
@@ -205,10 +215,15 @@ interface ProgramOptions {
 /** Main entry point - parse CLI options and execute search */
 const activate = async (): Promise<void> => {
   const opts = program.opts() as ProgramOptions;
-  const { libraryList, interactive, libraryName, title } = opts;
+  const { libraryList, moduleList, interactive, libraryName, title } = opts;
 
   if (libraryList) {
     printAllLibraryNames();
+    return;
+  }
+
+  if (moduleList) {
+    printAllModuleNames();
     return;
   }
 

@@ -55,6 +55,9 @@ const allLibraryList: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap(
 export const getAllLibraryNames = (): string[] =>
   allLibraryList.map((lib) => lib.name);
 
+export const getAllModuleNames = (): string[] =>
+  LIBRARY_MODULES.map((m) => m.moduleName);
+
 export const getModuleHomeUrls = (): Record<string, string> =>
   Object.fromEntries(LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]));
 
