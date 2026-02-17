@@ -117,6 +117,29 @@ describe("CLI", () => {
   });
 
   // ------------------------------------------------------------------
+  // Module List Tests
+  // ------------------------------------------------------------------
+
+  it("should list all modules with -m", { timeout: TIMEOUTS.QUICK }, async () => {
+    const { stdout, code } = await runCli(["-m"]);
+
+    assert.strictEqual(code, 0, "Exit code should be 0");
+    assert.match(stdout, /모두 \d+ 개의 통합 도서관/, "Should show total module count");
+
+    const match = stdout.match(/모두 (\d+) 개의 통합 도서관/);
+    assert.ok(match, "Should match module count pattern");
+    const count = parseInt(match[1], 10);
+    assert.ok(count > 5, `Should have more than 5 modules, got ${count}`);
+  });
+
+  it("should list all modules with --module-list", { timeout: TIMEOUTS.QUICK }, async () => {
+    const { stdout, code } = await runCli(["--module-list"]);
+
+    assert.strictEqual(code, 0, "Exit code should be 0");
+    assert.match(stdout, /모두 \d+ 개의 통합 도서관/, "Should show total module count");
+  });
+
+  // ------------------------------------------------------------------
   // Search Tests
   // ------------------------------------------------------------------
 
