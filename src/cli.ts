@@ -23,6 +23,7 @@ const MESSAGES = {
   searchSummary: (libs: number, books: number) =>
     `${libs} 개의 도서관에서  ${books} 권 검색됨`,
   promptLibrary: "도서관 이름은?",
+  promptModuleName: "통합도서관 이름은?",
   promptTitle: "책 이름은?",
   unknownError: "Unknown Error",
 };
@@ -31,6 +32,9 @@ const conf = new Configstore(pkg.name, {});
 
 /** Configuration helpers for persistent storage */
 const config = {
+  getModuleName: (): string | undefined =>
+    conf.get("moduleName") as string | undefined,
+  setModuleName: (name: string): void => conf.set("moduleName", name),
   getLibrary: (): string | undefined =>
     conf.get("library") as string | undefined,
   setLibrary: (name: string): void => conf.set("library", name),
@@ -54,9 +58,12 @@ const introMessage = (msg: string): void => {
 
 program
   .version(pkg.version)
-  .option("-a, --library-list", "Show libraries")
-  .option("-m, --module-list", "Show modules")
-  .option("-i, --interactive", "Use menu")
+  .option("-a, --library-list", "Show all libraries")
+  .option("-i, --interactive", "Search with library name")
+  .option(
+    "-m, --interactive-with-library-module",
+    "Search with library module name (includes integrated libraries)",
+  )
   .option("-l, --library-name [name,name]", "library name")
   .option("-t, --title [title]", "a part of book title")
   .parse(process.argv);
@@ -93,13 +100,6 @@ const printAllLibraryNames = (): void => {
   const libs = dl.getAllLibraryNames();
   libs.forEach((name) => console.log(name));
   console.log(colors.green(MESSAGES.libraryCount(libs.length)));
-};
-
-/** Print all available module names to console */
-const printAllModuleNames = (): void => {
-  const modules = dl.getAllModuleNames();
-  modules.forEach((name) => console.log(name));
-  console.log(colors.green(MESSAGES.moduleCount(modules.length)));
 };
 
 /**
@@ -214,10 +214,36 @@ const promptForSearchOptions = async (): Promise<{
   return { libraryName: library, title };
 };
 
+/**
+ * Interactive prompt for search options using inquirer with library module name.
+ */
+const promptForSearchOptionsWithLibraryModuleName = async (): Promise<{
+  libraryName: string;
+  title: string;
+}> => {
+  introMessage("Dongne Library");
+
+  const moduleName = await select({
+    message: MESSAGES.promptModuleName,
+    choices: dl.getAllModuleNames().map((name) => ({ name, value: name })),
+    default: config.getModuleName(),
+  });
+
+  const title = await input({
+    message: MESSAGES.promptTitle,
+    default: config.getTitle(),
+  });
+
+  config.setModuleName(moduleName);
+  config.setTitle(title);
+
+  return { libraryName: moduleName, title };
+};
+
 interface ProgramOptions {
   libraryList?: boolean;
-  moduleList?: boolean;
   interactive?: boolean;
+  interactiveWithLibraryModule?: boolean;
   libraryName?: string;
   title?: string;
 }
@@ -225,24 +251,26 @@ interface ProgramOptions {
 /** Main entry point - parse CLI options and execute search */
 const activate = async (): Promise<void> => {
   const opts = program.opts() as ProgramOptions;
-  const { libraryList, moduleList, interactive, libraryName, title } = opts;
+  const {
+    libraryList,
+    interactive,
+    interactiveWithLibraryModule,
+    libraryName,
+    title,
+  } = opts;
 
   if (libraryList) {
     printAllLibraryNames();
     return;
   }
 
-  if (moduleList) {
-    printAllModuleNames();
-    return;
-  }
-
   let searchOptions:
     | { title: string; libraryName: string | string[] }
     | undefined;
-
   if (interactive) {
     searchOptions = await promptForSearchOptions();
+  } else if (interactiveWithLibraryModule) {
+    searchOptions = await promptForSearchOptionsWithLibraryModuleName();
   } else if (libraryName && title) {
     const libraryNames = prependModuleNames(
       getLibraryFullNameList(libraryName),
