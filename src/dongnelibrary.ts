@@ -61,7 +61,7 @@ export const getAllModuleNames = (): string[] =>
 export const getModuleHomeUrls = (): Record<string, string> =>
   Object.fromEntries(LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]));
 
-const isModuleName = (name: string): boolean =>
+export const isModuleName = (name: string): boolean =>
   LIBRARY_MODULES.some((m) => m.moduleName === name);
 
 const getLibraryNamesInModule = (moduleName: string): string[] =>
@@ -77,7 +77,15 @@ const completeLibraryName = (str: string): string =>
   getAllLibraryNames().find((name) => name.includes(str)) ?? "";
 
 const isValidLibraryName = (libraryName: string): boolean =>
-  allLibraryList.some((lib) => lib.name === libraryName);
+  allLibraryList.some((lib) => lib.name === libraryName) ||
+  getAllModuleNames().some((moduleName) => moduleName === libraryName);
+
+const expendModuleNames = (libraryNameList: string[]): string[] => {
+  const expanded = libraryNameList.flatMap((name) =>
+    isModuleName(name) ? getLibraryNamesInModule(name) : [name],
+  );
+  return expanded.filter((name) => isValidLibraryName(name));
+};
 
 const resolveLibraryRegistryEntry = (
   libraryName: string | string[],
@@ -86,7 +94,7 @@ const resolveLibraryRegistryEntry = (
     libraryName === ""
       ? getAllLibraryNames()
       : Array.isArray(libraryName)
-        ? libraryName
+        ? expendModuleNames(libraryName)
         : isModuleName(libraryName)
           ? getLibraryNamesInModule(libraryName)
           : [libraryName];

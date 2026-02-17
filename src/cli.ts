@@ -117,11 +117,21 @@ const getBookCount = (results: SearchResult[]): number =>
 /**
  * Convert comma-separated library names to full name list.
  */
-const getLibraryFullNameList = (libraryName: string): string[] =>
-  util
-    .getArrayFromCommaSeparatedString(libraryName)
+const getLibraryFullNameList = (libraryNameWithCommas: string): string[] => {
+  const list = util
+    .getArrayFromCommaSeparatedString(libraryNameWithCommas)
     .map((name) => getFullLibraryName(name) || "")
-    .filter((name) => name);
+    .filter((name) => !dl.isModuleName(name) && name);
+  return list;
+};
+
+/**
+ * Prepend module names to library name list for search.
+ */
+
+const prependModuleNames = (libraryNameList: string[]): string[] => {
+  return [...dl.getAllModuleNames(), ...libraryNameList];
+};
 
 /**
  * Set up SIGINT handler for graceful cancellation.
@@ -234,7 +244,13 @@ const activate = async (): Promise<void> => {
   if (interactive) {
     searchOptions = await promptForSearchOptions();
   } else if (libraryName && title) {
-    searchOptions = { title, libraryName: getLibraryFullNameList(libraryName) };
+    const libraryNames = prependModuleNames(
+      getLibraryFullNameList(libraryName),
+    );
+    searchOptions = {
+      title,
+      libraryName: libraryNames,
+    };
   } else if (title) {
     searchOptions = { title, libraryName: "" };
   } else {
