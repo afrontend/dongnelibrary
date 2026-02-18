@@ -60,29 +60,62 @@ describe("CLI", () => {
   // Help and Version Tests
   // ------------------------------------------------------------------
 
-  it("should display version with --version", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["--version"]);
+  it(
+    "should display version with --version",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["--version"]);
 
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.match(stdout.trim(), /^\d+\.\d+\.\d+/, "Should output semver version");
-  });
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.match(
+        stdout.trim(),
+        /^\d+\.\d+\.\d+/,
+        "Should output semver version",
+      );
+    },
+  );
 
-  it("should display version with -V", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["-V"]);
+  it(
+    "should display version with -V",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["-V"]);
 
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.match(stdout.trim(), /^\d+\.\d+\.\d+/, "Should output semver version");
-  });
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.match(
+        stdout.trim(),
+        /^\d+\.\d+\.\d+/,
+        "Should output semver version",
+      );
+    },
+  );
 
-  it("should display help with --help", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["--help"]);
+  it(
+    "should display help with --help",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["--help"]);
 
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.ok(stdout.includes("-a, --library-list"), "Should show library-list option");
-    assert.ok(stdout.includes("-i, --interactive"), "Should show interactive option");
-    assert.ok(stdout.includes("-l, --library-name"), "Should show library-name option");
-    assert.ok(stdout.includes("-t, --title"), "Should show title option");
-  });
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("-a, --library-list"),
+        "Should show library-list option",
+      );
+      assert.ok(
+        stdout.includes("-i, --interactive"),
+        "Should show interactive option",
+      );
+      assert.ok(
+        stdout.includes("-m, --interactive-with-library-module"),
+        "Should show -m option",
+      );
+      assert.ok(
+        stdout.includes("-l, --library-name"),
+        "Should show library-name option",
+      );
+      assert.ok(stdout.includes("-t, --title"), "Should show title option");
+    },
+  );
 
   it("should display help with -h", { timeout: TIMEOUTS.QUICK }, async () => {
     const { stdout, code } = await runCli(["-h"]);
@@ -95,49 +128,44 @@ describe("CLI", () => {
   // Library List Tests
   // ------------------------------------------------------------------
 
-  it("should list all libraries with -a", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["-a"]);
+  it(
+    "should list all libraries with -a",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["-a"]);
 
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.ok(stdout.includes("도서관"), "Should include Korean word for library");
-    assert.match(stdout, /모두 \d+ 개의 도서관/, "Should show total library count");
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("도서관"),
+        "Should include Korean word for library",
+      );
+      assert.match(
+        stdout,
+        /모두 \d+ 개의 도서관/,
+        "Should show total library count",
+      );
 
-    // Verify we have a reasonable number of libraries
-    const match = stdout.match(/모두 (\d+) 개의 도서관/);
-    assert.ok(match, "Should match library count pattern");
-    const count = parseInt(match[1], 10);
-    assert.ok(count > 50, `Should have more than 50 libraries, got ${count}`);
-  });
+      // Verify we have a reasonable number of libraries
+      const match = stdout.match(/모두 (\d+) 개의 도서관/);
+      assert.ok(match, "Should match library count pattern");
+      const count = parseInt(match[1], 10);
+      assert.ok(count > 50, `Should have more than 50 libraries, got ${count}`);
+    },
+  );
 
-  it("should list all libraries with --library-list", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["--library-list"]);
+  it(
+    "should list all libraries with --library-list",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["--library-list"]);
 
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.ok(stdout.includes("도서관"), "Should include Korean word for library");
-  });
-
-  // ------------------------------------------------------------------
-  // Module List Tests
-  // ------------------------------------------------------------------
-
-  it("should list all modules with -m", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["-m"]);
-
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.match(stdout, /모두 \d+ 개의 통합 도서관/, "Should show total module count");
-
-    const match = stdout.match(/모두 (\d+) 개의 통합 도서관/);
-    assert.ok(match, "Should match module count pattern");
-    const count = parseInt(match[1], 10);
-    assert.ok(count > 5, `Should have more than 5 modules, got ${count}`);
-  });
-
-  it("should list all modules with --module-list", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli(["--module-list"]);
-
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    assert.match(stdout, /모두 \d+ 개의 통합 도서관/, "Should show total module count");
-  });
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("도서관"),
+        "Should include Korean word for library",
+      );
+    },
+  );
 
   // ------------------------------------------------------------------
   // Search Tests
@@ -153,9 +181,9 @@ describe("CLI", () => {
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary"
+        "Should show search summary",
       );
-    }
+    },
   );
 
   it(
@@ -163,17 +191,19 @@ describe("CLI", () => {
     { timeout: TIMEOUTS.SEARCH },
     async () => {
       const { stdout, code } = await runCli([
-        "--title", "python",
-        "--library-name", "군포"
+        "--title",
+        "python",
+        "--library-name",
+        "군포",
       ]);
 
       assert.strictEqual(code, 0, "Exit code should be 0");
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary"
+        "Should show search summary",
       );
-    }
+    },
   );
 
   it(
@@ -189,13 +219,13 @@ describe("CLI", () => {
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary"
+        "Should show search summary",
       );
 
       // Currently returns 0 results since comma-separated parsing isn't implemented
       const match = stdout.match(/(\d+) 개의 도서관에서/);
       assert.ok(match, "Should match library count pattern");
-    }
+    },
   );
 
   it(
@@ -208,9 +238,9 @@ describe("CLI", () => {
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary"
+        "Should show search summary",
       );
-    }
+    },
   );
 
   it(
@@ -223,9 +253,9 @@ describe("CLI", () => {
       // Book URLs are prefixed with → and contain http
       assert.ok(
         stdout.includes("→") && stdout.includes("http"),
-        "Should include book URLs in output"
+        "Should include book URLs in output",
       );
-    }
+    },
   );
 
   it(
@@ -233,8 +263,10 @@ describe("CLI", () => {
     { timeout: TIMEOUTS.SEARCH },
     async () => {
       const { stdout, code } = await runCli([
-        "-t", "zyxwvutsrqponmlkjihgfedcba",
-        "-l", "성남"
+        "-t",
+        "zyxwvutsrqponmlkjihgfedcba",
+        "-l",
+        "성남",
       ]);
 
       assert.strictEqual(code, 0, "Exit code should be 0");
@@ -242,9 +274,9 @@ describe("CLI", () => {
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary even with no results"
+        "Should show search summary even with no results",
       );
-    }
+    },
   );
 
   // ------------------------------------------------------------------
@@ -262,28 +294,82 @@ describe("CLI", () => {
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary"
+        "Should show search summary",
       );
 
       // Should have searched many libraries
       const match = stdout.match(/(\d+) 개의 도서관에서/);
       assert.ok(match, "Should match library count pattern");
       const libraryCount = parseInt(match[1], 10);
-      assert.ok(libraryCount > 10, `Should search many libraries, got ${libraryCount}`);
-    }
+      assert.ok(
+        libraryCount > 10,
+        `Should search many libraries, got ${libraryCount}`,
+      );
+    },
+  );
+
+  // ------------------------------------------------------------------
+  // Module-based Interactive Mode (-m) Tests
+  // ------------------------------------------------------------------
+
+  it(
+    "should show -m option in --help",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["--help"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("-m, --interactive-with-library-module"),
+        "Should list -m option in help",
+      );
+    },
+  );
+
+  it(
+    "should exit when SIGINT is sent during -m prompt",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { code } = await new Promise((resolve, reject) => {
+        const proc = spawn("node", [CLI_PATH, "-m"], {
+          env: { ...process.env, FORCE_COLOR: "0" },
+        });
+
+        let stdout = "";
+        let stderr = "";
+        proc.stdout.on("data", (d) => (stdout += d.toString()));
+        proc.stderr.on("data", (d) => (stderr += d.toString()));
+        proc.on("close", (code) => resolve({ stdout, stderr, code: code ?? 0 }));
+        proc.on("error", reject);
+
+        // Give process time to start, then send SIGINT
+        setTimeout(() => proc.kill("SIGINT"), 800);
+      });
+
+      // Process must exit (not hang) — code may be non-zero due to SIGINT
+      assert.ok(code !== undefined, "Process should have exited");
+    },
   );
 
   // ------------------------------------------------------------------
   // Edge Cases
   // ------------------------------------------------------------------
 
-  it("should exit silently with no arguments", { timeout: TIMEOUTS.QUICK }, async () => {
-    const { stdout, code } = await runCli([]);
+  it(
+    "should exit silently with no arguments",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli([]);
 
-    assert.strictEqual(code, 0, "Exit code should be 0");
-    // With no arguments, CLI should exit without output (no interactive mode)
-    assert.strictEqual(stdout.trim(), "", "Should produce no output without arguments");
-  });
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      // With no arguments, CLI should exit without output (no interactive mode)
+      assert.strictEqual(
+        stdout.trim(),
+        "",
+        "Should produce no output without arguments",
+      );
+    },
+  );
 
   it(
     "should handle partial library name match",
@@ -296,8 +382,8 @@ describe("CLI", () => {
       assert.match(
         stdout,
         /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary"
+        "Should show search summary",
       );
-    }
+    },
   );
 });
