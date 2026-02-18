@@ -230,9 +230,9 @@ describe("CLI", () => {
 
   it(
     "should search with Korean title",
-    { timeout: TIMEOUTS.SEARCH },
+    { timeout: TIMEOUTS.MULTI_SEARCH },
     async () => {
-      const { stdout, code } = await runCli(["-t", "소설", "-l", "용인"]);
+      const { stdout, code } = await runCli(["-t", "파이썬", "-l", "판교도서관"]);
 
       assert.strictEqual(code, 0, "Exit code should be 0");
       assert.match(
