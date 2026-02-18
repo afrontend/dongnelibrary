@@ -352,6 +352,126 @@ describe("CLI", () => {
   );
 
   // ------------------------------------------------------------------
+  // Query String Mode (-q) Tests
+  // ------------------------------------------------------------------
+
+  it(
+    "should show -q option in --help",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli(["--help"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("-q, --query"),
+        "Should list -q option in help",
+      );
+    },
+  );
+
+  it(
+    "should search with -q and exact library name",
+    { timeout: TIMEOUTS.SEARCH },
+    async () => {
+      const { stdout, code } = await runCli(["-q", "판교도서관 자바스크립트"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes('판교도서관에서 "자바스크립트" 검색'),
+        "Should confirm parsed library and title",
+      );
+      assert.match(
+        stdout,
+        /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
+        "Should show search summary",
+      );
+    },
+  );
+
+  it(
+    "should search with -q and title before library name",
+    { timeout: TIMEOUTS.SEARCH },
+    async () => {
+      const { stdout, code } = await runCli(["-q", "자바스크립트 판교도서관"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("판교도서관"),
+        "Should resolve library name regardless of order",
+      );
+      assert.match(
+        stdout,
+        /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
+        "Should show search summary",
+      );
+    },
+  );
+
+  it(
+    "should search all matching libraries when partial name matches multiple",
+    { timeout: TIMEOUTS.SEARCH },
+    async () => {
+      // "판교" matches both 판교도서관 and 판교어린이도서관
+      const { stdout, code } = await runCli(["-q", "판교 자바스크립트"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("판교도서관"),
+        "Should include 판교도서관 in confirmation",
+      );
+      assert.ok(
+        stdout.includes("판교어린이도서관"),
+        "Should include 판교어린이도서관 in confirmation",
+      );
+
+      const match = stdout.match(/(\d+) 개의 도서관에서/);
+      assert.ok(match, "Should show search summary");
+      const count = parseInt(match[1], 10);
+      assert.ok(count >= 2, `Should search at least 2 libraries, got ${count}`);
+    },
+  );
+
+  it(
+    "should search multiple libraries with -q and comma-separated names",
+    { timeout: TIMEOUTS.SEARCH },
+    async () => {
+      const { stdout, code } = await runCli(["-q", "판교,분당 자바스크립트"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("판교도서관"),
+        "Should include 판교도서관 in confirmation",
+      );
+      assert.ok(
+        stdout.includes("분당도서관"),
+        "Should include 분당도서관 in confirmation",
+      );
+      assert.match(
+        stdout,
+        /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
+        "Should show search summary",
+      );
+    },
+  );
+
+  it(
+    "should show error for -q when library name cannot be resolved",
+    { timeout: TIMEOUTS.QUICK },
+    async () => {
+      const { stdout, code } = await runCli([
+        "-q",
+        "zzznolibrary 자바스크립트",
+      ]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        stdout.includes("도서관 이름을 찾을 수 없습니다"),
+        "Should show library-not-found error",
+      );
+    },
+  );
+
+  // ------------------------------------------------------------------
   // Edge Cases
   // ------------------------------------------------------------------
 

@@ -113,6 +113,12 @@ const getFullLibraryName = (str: string): string | undefined =>
   dl.getAllLibraryNames().find((name) => name.includes(str));
 
 /**
+ * Find all library names that contain the given partial string.
+ */
+const getAllMatchingLibraryNames = (str: string): string[] =>
+  dl.getAllLibraryNames().filter((name) => name.includes(str));
+
+/**
  * Count total books across all search results.
  */
 const getBookCount = (results: SearchResult[]): number =>
@@ -308,13 +314,14 @@ const parseQueryString = (
 
   // Partial match: each whitespace token checked individually
   for (const token of tokens) {
-    const fullName = getFullLibraryName(token);
-    if (fullName) {
+    const matches = getAllMatchingLibraryNames(token);
+    if (matches.length > 0) {
       const title = tokens
         .filter((t) => t !== token)
         .join(" ")
         .trim();
-      if (title) return { libraryName: fullName, title };
+      if (title)
+        return { libraryName: matches.length === 1 ? matches[0] : matches, title };
     }
   }
 
