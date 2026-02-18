@@ -30,12 +30,17 @@ npm run hscity   # Hwaseong City
 npm run osan     # Osan City
 npm run snlib    # Seongnam City
 npm run suwon    # Suwon City
+npm run yjlib    # Yeoju City
 npm run yongin   # Yongin City
+npm run cli      # CLI option tests
 
 # Run CLI locally (after build)
-node ./dist/cli.js -i                      # Interactive mode
-node ./dist/cli.js -a                      # Show all libraries
-node ./dist/cli.js -t <title> -l <library> # Search specific library
+node ./dist/cli.js -i                          # Interactive mode
+node ./dist/cli.js -a                          # Show all libraries
+node ./dist/cli.js -t <title> -l <library>    # Search specific library
+node ./dist/cli.js -q "<library> <title>"     # Search with single query string
+node ./dist/cli.js -q "<lib1>,<lib2> <title>" # Search multiple libraries with single query
+node ./dist/cli.js -q                          # Interactive query prompt
 ```
 
 ## Architecture

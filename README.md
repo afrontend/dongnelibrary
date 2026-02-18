@@ -22,6 +22,9 @@
     node ./dist/cli.js -a
     node ./dist/cli.js -t 별 -l 남양
     node ./dist/cli.js -t 별 -l 흥천,판교
+    node ./dist/cli.js -q "판교 별"
+    node ./dist/cli.js -q "판교,정자 별"
+    node ./dist/cli.js -q
     npm test
 
 ## Install with npm and Run
@@ -31,6 +34,9 @@
     dongnelibrary -a
     dongnelibrary -t 별 -l 남양
     dongnelibrary -t 별 -l 흥천,판교
+    dongnelibrary -q "판교 별"
+    dongnelibrary -q "판교,정자 별"
+    dongnelibrary -q
 
 [![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
 
@@ -40,6 +46,9 @@
     npx dongnelibrary -a
     npx dongnelibrary -t 별 -l 남양
     npx dongnelibrary -t 별 -l 흥천,판교
+    npx dongnelibrary -q "판교 별"
+    npx dongnelibrary -q "판교,정자 별"
+    npx dongnelibrary -q
 
 ## Use GitHub Container Registry image
 
@@ -53,6 +62,8 @@
     docker run --rm ghcr.io/afrontend/dongnelibrary -a
     docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 남양
     docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 흥천,판교
+    docker run --rm ghcr.io/afrontend/dongnelibrary -q "판교 별"
+    docker run --rm ghcr.io/afrontend/dongnelibrary -q "판교,정자 별"
 
 ## Build and Run Docker Locally
 
@@ -66,6 +77,8 @@
     docker run dongnelibrary -a
     docker run dongnelibrary -t 별 -l "남양"
     docker run dongnelibrary -t 별 -l "흥천,판교"
+    docker run dongnelibrary -q "판교 별"
+    docker run dongnelibrary -q "판교,정자 별"
     docker run -it -v ~/.config/configstore:/root/.config/configstore dongnelibrary -i
 
 ## Deploy to GitHub Container Registry
