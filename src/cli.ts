@@ -147,6 +147,25 @@ const setupCancellation = (onCancel: () => void): (() => void) => {
 };
 
 /**
+ * Animated dots spinner shown while waiting for search results.
+ * Clears itself from the line when stopped.
+ */
+const createSpinner = (message: string) => {
+  const frames = ["   ", ".  ", ".. ", "..."];
+  let i = 0;
+  const timer = setInterval(() => {
+    process.stdout.write(`\r${message}${frames[i++ % frames.length]}`);
+  }, 300);
+
+  const stop = () => {
+    clearInterval(timer);
+    process.stdout.write("\r" + " ".repeat(message.length + 4) + "\r");
+  };
+
+  return { stop };
+};
+
+/**
  * Search libraries for books and print results.
  * Supports graceful cancellation with Ctrl+C.
  */
@@ -161,10 +180,12 @@ const searchBooks = ({
     const controller = new AbortController();
     const results: SearchResult[] = [];
     const cleanup = setupCancellation(() => controller.abort());
+    const spinner = createSpinner("검색 중");
 
     dl.search(
       { title, libraryName, signal: controller.signal },
       (err, book) => {
+        spinner.stop();
         if (err) {
           if (err.msg?.toLowerCase().includes("abort")) return;
           console.log(err.msg ?? MESSAGES.unknownError);
@@ -174,6 +195,7 @@ const searchBooks = ({
         }
       },
       () => {
+        spinner.stop();
         cleanup();
         resolve(results);
       },
