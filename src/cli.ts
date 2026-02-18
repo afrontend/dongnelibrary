@@ -66,6 +66,10 @@ program
   )
   .option("-l, --library-name [name,name]", "library name")
   .option("-t, --title [title]", "a part of book title")
+  .option(
+    "-q, --query [query]",
+    "Search with a single sentence containing library name and book title",
+  )
   .parse(process.argv);
 
 /**
@@ -262,12 +266,75 @@ const promptForSearchOptionsWithLibraryModuleName = async (): Promise<{
   return { libraryName: moduleName, title };
 };
 
+/**
+ * Parse a combined query string into library name and book title.
+ * Tries exact library/module name matches first (longest first),
+ * then falls back to partial token matching.
+ * Returns null if no library name can be identified.
+ */
+const parseQueryString = (
+  query: string,
+): { libraryName: string; title: string } | null => {
+  const allNames = [...dl.getAllModuleNames(), ...dl.getAllLibraryNames()].sort(
+    (a, b) => b.length - a.length,
+  );
+
+  // Exact match: library name appears as-is in the query
+  for (const name of allNames) {
+    if (query.includes(name)) {
+      const title = query.replace(name, "").trim();
+      if (title) return { libraryName: name, title };
+    }
+  }
+
+  // Partial match: split query by whitespace and check each token
+  const tokens = query.split(/\s+/);
+  for (const token of tokens) {
+    const fullName = getFullLibraryName(token);
+    if (fullName) {
+      const title = tokens
+        .filter((t) => t !== token)
+        .join(" ")
+        .trim();
+      if (title) return { libraryName: fullName, title };
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Interactive prompt for a single query string (library + title combined).
+ */
+const promptForQueryString = async (): Promise<{
+  libraryName: string;
+  title: string;
+} | null> => {
+  introMessage("Dongne Library");
+
+  const query = await input({
+    message: "도서관과 책 이름을 함께 입력하세요 (예: 판교도서관 해리포터)",
+  });
+
+  const parsed = parseQueryString(query.trim());
+  if (!parsed) {
+    console.log(
+      colors.yellow(
+        "도서관 이름을 찾을 수 없습니다. 도서관 이름을 포함해서 다시 입력해주세요.",
+      ),
+    );
+    return null;
+  }
+  return parsed;
+};
+
 interface ProgramOptions {
   libraryList?: boolean;
   interactive?: boolean;
   interactiveWithLibraryModule?: boolean;
   libraryName?: string;
   title?: string;
+  query?: string | boolean;
 }
 
 /** Main entry point - parse CLI options and execute search */
@@ -279,6 +346,7 @@ const activate = async (): Promise<void> => {
     interactiveWithLibraryModule,
     libraryName,
     title,
+    query,
   } = opts;
 
   if (libraryList) {
@@ -293,6 +361,25 @@ const activate = async (): Promise<void> => {
     searchOptions = await promptForSearchOptions();
   } else if (interactiveWithLibraryModule) {
     searchOptions = await promptForSearchOptionsWithLibraryModuleName();
+  } else if (query !== undefined) {
+    // -q without a value → interactive prompt; -q "string" → parse directly
+    const queryStr = typeof query === "string" ? query : undefined;
+    if (queryStr) {
+      const parsed = parseQueryString(queryStr.trim());
+      if (!parsed) {
+        console.log(
+          colors.yellow(
+            "도서관 이름을 찾을 수 없습니다. -a 옵션으로 도서관 목록을 확인하세요.",
+          ),
+        );
+        return;
+      }
+      searchOptions = parsed;
+    } else {
+      const parsed = await promptForQueryString();
+      if (!parsed) return;
+      searchOptions = parsed;
+    }
   } else if (libraryName && title) {
     const libraryNames = prependModuleNames(
       getLibraryFullNameList(libraryName),
