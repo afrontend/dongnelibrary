@@ -267,17 +267,36 @@ const promptForSearchOptionsWithLibraryModuleName = async (): Promise<{
 };
 
 /**
- * Parse a combined query string into library name and book title.
- * Tries exact library/module name matches first (longest first),
- * then falls back to partial token matching.
+ * Parse a combined query string into library name(s) and book title.
+ * Checks in order:
+ *   1. Comma-separated multi-library token (e.g. "판교,정자 해리포터")
+ *   2. Exact single library/module name anywhere in query
+ *   3. Partial single library per whitespace token
  * Returns null if no library name can be identified.
  */
 const parseQueryString = (
   query: string,
-): { libraryName: string; title: string } | null => {
+): { libraryName: string | string[]; title: string } | null => {
   const allNames = [...dl.getAllModuleNames(), ...dl.getAllLibraryNames()].sort(
     (a, b) => b.length - a.length,
   );
+
+  // Comma-separated multi-library: find a token like "판교,정자"
+  const tokens = query.split(/\s+/);
+  for (const token of tokens) {
+    if (!token.includes(",")) continue;
+    const parts = token.split(",").filter(Boolean);
+    const resolved = parts
+      .map((p) => getFullLibraryName(p))
+      .filter((n): n is string => !!n);
+    if (resolved.length === parts.length) {
+      const title = tokens
+        .filter((t) => t !== token)
+        .join(" ")
+        .trim();
+      if (title) return { libraryName: resolved, title };
+    }
+  }
 
   // Exact match: library name appears as-is in the query
   for (const name of allNames) {
@@ -287,8 +306,7 @@ const parseQueryString = (
     }
   }
 
-  // Partial match: split query by whitespace and check each token
-  const tokens = query.split(/\s+/);
+  // Partial match: each whitespace token checked individually
   for (const token of tokens) {
     const fullName = getFullLibraryName(token);
     if (fullName) {
@@ -307,13 +325,14 @@ const parseQueryString = (
  * Interactive prompt for a single query string (library + title combined).
  */
 const promptForQueryString = async (): Promise<{
-  libraryName: string;
+  libraryName: string | string[];
   title: string;
 } | null> => {
   introMessage("Dongne Library");
 
   const query = await input({
-    message: "도서관과 책 이름을 함께 입력하세요 (예: 판교도서관 해리포터)",
+    message:
+      "도서관과 책 이름을 함께 입력하세요 (예: 판교도서관 해리포터, 판교,정자 해리포터)",
   });
 
   const parsed = parseQueryString(query.trim());
@@ -375,10 +394,18 @@ const activate = async (): Promise<void> => {
         return;
       }
       searchOptions = parsed;
+      const libDisplay = Array.isArray(parsed.libraryName)
+        ? parsed.libraryName.map((n) => colors.cyan(n)).join(", ")
+        : colors.cyan(parsed.libraryName);
+      console.log(`${libDisplay}에서 "${parsed.title}" 검색`);
     } else {
       const parsed = await promptForQueryString();
       if (!parsed) return;
       searchOptions = parsed;
+      const libDisplay = Array.isArray(parsed.libraryName)
+        ? parsed.libraryName.map((n) => colors.cyan(n)).join(", ")
+        : colors.cyan(parsed.libraryName);
+      console.log(`${libDisplay}에서 "${parsed.title}" 검색`);
     }
   } else if (libraryName && title) {
     const libraryNames = prependModuleNames(
