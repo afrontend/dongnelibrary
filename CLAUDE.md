@@ -48,6 +48,7 @@ node ./dist/cli.js -q                          # Interactive query prompt
 The project is written in TypeScript and uses a modular plugin architecture where each library system has its own implementation module.
 
 **Build Output:**
+
 ```
 src/*.ts          →  (tsc)  →  dist/*.js + dist/*.d.ts
 src/library/*.ts  →  (tsc)  →  dist/library/*.js + dist/library/*.d.ts
@@ -74,6 +75,7 @@ src/library/*.ts  →  (tsc)  →  dist/library/*.js + dist/library/*.d.ts
 - `yongin.ts` - 용인시도서관 (Yongin City)
 
 Each library module must export:
+
 - `search(opt, callback)` - Main search function taking `{title, libraryName}`. Supports both callback style and Promise returns
 - `getLibraryNames()` - Returns array of branch names supported by this module
 - `homeUrl` - Base URL of the library system website
@@ -98,16 +100,25 @@ Each library module must export:
 The project exports TypeScript types for library consumers:
 
 ```typescript
-import dongnelibrary, { SearchOptions, SearchResult, Book, SearchError } from 'dongnelibrary';
+import dongnelibrary, {
+  SearchOptions,
+  SearchResult,
+  Book,
+  SearchError,
+} from "dongnelibrary";
 
 // Callback-style API
-dongnelibrary.search({ title: '책', libraryName: '도서관' }, callback);
+dongnelibrary.search({ title: "책", libraryName: "도서관" }, callback);
 
 // Promise-style API
-const results = await dongnelibrary.searchAsync({ title: '책', libraryName: '도서관' });
+const results = await dongnelibrary.searchAsync({
+  title: "책",
+  libraryName: "도서관",
+});
 ```
 
 Key types in `src/types.ts`:
+
 - `SearchOptions` - Options for book search
 - `SearchResult` - Search result with booklist
 - `Book` - Individual book information
@@ -122,6 +133,7 @@ Tests import from `dist/` (the compiled output), so `npm run build` runs automat
 All library tests use the shared `test/helpers/libraryTestSuite.js` helper which provides standard test cases (empty title, invalid title, Korean title search, multi-library search, bookUrl validation).
 
 To run a specific test within a file, use the `--test-name-pattern` flag:
+
 ```bash
 npm run build && node --test --test-name-pattern="Korean titles" test/gunpo.spec.js
 ```
@@ -136,22 +148,3 @@ npm run build && node --test --test-name-pattern="Korean titles" test/gunpo.spec
 - **suwon.ts**: `https://search.suwonlib.go.kr/getSearchResult/normal` (requires session init)
 - **yjlib.ts**: `https://www.yjlib.go.kr/web/menu/10036/program/30001/searchResultList.do`
 - **yongin.ts**: `https://lib.yongin.go.kr/intro/menu/10003/program/30012/plusSearchResultList.do`
-
-## Docker
-
-The project includes a `Dockerfile` in the root directory using Node 20 Alpine.
-
-```bash
-# Build locally
-docker build -t dongnelibrary .
-
-# Run
-docker run -it dongnelibrary -i
-
-# Deploy to Docker Hub
-docker login
-docker build -t <username>/dongnelibrary:latest .
-docker push <username>/dongnelibrary:latest
-```
-
-Docker Hub image: `frontendwordpress/dongnelibrary`
