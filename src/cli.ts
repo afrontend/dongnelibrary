@@ -58,18 +58,36 @@ const introMessage = (msg: string): void => {
 
 program
   .version(pkg.version)
-  .option("-a, --library-list", "Show all libraries")
-  .option("-i, --interactive", "Search with library name")
+  .option("-a, --library-list", "List all available library branches")
+  .option("-i, --interactive", "Interactive mode: choose a library and title from menus")
   .option(
     "-m, --interactive-with-library-module",
-    "Search with library module name (includes integrated libraries)",
+    "Interactive mode: choose by city library system (e.g. 성남, 수원)",
   )
-  .option("-l, --library-name [name,name]", "library name")
-  .option("-t, --title [title]", "a part of book title")
+  .option("-l, --library-name [name,name]", "Library name to search (comma-separated for multiple)")
+  .option("-t, --title [title]", "Book title to search (partial match)")
   .option(
     "-q, --query [query]",
-    "Search with a single sentence containing library name and book title",
+    'Combined search query: "<library> <title>" (omit value for interactive prompt)',
   )
+  .on("--help", () => {
+    console.log("");
+    console.log("Examples:");
+    console.log(
+      "  -i                          Interactive mode (select library from list)",
+    );
+    console.log("  -a                          Show all available libraries");
+    console.log(
+      "  -t 해리포터 -l 판교         Search by title and library name",
+    );
+    console.log(
+      '  -q "판교 해리포터"          Search with combined query string',
+    );
+    console.log(
+      '  -q "판교,정자 해리포터"     Search multiple libraries at once',
+    );
+    console.log("  -q                          Interactive query prompt");
+  })
   .parse(process.argv);
 
 /**
