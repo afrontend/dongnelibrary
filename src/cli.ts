@@ -283,9 +283,7 @@ const promptForSearchOptionsWithLibraryModuleName = async (): Promise<{
 const parseQueryString = (
   query: string,
 ): { libraryName: string | string[]; title: string } | null => {
-  const allNames = [...dl.getAllModuleNames(), ...dl.getAllLibraryNames()].sort(
-    (a, b) => b.length - a.length,
-  );
+  const allNames = dl.getAllLibraryNames().sort((a, b) => b.length - a.length);
 
   // Comma-separated multi-library: find a token like "판교,정자"
   const tokens = query.split(/\s+/);
@@ -321,7 +319,10 @@ const parseQueryString = (
         .join(" ")
         .trim();
       if (title)
-        return { libraryName: matches.length === 1 ? matches[0] : matches, title };
+        return {
+          libraryName: matches.length === 1 ? matches[0] : matches,
+          title,
+        };
     }
   }
 
