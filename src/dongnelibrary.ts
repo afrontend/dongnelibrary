@@ -80,29 +80,25 @@ const isValidLibraryName = (libraryName: string): boolean =>
   allLibraryList.some((lib) => lib.name === libraryName) ||
   getAllModuleNames().some((moduleName) => moduleName === libraryName);
 
-const expendModuleNames = (libraryNameList: string[]): string[] => {
-  const expanded = libraryNameList.flatMap((name) =>
+const expandModuleNames = (libraryNameList: string[]): string[] =>
+  libraryNameList.flatMap((name) =>
     isModuleName(name) ? getLibraryNamesInModule(name) : [name],
   );
-  return expanded.filter((name) => isValidLibraryName(name));
+
+const resolveNameList = (libraryName: string | string[]): string[] => {
+  if (libraryName === "") return getAllLibraryNames();
+  if (Array.isArray(libraryName)) return expandModuleNames(libraryName);
+  if (isModuleName(libraryName)) return getLibraryNamesInModule(libraryName);
+  return [libraryName];
 };
 
 const resolveLibraryRegistryEntry = (
   libraryName: string | string[],
-): LibraryRegistryEntry[] => {
-  const names =
-    libraryName === ""
-      ? getAllLibraryNames()
-      : Array.isArray(libraryName)
-        ? expendModuleNames(libraryName)
-        : isModuleName(libraryName)
-          ? getLibraryNamesInModule(libraryName)
-          : [libraryName];
-  return names
-    .map((name) => completeLibraryName(name))
-    .filter((fullName) => isValidLibraryName(fullName))
-    .map((fullName) => getLibraryRegistryEntryByName(fullName));
-};
+): LibraryRegistryEntry[] =>
+  resolveNameList(libraryName)
+    .map(completeLibraryName)
+    .filter(isValidLibraryName)
+    .map(getLibraryRegistryEntryByName);
 
 // =============================================================================
 // Book Result Helpers
@@ -174,23 +170,15 @@ export interface SearchOptionsMain {
   signal?: AbortSignal;
 }
 
-export const search = (
-  opt: SearchOptionsMain | undefined | null,
+export const searchAsync = (
+  opt: SearchOptionsMain,
   onResult?: SearchCallback,
-  onComplete?: SearchCompleteCallback,
-): void => {
-  if (!opt || (!onResult && !onComplete)) {
-    console.log("invalid search options");
-    return;
-  }
-
+): Promise<SearchResult[]> => {
   const { title, libraryName, signal } = opt;
   const libraries = resolveLibraryRegistryEntry(libraryName);
 
   const promises = libraries.map(async (lib) => {
-    if (signal?.aborted) {
-      return null;
-    }
+    if (signal?.aborted) return null;
     const { error, result } = await searchLibrary(lib, title, signal);
     if (error) {
       onResult?.(error);
@@ -200,43 +188,21 @@ export const search = (
     return result;
   });
 
-  Promise.all(promises).then((results) => {
-    const validResults = results.filter((r): r is SearchResult => r !== null);
-    onComplete?.(null, validResults);
-  });
+  return Promise.all(promises).then((r) =>
+    r.filter((v): v is SearchResult => v !== null),
+  );
 };
 
-export const searchAsync = (
-  opt: SearchOptionsMain,
+export const search = (
+  opt: SearchOptionsMain | undefined | null,
   onResult?: SearchCallback,
-): Promise<SearchResult[]> => {
-  return new Promise((resolve, reject) => {
-    if (!opt) {
-      reject(new Error("invalid search options"));
-      return;
-    }
-
-    const { title, libraryName, signal } = opt;
-    const libraries = resolveLibraryRegistryEntry(libraryName);
-
-    const promises = libraries.map(async (lib) => {
-      if (signal?.aborted) {
-        return null;
-      }
-      const { error, result } = await searchLibrary(lib, title, signal);
-      if (error) {
-        onResult?.(error);
-        return null;
-      }
-      onResult?.(null, result);
-      return result;
-    });
-
-    Promise.all(promises).then((results) => {
-      const validResults = results.filter((r): r is SearchResult => r !== null);
-      resolve(validResults);
-    });
-  });
+  onComplete?: SearchCompleteCallback,
+): void => {
+  if (!opt || (!onResult && !onComplete)) {
+    console.log("invalid search options");
+    return;
+  }
+  searchAsync(opt, onResult).then((results) => onComplete?.(null, results));
 };
 
 // Re-export types for consumers
