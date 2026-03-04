@@ -6,7 +6,7 @@ import {
   validateSearchOptions,
   wrapWithCallback,
 } from "../util";
-import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
+import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
 
 export const moduleName = "군포시도서관";
 export const homeUrl = "https://www.gunpolib.go.kr";
@@ -108,3 +108,5 @@ export const search = wrapWithCallback(searchImpl);
 export function getLibraryNames(): string[] {
   return getLibNames(libraryList);
 }
+
+({ moduleName, homeUrl, search, getLibraryNames }) satisfies LibraryModule;

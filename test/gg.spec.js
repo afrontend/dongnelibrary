@@ -2,7 +2,7 @@ const { describe, it } = require("node:test");
 const assert = require("assert").strict;
 const { request } = require("undici");
 const { JSDOM } = require("jsdom");
-const lib = require("../dist/library/gg");
+const lib = require("../dist/localLibraryModule/gg");
 const { createLibraryTestSuite } = require("./helpers/libraryTestSuite");
 
 // Run the standard test suite

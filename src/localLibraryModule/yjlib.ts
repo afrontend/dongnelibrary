@@ -7,7 +7,7 @@ import {
 } from "../util";
 import { get } from "../http";
 import { JSDOM } from "jsdom";
-import type { Book, LibraryInfo, SearchOptions, SearchResult } from "../types";
+import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
 
 export const moduleName = "여주시립도서관";
 export const homeUrl = "https://www.yjlib.go.kr";
@@ -133,3 +133,5 @@ export const search = wrapWithCallback(searchImpl);
 export function getLibraryNames(): string[] {
   return getLibNames(libraryList);
 }
+
+({ moduleName, homeUrl, search, getLibraryNames }) satisfies LibraryModule;

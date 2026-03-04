@@ -1,7 +1,7 @@
 const { describe, it } = require("node:test");
 const assert = require("assert");
 const dl = require("../dist/dongnelibrary");
-const gunpo = require("../dist/library/gunpo");
+const gunpo = require("../dist/localLibraryModule/gunpo");
 
 describe("Cancellation", () => {
   describe("AbortController support", () => {

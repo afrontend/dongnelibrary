@@ -1,11 +1,11 @@
-import * as gg from "./library/gg";
-import * as gunpo from "./library/gunpo";
-import * as hscity from "./library/hscity";
-import * as osan from "./library/osan";
-import * as snlib from "./library/snlib";
-import * as suwon from "./library/suwon";
-import * as yjlib from "./library/yjlib";
-import * as yongin from "./library/yongin";
+import * as gg from "./localLibraryModule/gg";
+import * as gunpo from "./localLibraryModule/gunpo";
+import * as hscity from "./localLibraryModule/hscity";
+import * as osan from "./localLibraryModule/osan";
+import * as snlib from "./localLibraryModule/snlib";
+import * as suwon from "./localLibraryModule/suwon";
+import * as yjlib from "./localLibraryModule/yjlib";
+import * as yongin from "./localLibraryModule/yongin";
 import type {
   Book,
   LibraryModule,
