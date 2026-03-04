@@ -7,7 +7,13 @@ import {
 } from "../util";
 import { get } from "../http";
 import { JSDOM } from "jsdom";
-import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
+import type {
+  Book,
+  LibraryInfo,
+  LibraryModule,
+  SearchOptions,
+  SearchResult,
+} from "../types";
 
 export const moduleName = "용인시도서관";
 export const homeUrl = "https://lib.yongin.go.kr";
@@ -126,7 +132,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
 
     // Get availability status from .status p
     const statusEl = li.querySelector(".status p");
-    const statusText = statusEl ? statusEl.textContent?.trim() ?? "" : "";
+    const statusText = statusEl ? (statusEl.textContent?.trim() ?? "") : "";
     const exist = statusText.includes("대출가능");
 
     // Get library name from ".book_info.info03 p" (first p contains library name)

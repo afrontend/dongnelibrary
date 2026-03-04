@@ -6,7 +6,13 @@ import {
   validateSearchOptions,
   wrapWithCallback,
 } from "../util";
-import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
+import type {
+  Book,
+  LibraryInfo,
+  LibraryModule,
+  SearchOptions,
+  SearchResult,
+} from "../types";
 
 export const moduleName = "군포시도서관";
 export const homeUrl = "https://www.gunpolib.go.kr";
@@ -58,16 +64,21 @@ interface GunpoApiResponse {
 }
 
 function getBookList(json: GunpoApiResponse): Book[] {
-  return _.map(json.data ? json.data.list : [], function (book: GunpoBook): Book {
-    return {
-      title: book.titleStatement,
-      exist: book.branchVolumes.some((vol) => vol.cState.includes("대출가능")),
-      libraryName: book.branchVolumes.map((vol) => vol.name).join(","),
-      bookUrl: book.id
-        ? `https://www.gunpolib.go.kr/#/search/detail/${book.id}`
-        : "",
-    };
-  });
+  return _.map(
+    json.data ? json.data.list : [],
+    function (book: GunpoBook): Book {
+      return {
+        title: book.titleStatement,
+        exist: book.branchVolumes.some((vol) =>
+          vol.cState.includes("대출가능"),
+        ),
+        libraryName: book.branchVolumes.map((vol) => vol.name).join(","),
+        bookUrl: book.id
+          ? `https://www.gunpolib.go.kr/#/search/detail/${book.id}`
+          : "",
+      };
+    },
+  );
 }
 
 /**

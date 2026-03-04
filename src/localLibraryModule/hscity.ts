@@ -7,7 +7,13 @@ import {
 } from "../util";
 import { post } from "../http";
 import { JSDOM } from "jsdom";
-import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
+import type {
+  Book,
+  LibraryInfo,
+  LibraryModule,
+  SearchOptions,
+  SearchResult,
+} from "../types";
 
 export const moduleName = "화성시립도서관";
 export const homeUrl = "https://hscitylib.or.kr";
@@ -92,7 +98,8 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
       const [, bookKey, speciesKey, isbn, pubFormCode] = match;
       bookUrl = `https://hscitylib.or.kr/intro/menu/10008/program/30001/searchResultDetail.do?bookKey=${bookKey}&speciesKey=${speciesKey}&isbn=${isbn}&pubFormCode=${pubFormCode}`;
     }
-    const availability = item.querySelector("span.emp8")?.textContent?.trim() ?? "";
+    const availability =
+      item.querySelector("span.emp8")?.textContent?.trim() ?? "";
     const libName = item.querySelector("b.themeFC")?.textContent?.trim() ?? "";
     booklist.push({
       libraryName: libName.replace(/[\[\]]/g, ""),

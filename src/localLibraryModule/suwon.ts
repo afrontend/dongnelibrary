@@ -5,7 +5,13 @@ import {
   wrapWithCallback,
 } from "../util";
 import { createSession } from "../http";
-import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
+import type {
+  Book,
+  LibraryInfo,
+  LibraryModule,
+  SearchOptions,
+  SearchResult,
+} from "../types";
 
 export const moduleName = "수원시도서관";
 export const homeUrl = "https://www.suwonlib.go.kr";

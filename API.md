@@ -1,6 +1,6 @@
 # DongneLibrary API Reference
 
-A JavaScript/TypeScript library for checking book availability across 100+ Korean public library branches in Gyeonggi Province (경기도).
+A JavaScript/TypeScript library for checking book availability across 160+ Korean public library branches in Gyeonggi Province (경기도).
 
 ## Installation
 
@@ -186,20 +186,20 @@ try {
 
 ---
 
-### getLibraryNames()
+### getAllLibraryNames()
 
 Returns an array of all supported library branch names.
 
 #### Returns
 
-`string[]` - Array of library names (100+ branches)
+`string[]` - Array of library names (160+ branches)
 
 #### Example
 
 ```javascript
-const libraries = dongnelibrary.getLibraryNames();
+const libraries = dongnelibrary.getAllLibraryNames();
 console.log(libraries);
-// ['가좌도서관', '갈현도서관', '경기평생교육학습관', ...]
+// ['경기중앙교육도서관', '경기평택교육도서관', '경기광주교육도서관', ...]
 ```
 
 ---
@@ -218,8 +218,8 @@ Returns a mapping of library system module names to their home URLs.
 const urls = dongnelibrary.getModuleHomeUrls();
 console.log(urls);
 // {
-//   gg: 'https://lib.goe.go.kr',
-//   gunpo: 'https://www.gunpolib.go.kr',
+//   '경기교육통합도서관': 'https://lib.goe.go.kr',
+//   '군포시도서관': 'https://www.gunpolib.go.kr',
 //   ...
 // }
 ```
@@ -294,7 +294,7 @@ type SearchCompleteCallback = (
 | `yjlib`  | 여주시립도서관     | Yeoju City        |
 | `yongin` | 용인시도서관       | Yongin City       |
 
-Use `getLibraryNames()` to see all 100+ individual branch names.
+Use `getAllLibraryNames()` to see all 160+ individual branch names.
 
 ---
 

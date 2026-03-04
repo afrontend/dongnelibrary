@@ -7,7 +7,13 @@ import {
 } from "../util";
 import { get } from "../http";
 import { JSDOM } from "jsdom";
-import type { Book, LibraryInfo, LibraryModule, SearchOptions, SearchResult } from "../types";
+import type {
+  Book,
+  LibraryInfo,
+  LibraryModule,
+  SearchOptions,
+  SearchResult,
+} from "../types";
 
 export const moduleName = "오산시도서관";
 export const homeUrl = "https://www.osanlibrary.go.kr";
@@ -69,7 +75,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     // Get title and book URL from .book_name link
     const titleLink = li.querySelector(".book_name");
     const titleEl = titleLink ? titleLink.querySelector("span") : null;
-    const bookTitle = titleEl ? titleEl.textContent?.trim() ?? "" : "";
+    const bookTitle = titleEl ? (titleEl.textContent?.trim() ?? "") : "";
 
     // Extract book URL from onclick handler
     let bookUrl = "";
@@ -84,7 +90,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
 
     // Get availability status from .status p
     const statusEl = li.querySelector(".status p");
-    const statusText = statusEl ? statusEl.textContent?.trim() ?? "" : "";
+    const statusText = statusEl ? (statusEl.textContent?.trim() ?? "") : "";
     const exist = statusText.includes("대출가능");
 
     // Get library name from ".book_info .fb p" containing "소장도서관"
