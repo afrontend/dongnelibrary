@@ -106,3 +106,39 @@ export interface LibraryRegistryEntry {
   search: LibraryModule["search"];
   homeUrl: string;
 }
+
+/**
+ * Callback function signature for search completion
+ */
+export type SearchCompleteCallback = (
+  err: SearchError | null,
+  results?: SearchResult[],
+) => void;
+
+/**
+ * Options for the main search API
+ */
+export interface SearchOptionsMain {
+  title: string;
+  libraryName: string | string[];
+  signal?: AbortSignal;
+}
+
+/**
+ * Public API interface for DongneLibrary
+ */
+export interface DongneLibraryAPI {
+  getAllLibraryNames: () => string[];
+  getAllModuleNames: () => string[];
+  getModuleHomeUrls: () => Record<string, string>;
+  isModuleName: (name: string) => boolean;
+  searchAsync: (
+    opt: SearchOptionsMain,
+    onResult?: SearchCallback,
+  ) => Promise<SearchResult[]>;
+  search: (
+    opt: SearchOptionsMain | undefined | null,
+    onResult?: SearchCallback,
+    onComplete?: SearchCompleteCallback,
+  ) => void;
+}

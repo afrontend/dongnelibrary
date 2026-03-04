@@ -8,9 +8,13 @@ import * as yjlib from "./localLibraryModule/yjlib";
 import * as yongin from "./localLibraryModule/yongin";
 import type {
   Book,
+  DongneLibraryAPI,
   LibraryModule,
   LibraryRegistryEntry,
+  SearchCallback,
+  SearchCompleteCallback,
   SearchError,
+  SearchOptionsMain,
   SearchResult,
 } from "./types";
 
@@ -154,22 +158,6 @@ const searchLibrary = (
     });
   });
 
-export type SearchCallback = (
-  err: SearchError | null,
-  result?: SearchResult,
-) => void;
-
-export type SearchCompleteCallback = (
-  err: SearchError | null,
-  results?: SearchResult[],
-) => void;
-
-export interface SearchOptionsMain {
-  title: string;
-  libraryName: string | string[];
-  signal?: AbortSignal;
-}
-
 export const searchAsync = (
   opt: SearchOptionsMain,
   onResult?: SearchCallback,
@@ -206,4 +194,20 @@ export const search = (
 };
 
 // Re-export types for consumers
-export type { SearchResult, SearchError, Book } from "./types";
+export type {
+  SearchResult,
+  SearchError,
+  SearchOptionsMain,
+  SearchCallback,
+  SearchCompleteCallback,
+  Book,
+} from "./types";
+
+({
+  getAllLibraryNames,
+  getAllModuleNames,
+  getModuleHomeUrls,
+  isModuleName,
+  searchAsync,
+  search,
+}) satisfies DongneLibraryAPI;
