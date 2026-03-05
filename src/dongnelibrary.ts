@@ -1,3 +1,8 @@
+// =============================================================================
+// IMPORTS
+// =============================================================================
+
+// Local library modules
 import * as gg from "./localLibraryModule/gg";
 import * as gunpo from "./localLibraryModule/gunpo";
 import * as hscity from "./localLibraryModule/hscity";
@@ -6,6 +11,8 @@ import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
 import * as yjlib from "./localLibraryModule/yjlib";
 import * as yongin from "./localLibraryModule/yongin";
+
+// Type definitions
 import type {
   Book,
   DongneLibraryAPI,
@@ -19,9 +26,12 @@ import type {
 } from "./types";
 
 // =============================================================================
-// Configuration
+// CONFIGURATION
 // =============================================================================
 
+/**
+ * List of all available library modules
+ */
 const LIBRARY_MODULES: LibraryModule[] = [
   gg,
   gunpo,
@@ -33,8 +43,14 @@ const LIBRARY_MODULES: LibraryModule[] = [
   yongin,
 ];
 
+/**
+ * Error object returned when an unknown library is requested
+ */
 const UNKNOWN_LIBRARY_ERROR: SearchError = { msg: "Unknown library name" };
 
+/**
+ * Default library entry for unknown/invalid library names
+ */
 const UNKNOWN_LIBRARY: LibraryRegistryEntry = {
   name: "Unknown",
   search: async (_opt, onResult) => {
@@ -44,10 +60,13 @@ const UNKNOWN_LIBRARY: LibraryRegistryEntry = {
 };
 
 // =============================================================================
-// Library Registry
+// LIBRARY REGISTRY
 // =============================================================================
 
-const allLibraryList: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap(
+/**
+ * Flatten all library names from modules into a single registry
+ */
+const ALL_LIBRARY_LIST: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap(
   (module) =>
     module.getLibraryNames().map((name) => ({
       name,
@@ -56,39 +75,86 @@ const allLibraryList: LibraryRegistryEntry[] = LIBRARY_MODULES.flatMap(
     })),
 );
 
+/**
+ * Get all available library names
+ * @returns Array of all library names
+ */
 export const getAllLibraryNames = (): string[] =>
-  allLibraryList.map((lib) => lib.name);
+  ALL_LIBRARY_LIST.map((lib) => lib.name);
 
+/**
+ * Get all module names
+ * @returns Array of all module names
+ */
 export const getAllModuleNames = (): string[] =>
-  LIBRARY_MODULES.map((m) => m.moduleName);
+  LIBRARY_MODULES.map((module) => module.moduleName);
 
+/**
+ * Get home URLs for all modules
+ * @returns Record mapping module names to their home URLs
+ */
 export const getModuleHomeUrls = (): Record<string, string> =>
-  Object.fromEntries(LIBRARY_MODULES.map((m) => [m.moduleName, m.homeUrl]));
+  Object.fromEntries(LIBRARY_MODULES.map((module) => [module.moduleName, module.homeUrl]));
 
+/**
+ * Check if a name corresponds to a known module
+ * @param name - Name to check
+ * @returns True if the name is a valid module name
+ */
 export const isModuleName = (name: string): boolean =>
-  LIBRARY_MODULES.some((m) => m.moduleName === name);
+  LIBRARY_MODULES.some((module) => module.moduleName === name);
 
+/**
+ * Get all library names from a specific module
+ * @param moduleName - Name of the module to get libraries from
+ * @returns Array of library names in the specified module
+ */
 const getLibraryNamesInModule = (moduleName: string): string[] =>
-  LIBRARY_MODULES.find((m) => m.moduleName === moduleName)?.getLibraryNames() ??
+  LIBRARY_MODULES.find((module) => module.moduleName === moduleName)?.getLibraryNames() ??
   [];
 
+/**
+ * Get a library registry entry by name
+ * @param libraryName - Name of the library to find
+ * @returns Library registry entry or unknown library if not found
+ */
 const getLibraryRegistryEntryByName = (
   libraryName: string,
 ): LibraryRegistryEntry =>
-  allLibraryList.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
+  ALL_LIBRARY_LIST.find((lib) => lib.name === libraryName) ?? UNKNOWN_LIBRARY;
 
+/**
+ * Complete a partial library name to full name
+ * @param str - Partial library name to complete
+ * @returns Full library name if found, otherwise empty string
+ */
 const completeLibraryName = (str: string): string =>
   getAllLibraryNames().find((name) => name.includes(str)) ?? "";
 
+/**
+ * Validate if a library name is valid
+ * @param libraryName - Name to validate
+ * @returns True if the library name is valid (exists or is a module name)
+ */
 const isValidLibraryName = (libraryName: string): boolean =>
-  allLibraryList.some((lib) => lib.name === libraryName) ||
+  ALL_LIBRARY_LIST.some((lib) => lib.name === libraryName) ||
   getAllModuleNames().some((moduleName) => moduleName === libraryName);
 
+/**
+ * Expand module names to their constituent library names
+ * @param libraryNameList - List of library names and/or module names
+ * @returns Expanded list with module names replaced by their constituent libraries
+ */
 const expandModuleNames = (libraryNameList: string[]): string[] =>
   libraryNameList.flatMap((name) =>
     isModuleName(name) ? getLibraryNamesInModule(name) : [name],
   );
 
+/**
+ * Resolve library names to their actual names
+ * @param libraryName - Single library name or array of names
+ * @returns Array of resolved library names
+ */
 const resolveNameList = (libraryName: string | string[]): string[] => {
   if (libraryName === "") return getAllLibraryNames();
   if (Array.isArray(libraryName)) return expandModuleNames(libraryName);
@@ -96,6 +162,11 @@ const resolveNameList = (libraryName: string | string[]): string[] => {
   return [libraryName];
 };
 
+/**
+ * Resolve library names to their registry entries
+ * @param libraryName - Single library name or array of names
+ * @returns Array of registry entries for the requested libraries
+ */
 const resolveLibraryRegistryEntry = (
   libraryName: string | string[],
 ): LibraryRegistryEntry[] =>
@@ -105,9 +176,14 @@ const resolveLibraryRegistryEntry = (
     .map(getLibraryRegistryEntryByName);
 
 // =============================================================================
-// Book Result Helpers
+// BOOK RESULT HELPERS
 // =============================================================================
 
+/**
+ * Normalize book data to ensure consistent structure
+ * @param book - Book object with potentially missing fields
+ * @returns Normalized book object with all required fields
+ */
 const normalizeBook = ({ libraryName, title, exist, bookUrl }: Book): Book => ({
   libraryName,
   title,
@@ -115,21 +191,41 @@ const normalizeBook = ({ libraryName, title, exist, bookUrl }: Book): Book => ({
   bookUrl,
 });
 
+/**
+ * Sort books by availability (available books first)
+ * @param books - Array of books to sort
+ * @returns Sorted array with available books first
+ */
 const sortByAvailability = (books: Book[]): Book[] =>
   books.sort((a, b) => (a.exist === b.exist ? 0 : a.exist ? -1 : 1));
 
+/**
+ * Process a list of books by normalizing and sorting them
+ * @param books - Array of book objects to process
+ * @returns Processed and sorted array of books
+ */
 const processBooklist = (books: Book[]): Book[] =>
   sortByAvailability(books.map(normalizeBook));
 
 // =============================================================================
-// Search Logic
+// SEARCH LOGIC
 // =============================================================================
 
+/**
+ * Result structure for individual library searches
+ */
 interface SearchLibraryResult {
   error?: SearchError;
   result?: SearchResult;
 }
 
+/**
+ * Perform a search on a single library
+ * @param lib - Library registry entry to search
+ * @param title - Search term
+ * @param signal - AbortSignal for cancellation support
+ * @returns Promise resolving to search result or error
+ */
 const searchLibrary = (
   lib: LibraryRegistryEntry,
   title: string,
@@ -158,6 +254,12 @@ const searchLibrary = (
     });
   });
 
+/**
+ * Asynchronously search across multiple libraries
+ * @param opt - Search options including title and library names
+ * @param onResult - Callback for individual search results
+ * @returns Promise resolving to array of search results
+ */
 export const searchAsync = (
   opt: SearchOptionsMain,
   onResult?: SearchCallback,
@@ -181,6 +283,12 @@ export const searchAsync = (
   );
 };
 
+/**
+ * Synchronous search wrapper that calls completion callback
+ * @param opt - Search options or null/undefined
+ * @param onResult - Callback for individual search results
+ * @param onComplete - Callback for final search results
+ */
 export const search = (
   opt: SearchOptionsMain | undefined | null,
   onResult?: SearchCallback,
@@ -193,6 +301,10 @@ export const search = (
   searchAsync(opt, onResult).then((results) => onComplete?.(null, results));
 };
 
+// =============================================================================
+// TYPE EXPORTS
+// =============================================================================
+
 // Re-export types for consumers
 export type {
   SearchResult,
@@ -202,6 +314,10 @@ export type {
   SearchCompleteCallback,
   Book,
 } from "./types";
+
+// =============================================================================
+// API EXPORT
+// =============================================================================
 
 ({
   getAllLibraryNames,
