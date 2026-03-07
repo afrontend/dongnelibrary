@@ -5,6 +5,7 @@
 // Local library modules
 import * as gg from "./localLibraryModule/gg";
 import * as gunpo from "./localLibraryModule/gunpo";
+import * as jeju from "./localLibraryModule/jeju";
 import * as hscity from "./localLibraryModule/hscity";
 import * as osan from "./localLibraryModule/osan";
 import * as snlib from "./localLibraryModule/snlib";
@@ -35,6 +36,7 @@ import type {
 const LIBRARY_MODULES: LibraryModule[] = [
   gg,
   gunpo,
+  jeju,
   hscity,
   osan,
   snlib,
