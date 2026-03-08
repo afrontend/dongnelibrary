@@ -131,7 +131,7 @@ const getLibraryRegistryEntryByName = (
  * @returns Full library name if found, otherwise empty string
  */
 const completeLibraryName = (str: string): string =>
-  getAllLibraryNames().find((name) => name.includes(str)) ?? "";
+  ALL_LIBRARY_LIST.find((lib) => lib.name.includes(str))?.name ?? "";
 
 /**
  * Validate if a library name is valid
@@ -140,7 +140,7 @@ const completeLibraryName = (str: string): string =>
  */
 const isValidLibraryName = (libraryName: string): boolean =>
   ALL_LIBRARY_LIST.some((lib) => lib.name === libraryName) ||
-  getAllModuleNames().some((moduleName) => moduleName === libraryName);
+  isModuleName(libraryName);
 
 /**
  * Expand module names to their constituent library names

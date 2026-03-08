@@ -37,9 +37,6 @@ const libraryList: LibraryInfo[] = [
 
 const getLibraryCode = createLibraryCodeLookup(libraryList);
 
-const manageCodeToName: Record<string, string> = Object.fromEntries(
-  libraryList.map((lib) => [lib.code, lib.name]),
-);
 
 interface JejuBook {
   recKey: string;
@@ -114,7 +111,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
       return {
         title: book.title,
         exist,
-        libraryName: manageCodeToName[book.manageCode] ?? libraryName,
+        libraryName: libraryList.find((l) => l.code === book.manageCode)?.name ?? libraryName,
         bookUrl: `https://www.jeju.go.kr/lib/service/search/simple.htm?q=${encodeURIComponent(title)}`,
       };
     }),
@@ -122,7 +119,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
 
   return {
     startPage: opt.startPage,
-    totalBookCount: json.query.rows,
+    totalBookCount: books.length,
     booklist,
   };
 }
