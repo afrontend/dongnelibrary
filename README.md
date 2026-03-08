@@ -19,6 +19,7 @@
     npm run build
 
     node ./dist/cli.js -i
+    node ./dist/cli.js -m
     node ./dist/cli.js -a
     node ./dist/cli.js -t 별 -l 남양
     node ./dist/cli.js -t 별 -l 흥천,판교
@@ -31,6 +32,7 @@
 
     npm install dongnelibrary@latest -g
     dongnelibrary -i
+    dongnelibrary -m
     dongnelibrary -a
     dongnelibrary -t 별 -l 남양
     dongnelibrary -t 별 -l 흥천,판교
@@ -43,6 +45,7 @@
 ## Run with npx
 
     npx dongnelibrary -i
+    npx dongnelibrary -m
     npx dongnelibrary -a
     npx dongnelibrary -t 별 -l 남양
     npx dongnelibrary -t 별 -l 흥천,판교
@@ -59,6 +62,7 @@
 ### run examples
 
     docker run -it --rm ghcr.io/afrontend/dongnelibrary -i
+    docker run -it --rm ghcr.io/afrontend/dongnelibrary -m
     docker run --rm ghcr.io/afrontend/dongnelibrary -a
     docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 남양
     docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 흥천,판교
@@ -74,6 +78,7 @@
 ### run examples
 
     docker run -it dongnelibrary -i
+    docker run -it dongnelibrary -m
     docker run dongnelibrary -a
     docker run dongnelibrary -t 별 -l "남양"
     docker run dongnelibrary -t 별 -l "흥천,판교"
@@ -145,6 +150,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 - [수원시도서관][suwon-url] (선경도서관,수원중앙도서관,창룡도서관,화서다산도서관,호매실도서관,서수원도서관,한림도서관,버드내도서관,북수원도서관,대추골도서관,일월도서관,광교홍재도서관,태장마루도서관,광교푸른숲도서관,매여울도서관,망포글빛도서관,슬기샘도서관,지혜샘어린이도서관,바른샘어린이도서관,한아름도서관,반달어린이도서관,사랑샘도서관,희망샘도서관)
 - [용인시도서관][yongin-url] (수지도서관,구갈희망누리도서관,구성도서관,기흥도서관,남사도서관,동백도서관,동천도서관,모현도서관,보라도서관,상현도서관,서농도서관,성복도서관,용인중앙도서관,양지해밀도서관,영덕도서관,이동꿈틀도서관,죽전도서관,청덕도서관,포곡도서관,흥덕도서관,기흥동행정복지센터스마트도서관,기흥역스마트도서관,동천동행정복지센터스마트도서관,마북동행정복지센터스마트도서관,보정동행정복지센터스마트도서관,상갈동행정복지센터스마트도서관,상하동행정복지센터스마트도서관,성복역스마트도서관,시청스마트도서관,신봉동행정복지센터스마트도서관,역북동행정복지센터스마트도서관,용인중앙시장역스마트도서관,원삼면스마트도서관,유방어린이공원스마트도서관,죽전역스마트도서관,고림다온작은도서관,남사맑은누리작은도서관,백암면작은도서관,상현1동작은도서관,상현2동작은도서관,이동천리작은도서관)
 - [여주시립도서관][yjlib-url] (여주도서관,세종도서관,점동도서관,여주기적의도서관,흥천도서관,금사도서관,대신도서관,산북작은도서관,북내작은도서관,여주역스마트도서관,이마트스마트도서관)
+- [제주시도서관][jeju-url] (한라도서관,우당도서관,탐라도서관,제주시기적의도서관,애월도서관,조천읍도서관,한경도서관,삼매봉도서관,중앙도서관,동부도서관,서부도서관,서귀포기적의도서관,성산일출도서관,안덕산방도서관,표선도서관,꿈바당어린이도서관)
 
 ## 마무리
 
@@ -163,6 +169,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
     npm run suwon   # 수원시 도서관
     npm run yjlib   # 여주시 도서관
     npm run yongin  # 용인시 도서관
+    npm run jeju    # 제주시 도서관
 
 [dongnelibraryspa]: https://github.com/afrontend/dongnelibraryspa "AngularJS, Foundation을 사용한 Web UI"
 [npm-image]: https://img.shields.io/npm/v/dongnelibrary.svg
@@ -177,3 +184,4 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 [suwon-url]: https://www.suwonlib.go.kr
 [yongin-url]: https://lib.yongin.go.kr
 [yjlib-url]: https://www.yjlib.go.kr
+[jeju-url]: https://www.jeju.go.kr/

@@ -1,6 +1,6 @@
 # DongneLibrary API Reference
 
-A JavaScript/TypeScript library for checking book availability across 160+ Korean public library branches in Gyeonggi Province (경기도).
+A JavaScript/TypeScript library for checking book availability across 180+ Korean public library branches.
 
 ## Installation
 
@@ -192,7 +192,7 @@ Returns an array of all supported library branch names.
 
 #### Returns
 
-`string[]` - Array of library names (160+ branches)
+`string[]` - Array of library names (180+ branches)
 
 #### Example
 
@@ -222,6 +222,47 @@ console.log(urls);
 //   '군포시도서관': 'https://www.gunpolib.go.kr',
 //   ...
 // }
+```
+
+---
+
+### getAllModuleNames()
+
+Returns an array of all library system module names.
+
+#### Returns
+
+`string[]` - Array of module names
+
+#### Example
+
+```javascript
+const modules = dongnelibrary.getAllModuleNames();
+console.log(modules);
+// ['경기교육통합도서관', '군포시도서관', '성남시도서관', ...]
+```
+
+---
+
+### isModuleName(name)
+
+Checks if a given name is a library system module name.
+
+#### Parameters
+
+| Parameter | Type     | Required | Description            |
+| --------- | -------- | -------- | ---------------------- |
+| `name`    | `string` | Yes      | Name to check          |
+
+#### Returns
+
+`boolean` - `true` if the name is a module name
+
+#### Example
+
+```javascript
+dongnelibrary.isModuleName("성남시도서관"); // true
+dongnelibrary.isModuleName("판교도서관"); // false (branch name, not module name)
 ```
 
 ---
@@ -293,8 +334,9 @@ type SearchCompleteCallback = (
 | `suwon`  | 수원시도서관       | Suwon City        |
 | `yjlib`  | 여주시립도서관     | Yeoju City        |
 | `yongin` | 용인시도서관       | Yongin City       |
+| `jeju`   | 제주시도서관       | Jeju City         |
 
-Use `getAllLibraryNames()` to see all 160+ individual branch names.
+Use `getAllLibraryNames()` to see all 180+ individual branch names.
 
 ---
 
@@ -303,6 +345,9 @@ Use `getAllLibraryNames()` to see all 160+ individual branch names.
 ```bash
 # Interactive mode
 npx dongnelibrary -i
+
+# Interactive mode (choose by library system)
+npx dongnelibrary -m
 
 # Search specific library
 npx dongnelibrary -t "해리포터" -l "판교도서관"
@@ -320,7 +365,14 @@ See `dongnelibrary --help` for all options.
 The package includes TypeScript declarations. Import types directly:
 
 ```typescript
-import dongnelibrary, { SearchResult, SearchError, Book } from "dongnelibrary";
+import dongnelibrary, {
+  SearchResult,
+  SearchError,
+  SearchOptionsMain,
+  SearchCallback,
+  SearchCompleteCallback,
+  Book,
+} from "dongnelibrary";
 ```
 
 ---
