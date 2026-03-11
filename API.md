@@ -250,9 +250,9 @@ Checks if a given name is a library system module name.
 
 #### Parameters
 
-| Parameter | Type     | Required | Description            |
-| --------- | -------- | -------- | ---------------------- |
-| `name`    | `string` | Yes      | Name to check          |
+| Parameter | Type     | Required | Description   |
+| --------- | -------- | -------- | ------------- |
+| `name`    | `string` | Yes      | Name to check |
 
 #### Returns
 
@@ -324,17 +324,18 @@ type SearchCompleteCallback = (
 
 ## Supported Library Systems
 
-| Module   | Library System     | Region            |
-| -------- | ------------------ | ----------------- |
-| `gg`     | 경기교육통합도서관 | Gyeonggi Province |
-| `gunpo`  | 군포시도서관       | Gunpo City        |
-| `hscity` | 화성시립도서관     | Hwaseong City     |
-| `osan`   | 오산시도서관       | Osan City         |
-| `snlib`  | 성남시도서관       | Seongnam City     |
-| `suwon`  | 수원시도서관       | Suwon City        |
-| `yjlib`  | 여주시립도서관     | Yeoju City        |
-| `yongin` | 용인시도서관       | Yongin City       |
-| `jeju`   | 제주시도서관       | Jeju City         |
+| Module   | Library System                 | Region            |
+| -------- | ------------------------------ | ----------------- |
+| `gg`     | 경기교육통합도서관             | Gyeonggi Province |
+| `gunpo`  | 군포시도서관                   | Gunpo City        |
+| `hscity` | 화성시립도서관                 | Hwaseong City     |
+| `ice`    | 인천광역시교육청통합공공도서관 | Incheon City      |
+| `osan`   | 오산시도서관                   | Osan City         |
+| `snlib`  | 성남시도서관                   | Seongnam City     |
+| `suwon`  | 수원시도서관                   | Suwon City        |
+| `yjlib`  | 여주시립도서관                 | Yeoju City        |
+| `yongin` | 용인시도서관                   | Yongin City       |
+| `jeju`   | 제주시도서관                   | Jeju City         |
 
 Use `getAllLibraryNames()` to see all 180+ individual branch names.
 
