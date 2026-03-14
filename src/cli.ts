@@ -39,8 +39,7 @@ const config = {
   getLibrary: (): string | undefined =>
     conf.get("library") as string | undefined,
   setLibrary: (name: string): void => conf.set("library", name),
-  getTitle: (): string | undefined =>
-    conf.get("title") as string | undefined,
+  getTitle: (): string | undefined => conf.get("title") as string | undefined,
   setTitle: (title: string): void => conf.set("title", title),
 };
 
@@ -66,10 +65,9 @@ program
   .option("-a, --library-list", "도서관 목록 보기")
   .option("-i, --interactive", "대화형 모드로 검색")
   .option(
-    "-m, --interactive-with-library-module",
-    "통합도서관별 대화형 모드로 검색",
+    "-l, --library-name [name,name]",
+    "도서관 이름 지정 (콤마로 복수 지정 가능)",
   )
-  .option("-l, --library-name [name,name]", "도서관 이름 지정 (콤마로 복수 지정 가능)")
   .option("-t, --title [title]", "책 이름으로 검색")
   .option(
     "-q, --query [query]",
@@ -80,13 +78,13 @@ program
     "after",
     `
 Examples:
-  $ dongnelibrary                       대화형 모드로 검색
-  $ dongnelibrary -i                    대화형 모드로 검색
-  $ dongnelibrary -a                    도서관 목록 보기
-  $ dongnelibrary -t 해리포터 -l 판교   도서관과 책 이름 지정
-  $ dongnelibrary -q "판교 해리포터"    한 줄 검색
-  $ dongnelibrary -q "판교,정자 해리포터"  여러 도서관 검색
-  $ dongnelibrary -q                    대화형 한 줄 검색`,
+  $ dongnelibrary                         대화형 모드로 검색
+  $ dongnelibrary -i                      대화형 모드로 검색
+  $ dongnelibrary -a                      도서관 목록 보기
+  $ dongnelibrary -t 해리포터 -l 판교     도서관과 책 이름 지정
+  $ dongnelibrary -q "판교 해리포터"      한 줄 검색
+  $ dongnelibrary -q "판교,정자 해리포터" 여러 도서관 검색
+  $ dongnelibrary -q                      대화형 한 줄 검색`,
   )
   .parse(process.argv);
 
@@ -201,8 +199,7 @@ const createSpinner = (message: string, total?: number) => {
   let completed = 0;
 
   const render = () => {
-    const progress =
-      total !== undefined ? ` (${completed}/${total})` : "";
+    const progress = total !== undefined ? ` (${completed}/${total})` : "";
     process.stdout.write(
       `\r${message}${progress}${frames[frameIndex++ % frames.length]}`,
     );
@@ -448,13 +445,11 @@ const promptForQueryString = async (): Promise<{
 interface ProgramOptions {
   libraryList?: boolean;
   interactive?: boolean;
-  interactiveWithLibraryModule?: boolean;
   libraryName?: string;
   title?: string;
   query?: string | boolean;
   url?: boolean;
 }
-
 
 /** Main entry point - parse CLI options and execute search */
 const activate = async (): Promise<void> => {
@@ -462,7 +457,6 @@ const activate = async (): Promise<void> => {
   const {
     libraryList,
     interactive,
-    interactiveWithLibraryModule,
     libraryName,
     title,
     query,
@@ -478,8 +472,7 @@ const activate = async (): Promise<void> => {
     | { title: string; libraryName: string | string[] }
     | undefined;
 
-  // -i or -m both use unified interactive mode
-  if (interactive || interactiveWithLibraryModule) {
+  if (interactive) {
     searchOptions = await promptInteractive();
   } else if (query !== undefined) {
     // -q without a value → interactive prompt; -q "string" → parse directly
