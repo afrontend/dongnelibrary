@@ -488,18 +488,17 @@ const activate = async (): Promise<void> => {
         return;
       }
       searchOptions = parsed;
-      const libDisplay = Array.isArray(parsed.libraryName)
-        ? parsed.libraryName.map((n) => colors.cyan(n)).join(", ")
-        : colors.cyan(parsed.libraryName);
-      console.log(`${libDisplay}에서 "${parsed.title}" 검색`);
     } else {
       const parsed = await promptForQueryString();
       if (!parsed) return;
       searchOptions = parsed;
-      const libDisplay = Array.isArray(parsed.libraryName)
-        ? parsed.libraryName.map((n) => colors.cyan(n)).join(", ")
-        : colors.cyan(parsed.libraryName);
-      console.log(`${libDisplay}에서 "${parsed.title}" 검색`);
+    }
+
+    if (searchOptions) {
+      const libDisplay = Array.isArray(searchOptions.libraryName)
+        ? searchOptions.libraryName.map((n) => colors.cyan(n)).join(", ")
+        : colors.cyan(searchOptions.libraryName);
+      console.log(`${libDisplay}에서 "${searchOptions.title}" 검색`);
     }
   } else if (libraryName && title) {
     const libraryNames = prependModuleNames(
