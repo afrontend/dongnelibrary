@@ -18,8 +18,8 @@
     npm ci
     npm run build
 
+    node ./dist/cli.js
     node ./dist/cli.js -i
-    node ./dist/cli.js -m
     node ./dist/cli.js -a
     node ./dist/cli.js -t 별 -l 남양
     node ./dist/cli.js -t 별 -l 흥천,판교
@@ -31,8 +31,8 @@
 ## Install with npm and Run
 
     npm install dongnelibrary@latest -g
+    dongnelibrary
     dongnelibrary -i
-    dongnelibrary -m
     dongnelibrary -a
     dongnelibrary -t 별 -l 남양
     dongnelibrary -t 별 -l 흥천,판교
@@ -44,8 +44,8 @@
 
 ## Run with npx
 
+    npx dongnelibrary
     npx dongnelibrary -i
-    npx dongnelibrary -m
     npx dongnelibrary -a
     npx dongnelibrary -t 별 -l 남양
     npx dongnelibrary -t 별 -l 흥천,판교
@@ -61,8 +61,8 @@
 
 ### run examples
 
+    docker run -it --rm ghcr.io/afrontend/dongnelibrary
     docker run -it --rm ghcr.io/afrontend/dongnelibrary -i
-    docker run -it --rm ghcr.io/afrontend/dongnelibrary -m
     docker run --rm ghcr.io/afrontend/dongnelibrary -a
     docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 남양
     docker run --rm ghcr.io/afrontend/dongnelibrary -t 별 -l 흥천,판교
@@ -77,8 +77,8 @@
 
 ### run examples
 
+    docker run -it dongnelibrary
     docker run -it dongnelibrary -i
-    docker run -it dongnelibrary -m
     docker run dongnelibrary -a
     docker run dongnelibrary -t 별 -l "남양"
     docker run dongnelibrary -t 별 -l "흥천,판교"

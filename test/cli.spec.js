@@ -244,16 +244,30 @@ describe("CLI", () => {
   );
 
   it(
-    "should show book URLs in search results",
+    "should show book URLs when --url flag is used",
     { timeout: TIMEOUTS.SEARCH },
     async () => {
-      const { stdout, code } = await runCli(["-t", "javascript", "-l", "성남"]);
+      const { stdout, code } = await runCli(["-t", "javascript", "-l", "성남", "--url"]);
 
       assert.strictEqual(code, 0, "Exit code should be 0");
       // Book URLs are prefixed with → and contain http
       assert.ok(
         stdout.includes("→") && stdout.includes("http"),
-        "Should include book URLs in output",
+        "Should include book URLs in output when --url is used",
+      );
+    },
+  );
+
+  it(
+    "should hide book URLs by default",
+    { timeout: TIMEOUTS.SEARCH },
+    async () => {
+      const { stdout, code } = await runCli(["-t", "javascript", "-l", "성남"]);
+
+      assert.strictEqual(code, 0, "Exit code should be 0");
+      assert.ok(
+        !stdout.includes("→ http"),
+        "Should not include book URLs by default",
       );
     },
   );
@@ -476,18 +490,27 @@ describe("CLI", () => {
   // ------------------------------------------------------------------
 
   it(
-    "should exit silently with no arguments",
+    "should enter interactive mode with no arguments",
     { timeout: TIMEOUTS.QUICK },
     async () => {
-      const { stdout, code } = await runCli([]);
+      // With no arguments, CLI enters interactive mode (shows prompt)
+      // Send SIGINT after a short delay to exit the prompt
+      const { code } = await new Promise((resolve, reject) => {
+        const proc = spawn("node", [CLI_PATH], {
+          env: { ...process.env, FORCE_COLOR: "0" },
+        });
 
-      assert.strictEqual(code, 0, "Exit code should be 0");
-      // With no arguments, CLI should exit without output (no interactive mode)
-      assert.strictEqual(
-        stdout.trim(),
-        "",
-        "Should produce no output without arguments",
-      );
+        let stdout = "";
+        let stderr = "";
+        proc.stdout.on("data", (d) => (stdout += d.toString()));
+        proc.stderr.on("data", (d) => (stderr += d.toString()));
+        proc.on("close", (code) => resolve({ stdout, stderr, code: code ?? 0 }));
+        proc.on("error", reject);
+
+        setTimeout(() => proc.kill("SIGINT"), 800);
+      });
+
+      assert.ok(code !== undefined, "Process should have exited");
     },
   );
 

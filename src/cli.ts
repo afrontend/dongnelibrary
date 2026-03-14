@@ -2,8 +2,8 @@
 import Configstore from "configstore";
 import colors from "colors";
 import figlet from "figlet";
-import { select, input } from "@inquirer/prompts";
-import program from "commander";
+import { select, input, search } from "@inquirer/prompts";
+import { Command } from "commander";
 import * as dl from "./dongnelibrary";
 import * as util from "./util";
 import type { SearchResult } from "./types";
@@ -12,7 +12,6 @@ import type { SearchResult } from "./types";
 const pkg = require("../package.json") as { name: string; version: string };
 
 // Constants
-const DEFAULT_TITLE = "javascript";
 const LIBRARY_SUFFIX = "도서관";
 
 /** UI messages */
@@ -20,12 +19,14 @@ const MESSAGES = {
   cancelSearch: "검색 취소 중...",
   libraryCount: (count: number) => `모두 ${count} 개의 도서관`,
   moduleCount: (count: number) => `모두 ${count} 개의 통합 도서관`,
-  searchSummary: (libs: number, books: number) =>
-    `${libs} 개의 도서관에서  ${books} 권 검색됨`,
-  promptLibrary: "도서관 이름은?",
-  promptModuleName: "통합도서관 이름은?",
+  searchSummary: (libs: number, books: number, available: number) =>
+    `${libs} 개의 도서관에서 ${books} 권 검색됨 (대출가능 ${available}권)`,
   promptTitle: "책 이름은?",
+  promptModuleName: "통합도서관 이름은?",
+  promptSearchScope: "검색 범위를 선택하세요",
+  promptLibrarySearch: "도서관 이름을 입력하세요",
   unknownError: "Unknown Error",
+  titleRequired: "책 이름을 입력해 주세요.",
 };
 
 const conf = new Configstore(pkg.name, {});
@@ -38,8 +39,8 @@ const config = {
   getLibrary: (): string | undefined =>
     conf.get("library") as string | undefined,
   setLibrary: (name: string): void => conf.set("library", name),
-  getTitle: (): string =>
-    (conf.get("title") as string | undefined) ?? DEFAULT_TITLE,
+  getTitle: (): string | undefined =>
+    conf.get("title") as string | undefined,
   setTitle: (title: string): void => conf.set("title", title),
 };
 
@@ -56,38 +57,37 @@ const introMessage = (msg: string): void => {
   );
 };
 
+const program = new Command();
+
 program
+  .name("dongnelibrary")
   .version(pkg.version)
-  .option("-a, --library-list", "List all available library branches")
-  .option("-i, --interactive", "Interactive mode: choose a library and title from menus")
+  .description("동네 도서관에서 책을 검색합니다.")
+  .option("-a, --library-list", "도서관 목록 보기")
+  .option("-i, --interactive", "대화형 모드로 검색")
   .option(
     "-m, --interactive-with-library-module",
-    "Interactive mode: choose by city library system (e.g. 성남, 수원)",
+    "통합도서관별 대화형 모드로 검색",
   )
-  .option("-l, --library-name [name,name]", "Library name to search (comma-separated for multiple)")
-  .option("-t, --title [title]", "Book title to search (partial match)")
+  .option("-l, --library-name [name,name]", "도서관 이름 지정 (콤마로 복수 지정 가능)")
+  .option("-t, --title [title]", "책 이름으로 검색")
   .option(
     "-q, --query [query]",
-    'Combined search query: "<library> <title>" (omit value for interactive prompt)',
+    '도서관과 책 이름을 한 번에 입력 (예: "판교 해리포터")',
   )
-  .on("--help", () => {
-    console.log("");
-    console.log("Examples:");
-    console.log(
-      "  -i                          Interactive mode (select library from list)",
-    );
-    console.log("  -a                          Show all available libraries");
-    console.log(
-      "  -t 해리포터 -l 판교         Search by title and library name",
-    );
-    console.log(
-      '  -q "판교 해리포터"          Search with combined query string',
-    );
-    console.log(
-      '  -q "판교,정자 해리포터"     Search multiple libraries at once',
-    );
-    console.log("  -q                          Interactive query prompt");
-  })
+  .option("-u, --url", "검색 결과에 도서 URL 표시")
+  .addHelpText(
+    "after",
+    `
+Examples:
+  $ dongnelibrary                       대화형 모드로 검색
+  $ dongnelibrary -i                    대화형 모드로 검색
+  $ dongnelibrary -a                    도서관 목록 보기
+  $ dongnelibrary -t 해리포터 -l 판교   도서관과 책 이름 지정
+  $ dongnelibrary -q "판교 해리포터"    한 줄 검색
+  $ dongnelibrary -q "판교,정자 해리포터"  여러 도서관 검색
+  $ dongnelibrary -q                    대화형 한 줄 검색`,
+  )
   .parse(process.argv);
 
 /**
@@ -98,30 +98,48 @@ const truncateAt = (str: string, substring: string): string => {
   return index === -1 ? str : str.substring(0, index);
 };
 
-/** Status marks for book availability display */
-const MARKS = {
-  ok: "✓ ",
-  notOk: "✖ ",
-};
-
 /**
- * Print book search results to console.
+ * Print book search results grouped by library with header.
  */
-const printBooks = ({ booklist }: SearchResult): void => {
-  for (const { libraryName, exist, title, bookUrl } of booklist) {
-    const mark = exist ? ` ${MARKS.ok} ` : ` ${colors.red(MARKS.notOk)} `;
-    console.log(`${truncateAt(libraryName, LIBRARY_SUFFIX)}${mark}${title}`);
-    if (bookUrl) {
-      console.log(`  → ${colors.cyan(bookUrl)}`);
+const printBooks = (
+  { booklist, libraryName }: SearchResult,
+  showUrl: boolean,
+): void => {
+  const available = booklist.filter((b) => b.exist).length;
+  const total = booklist.length;
+  const name = libraryName ?? "알 수 없음";
+
+  // Library header with summary
+  const header = `${name} (${total}권, 대출가능 ${available}권)`;
+  const lineLen = Math.max(0, 54 - header.length);
+  console.log(colors.cyan(`\n── ${header} ${"─".repeat(lineLen)}`));
+
+  // Book list without repeating library name
+  for (const { exist, title, bookUrl } of booklist) {
+    const mark = exist ? colors.green("  ✓") : colors.red("  ✖");
+    console.log(`${mark}  ${title}`);
+    if (showUrl && bookUrl) {
+      console.log(`     → ${colors.cyan(bookUrl)}`);
     }
   }
 };
 
-/** Print all available library names to console */
+/** Print all available library names grouped by module */
 const printAllLibraryNames = (): void => {
-  const libs = dl.getAllLibraryNames();
-  libs.forEach((name) => console.log(name));
-  console.log(colors.green(MESSAGES.libraryCount(libs.length)));
+  const moduleNames = dl.getAllModuleNames();
+  let totalCount = 0;
+
+  for (const moduleName of moduleNames) {
+    const libs = dl.getLibraryNamesInModule(moduleName);
+    totalCount += libs.length;
+    console.log(colors.cyan(`\n[${moduleName}] (${libs.length}개)`));
+    for (const name of libs) {
+      console.log(`  ${name}`);
+    }
+  }
+
+  console.log(colors.green(`\n${MESSAGES.libraryCount(totalCount)}`));
+  console.log(colors.green(MESSAGES.moduleCount(moduleNames.length)));
 };
 
 /**
@@ -156,7 +174,6 @@ const getLibraryFullNameList = (libraryNameWithCommas: string): string[] => {
 /**
  * Prepend module names to library name list for search.
  */
-
 const prependModuleNames = (libraryNameList: string[]): string[] => {
   return [...dl.getAllModuleNames(), ...libraryNameList];
 };
@@ -175,50 +192,66 @@ const setupCancellation = (onCancel: () => void): (() => void) => {
 };
 
 /**
- * Animated dots spinner shown while waiting for search results.
+ * Animated dots spinner with optional progress count.
  * Clears itself from the line when stopped.
  */
-const createSpinner = (message: string) => {
+const createSpinner = (message: string, total?: number) => {
   const frames = ["   ", ".  ", ".. ", "..."];
-  let i = 0;
-  const timer = setInterval(() => {
-    process.stdout.write(`\r${message}${frames[i++ % frames.length]}`);
-  }, 300);
+  let frameIndex = 0;
+  let completed = 0;
 
-  const stop = () => {
-    clearInterval(timer);
-    process.stdout.write("\r" + " ".repeat(message.length + 4) + "\r");
+  const render = () => {
+    const progress =
+      total !== undefined ? ` (${completed}/${total})` : "";
+    process.stdout.write(
+      `\r${message}${progress}${frames[frameIndex++ % frames.length]}`,
+    );
   };
 
-  return { stop };
+  const timer = setInterval(render, 300);
+
+  return {
+    tick: () => {
+      completed++;
+    },
+    stop: () => {
+      clearInterval(timer);
+      const clearLen = message.length + 20;
+      process.stdout.write("\r" + " ".repeat(clearLen) + "\r");
+    },
+  };
 };
 
 /**
  * Search libraries for books and print results.
- * Supports graceful cancellation with Ctrl+C.
+ * Shows progress count during search.
  */
 const searchBooks = ({
   title,
   libraryName,
+  showUrl = false,
 }: {
   title: string;
   libraryName: string | string[];
+  showUrl?: boolean;
 }): Promise<SearchResult[]> =>
   new Promise((resolve) => {
     const controller = new AbortController();
     const results: SearchResult[] = [];
     const cleanup = setupCancellation(() => controller.abort());
-    const spinner = createSpinner("검색 중");
+    const total = dl.resolveLibraryCount(libraryName);
+    const spinner = createSpinner("검색 중", total);
 
     dl.search(
       { title, libraryName, signal: controller.signal },
       (err, book) => {
+        spinner.tick();
         spinner.stop();
         if (err) {
           if (err.msg?.toLowerCase().includes("abort")) return;
           console.log(err.msg ?? MESSAGES.unknownError);
         } else if (book) {
-          printBooks(book);
+          printBooks(book, showUrl);
           results.push(book);
         }
       },
@@ -231,63 +264,102 @@ const searchBooks = ({
   });
 
 /**
- * Print search summary with library and book counts.
+ * Print search summary with library, book, and availability counts.
  */
 const printSearchSummary = (results: SearchResult[]): void => {
   const bookCount = getBookCount(results);
-  console.log(colors.green(MESSAGES.searchSummary(results.length, bookCount)));
+  const availableCount = results.reduce(
+    (sum, r) => sum + r.booklist.filter((b) => b.exist).length,
+    0,
+  );
+  console.log(colors.green(`\n${"━".repeat(58)}`));
+  console.log(
+    colors.green(
+      MESSAGES.searchSummary(results.length, bookCount, availableCount),
+    ),
+  );
 };
 
+// =============================================================================
+// INTERACTIVE PROMPTS
+// =============================================================================
+
+/** Search scope options for interactive mode */
+const SEARCH_SCOPES = {
+  all: "all",
+  module: "module",
+  search: "search",
+} as const;
+
 /**
- * Interactive prompt for search options using inquirer.
+ * Unified interactive prompt.
+ * Flow: 책 이름 → 검색 범위 선택 → (도서관 선택)
  */
-const promptForSearchOptions = async (): Promise<{
-  libraryName: string;
+const promptInteractive = async (): Promise<{
+  libraryName: string | string[];
   title: string;
 }> => {
   introMessage("Dongne Library");
 
-  const library = await select({
-    message: MESSAGES.promptLibrary,
-    choices: dl.getAllLibraryNames().map((name) => ({ name, value: name })),
-    default: config.getLibrary(),
-  });
-
+  // Step 1: Book title first
   const title = await input({
     message: MESSAGES.promptTitle,
     default: config.getTitle(),
+    validate: (v) => (v.trim() ? true : MESSAGES.titleRequired),
   });
-
-  config.setLibrary(library);
   config.setTitle(title);
 
-  return { libraryName: library, title };
-};
-
-/**
- * Interactive prompt for search options using inquirer with library module name.
- */
-const promptForSearchOptionsWithLibraryModuleName = async (): Promise<{
-  libraryName: string;
-  title: string;
-}> => {
-  introMessage("Dongne Library");
-
-  const moduleName = await select({
-    message: MESSAGES.promptModuleName,
-    choices: dl.getAllModuleNames().map((name) => ({ name, value: name })),
-    default: config.getModuleName(),
+  // Step 2: Search scope
+  const scope = await select({
+    message: MESSAGES.promptSearchScope,
+    choices: [
+      {
+        name: `전체 도서관 검색 (${dl.getAllLibraryNames().length}개)`,
+        value: SEARCH_SCOPES.all,
+      },
+      {
+        name: `통합도서관별 검색 (${dl.getAllModuleNames().length}개)`,
+        value: SEARCH_SCOPES.module,
+      },
+      {
+        name: "도서관 이름으로 검색",
+        value: SEARCH_SCOPES.search,
+      },
+    ],
   });
 
-  const title = await input({
-    message: MESSAGES.promptTitle,
-    default: config.getTitle(),
+  // All libraries
+  if (scope === SEARCH_SCOPES.all) {
+    return { title, libraryName: "" };
+  }
+
+  // Module selection
+  if (scope === SEARCH_SCOPES.module) {
+    const moduleName = await select({
+      message: MESSAGES.promptModuleName,
+      choices: dl.getAllModuleNames().map((name) => ({ name, value: name })),
+      default: config.getModuleName(),
+    });
+    config.setModuleName(moduleName);
+    return { title, libraryName: moduleName };
+  }
+
+  // Library name autocomplete search
+  const allLibraryNames = dl.getAllLibraryNames();
+  const libraryName = await search({
+    message: MESSAGES.promptLibrarySearch,
+    source: async (term) => {
+      if (!term) {
+        return allLibraryNames.map((name) => ({ name, value: name }));
+      }
+      return allLibraryNames
+        .filter((name) => name.includes(term))
+        .map((name) => ({ name, value: name }));
+    },
   });
+  config.setLibrary(libraryName);
 
-  config.setModuleName(moduleName);
-  config.setTitle(title);
-
-  return { libraryName: moduleName, title };
+  return { title, libraryName };
 };
 
 /**
@@ -380,7 +452,9 @@ interface ProgramOptions {
   libraryName?: string;
   title?: string;
   query?: string | boolean;
+  url?: boolean;
 }
+
 
 /** Main entry point - parse CLI options and execute search */
 const activate = async (): Promise<void> => {
@@ -392,6 +466,7 @@ const activate = async (): Promise<void> => {
     libraryName,
     title,
     query,
+    url: showUrl,
   } = opts;
 
   if (libraryList) {
@@ -402,10 +477,10 @@ const activate = async (): Promise<void> => {
   let searchOptions:
     | { title: string; libraryName: string | string[] }
     | undefined;
-  if (interactive) {
-    searchOptions = await promptForSearchOptions();
-  } else if (interactiveWithLibraryModule) {
-    searchOptions = await promptForSearchOptionsWithLibraryModuleName();
+
+  // -i or -m both use unified interactive mode
+  if (interactive || interactiveWithLibraryModule) {
+    searchOptions = await promptInteractive();
   } else if (query !== undefined) {
     // -q without a value → interactive prompt; -q "string" → parse directly
     const queryStr = typeof query === "string" ? query : undefined;
@@ -444,10 +519,11 @@ const activate = async (): Promise<void> => {
   } else if (title) {
     searchOptions = { title, libraryName: "" };
   } else {
-    return;
+    // No arguments → default to interactive mode
+    searchOptions = await promptInteractive();
   }
 
-  const results = await searchBooks(searchOptions);
+  const results = await searchBooks({ ...searchOptions, showUrl: !!showUrl });
   printSearchSummary(results);
 };
 

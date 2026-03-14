@@ -55,7 +55,7 @@
     "@inquirer/prompts": "^7.0.0",
     "async": "^2.5.0",
     "colors": "^1.4.0",
-    "commander": "^2.11.0",
+    "commander": "^14.0.3",
     "configstore": "^4.0.0",
     "figlet": "^1.2.1",
     "jsdom": "^21.1.1",

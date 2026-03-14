@@ -113,7 +113,7 @@ export const isModuleName = (name: string): boolean =>
  * @param moduleName - Name of the module to get libraries from
  * @returns Array of library names in the specified module
  */
-const getLibraryNamesInModule = (moduleName: string): string[] =>
+export const getLibraryNamesInModule = (moduleName: string): string[] =>
   LIBRARY_MODULES.find((module) => module.moduleName === moduleName)?.getLibraryNames() ??
   [];
 
@@ -322,6 +322,13 @@ export type {
 // =============================================================================
 // API EXPORT
 // =============================================================================
+
+/**
+ * Get the number of libraries that will be searched for a given name/names.
+ */
+export const resolveLibraryCount = (
+  libraryName: string | string[],
+): number => resolveLibraryRegistryEntry(libraryName).length;
 
 ({
   getAllLibraryNames,

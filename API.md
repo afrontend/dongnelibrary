@@ -1,6 +1,6 @@
 # DongneLibrary API Reference
 
-A JavaScript/TypeScript library for checking book availability across 180+ Korean public library branches.
+A JavaScript/TypeScript library for checking book availability across 190+ Korean public library branches.
 
 ## Installation
 
@@ -192,7 +192,7 @@ Returns an array of all supported library branch names.
 
 #### Returns
 
-`string[]` - Array of library names (180+ branches)
+`string[]` - Array of library names (190+ branches)
 
 #### Example
 
@@ -240,6 +240,54 @@ Returns an array of all library system module names.
 const modules = dongnelibrary.getAllModuleNames();
 console.log(modules);
 // ['경기교육통합도서관', '군포시도서관', '성남시도서관', ...]
+```
+
+---
+
+### getLibraryNamesInModule(moduleName)
+
+Returns an array of library branch names belonging to a specific module.
+
+#### Parameters
+
+| Parameter    | Type     | Required | Description              |
+| ------------ | -------- | -------- | ------------------------ |
+| `moduleName` | `string` | Yes      | Module name to look up   |
+
+#### Returns
+
+`string[]` - Array of library branch names in the module
+
+#### Example
+
+```javascript
+const libs = dongnelibrary.getLibraryNamesInModule("성남시도서관");
+console.log(libs);
+// ['논골도서관', '중원어린이도서관', '성남중앙도서관', '분당도서관', ...]
+```
+
+---
+
+### resolveLibraryCount(libraryName)
+
+Returns the number of libraries that will be searched for the given name(s).
+
+#### Parameters
+
+| Parameter     | Type                 | Required | Description                                         |
+| ------------- | -------------------- | -------- | --------------------------------------------------- |
+| `libraryName` | `string \| string[]` | Yes      | Library name(s). Use `''` for all libraries         |
+
+#### Returns
+
+`number` - Number of libraries that will be searched
+
+#### Example
+
+```javascript
+dongnelibrary.resolveLibraryCount("");            // 193 (all libraries)
+dongnelibrary.resolveLibraryCount("성남시도서관"); // 18 (all branches in module)
+dongnelibrary.resolveLibraryCount("판교도서관");   // 1
 ```
 
 ---
@@ -337,25 +385,36 @@ type SearchCompleteCallback = (
 | `yongin` | 용인시도서관                   | Yongin City       |
 | `jeju`   | 제주시도서관                   | Jeju City         |
 
-Use `getAllLibraryNames()` to see all 180+ individual branch names.
+Use `getAllLibraryNames()` to see all 190+ individual branch names.
 
 ---
 
 ## CLI Usage
 
 ```bash
-# Interactive mode
+# Interactive mode (default - no arguments needed)
+npx dongnelibrary
+
+# Interactive mode (explicit)
 npx dongnelibrary -i
 
-# Interactive mode (choose by library system)
-npx dongnelibrary -m
+# List all libraries grouped by module
+npx dongnelibrary -a
 
 # Search specific library
 npx dongnelibrary -t "해리포터" -l "판교도서관"
 
-# Search all libraries
-npx dongnelibrary -t "해리포터" -a
+# Quick search with combined query
+npx dongnelibrary -q "판교 해리포터"
+
+# Search multiple libraries
+npx dongnelibrary -q "판교,정자 해리포터"
 ```
+
+The interactive mode prompts for book title first, then lets you choose a search scope:
+- Search all libraries
+- Search by library system (10 modules)
+- Search by library name (autocomplete)
 
 See `dongnelibrary --help` for all options.
 
