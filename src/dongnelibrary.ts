@@ -330,11 +330,15 @@ export const resolveLibraryCount = (
   libraryName: string | string[],
 ): number => resolveLibraryRegistryEntry(libraryName).length;
 
-({
-  getAllLibraryNames,
-  getAllModuleNames,
-  getModuleHomeUrls,
-  isModuleName,
-  searchAsync,
-  search,
-}) satisfies DongneLibraryAPI;
+// Default export object implementing DongneLibraryAPI
+export const dongneLibrary: DongneLibraryAPI = {
+   getAllLibraryNames,
+   getAllModuleNames,
+   getModuleHomeUrls,
+   isModuleName,
+   resolveLibraryCount,
+   searchAsync,
+   search,
+};
+
+export default dongneLibrary;

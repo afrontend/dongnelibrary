@@ -128,6 +128,7 @@ export interface SearchOptionsMain {
  * Public API interface for DongneLibrary
  */
 export interface DongneLibraryAPI {
+  resolveLibraryCount: (libraryName: string | string[]) => number;
   getAllLibraryNames: () => string[];
   getAllModuleNames: () => string[];
   getModuleHomeUrls: () => Record<string, string>;
