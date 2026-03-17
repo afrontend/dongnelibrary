@@ -26,6 +26,9 @@
     "yjlib": "npm run build && node --test test/yjlib.spec.js",
     "yongin": "npm run build && node --test test/yongin.spec.js",
     "jeju": "npm run build && node --test test/jeju.spec.js",
+    "wonju": "npm run build && node --test test/wonju.spec.js",
+    "cancel": "npm run build && node --test test/cancel.spec.js",
+    "util": "npm run build && node --test test/util.spec.js",
     "cli": "npm run build && node --test test/cli.spec.js"
   },
   "repository": {
