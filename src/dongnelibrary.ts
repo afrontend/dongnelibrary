@@ -3,6 +3,7 @@
 // =============================================================================
 
 // Local library modules
+import * as cbelib from "./localLibraryModule/cbelib";
 import * as gg from "./localLibraryModule/gg";
 import * as gunpo from "./localLibraryModule/gunpo";
 import * as jeju from "./localLibraryModule/jeju";
@@ -37,6 +38,7 @@ import type {
  * List of all available library modules
  */
 const LIBRARY_MODULES: LibraryModule[] = [
+  cbelib,
   gg,
   gunpo,
   jeju,

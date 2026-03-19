@@ -142,6 +142,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 
 ## 검색 가능한 도서관
 
+- [충청북도교육도서관][cbelib-url] (충청북도교육도서관,충북교육문화원,중원교육문화원,중원교육도서관,제천학생회관,미원교육도서관,보은교육도서관,옥천교육도서관,영동교육도서관,진천교육도서관,괴산교육도서관,증평교육도서관,음성교육도서관,금왕교육도서관,단양교육도서관)
 - [경기교육통합도서관][gg-url] (경기중앙교육도서관,경기평택교육도서관,경기광주교육도서관,경기여주가남교육도서관,경기포천교육도서관,경기김포교육도서관,경기과천교육도서관,경기성남교육도서관,경기화성교육도서관,경기의정부교육도서관,경기평생교육학습관)
 - [군포시도서관][gunpo-url] (산본도서관,당동도서관,대야도서관,어린이도서관,이동도서관,군포중앙도서관,누리천문대,시청북카페밥상머리,부곡도서관,당정문화도서관,동화나무어린이도서관,금정작은도서관,재궁꿈나무도서관,궁내동작은도서관,노루목작은도서관,버드나무에부는바람작은도서관,꿈쟁이도서관,우리마을도서관,북카페사랑아이엔지,산본역도서관,하늘정원작은도서관,꿈이지,꿈드림작은도서관,여담작은도서관)
 - [성남시도서관][snlib-url] (논골도서관,중원어린이도서관,성남중앙도서관,분당도서관,고등도서관,구미도서관,해오름도서관,중원도서관,무지개도서관,수내도서관,판교도서관,위례도서관,수정도서관,책테마파크도서관,운중도서관,서현도서관,복정도서관,판교어린이도서관)
@@ -164,6 +165,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 
     npm test
     npm run dongne  # 여러 도서관 검색
+    npm run cbelib  # 충청북도 도서관
     npm run gg      # 경기도 도서관
     npm run gunpo   # 군포시 도서관
     npm run hscity  # 화성시 도서관
@@ -182,6 +184,7 @@ console.log(results.length + " 개의 도서관을 검색했습니다.");
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [web-ui-url]: https://dongne.onrender.com
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
+[cbelib-url]: https://www.cbelib.go.kr
 [gg-url]: https://lib.goe.go.kr
 [gunpo-url]: https://www.gunpolib.go.kr
 [hscity-url]: https://hscitylib.or.kr
