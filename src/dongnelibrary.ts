@@ -15,6 +15,7 @@ import * as suwon from "./localLibraryModule/suwon";
 import * as wonju from "./localLibraryModule/wonju";
 import * as yjlib from "./localLibraryModule/yjlib";
 import * as yongin from "./localLibraryModule/yongin";
+import * as yplib from "./localLibraryModule/yplib";
 import * as yslib from "./localLibraryModule/yslib";
 
 // Type definitions
@@ -50,6 +51,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   wonju,
   yjlib,
   yongin,
+  yplib,
   yslib,
 ];
 

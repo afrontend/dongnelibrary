@@ -28,7 +28,11 @@ const KOREAN_ERROR_PAGE_INDICATORS = [
   "요청하신 페이지를 찾을 수 없습니다",
 ];
 
-const SESSION_REQUIRED_DOMAINS = ["lib.goe.go.kr", "search.suwonlib.go.kr"];
+const SESSION_REQUIRED_DOMAINS = [
+  "lib.goe.go.kr",
+  "search.suwonlib.go.kr",
+  "www.yplib.go.kr",
+];
 
 const KOREAN_TEST_TITLES = ["별", "자바", "소설"];
 
