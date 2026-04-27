@@ -6,6 +6,7 @@ import {
   createLibraryCodeLookup,
   validateSearchOptions,
   wrapWithCallback,
+  stripHtml,
 } from "../util";
 import type {
   Book,
@@ -50,10 +51,6 @@ interface YplibApiResponse {
     totalCount: number;
     bookList: YplibBook[];
   };
-}
-
-function stripHtml(str: string): string {
-  return str.replace(/<[^>]*>/g, "");
 }
 
 async function searchImpl(opt: SearchOptions): Promise<SearchResult> {

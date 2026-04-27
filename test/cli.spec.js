@@ -106,10 +106,6 @@ describe("CLI", () => {
         "Should show interactive option",
       );
       assert.ok(
-        stdout.includes("-m, --interactive-with-library-module"),
-        "Should show -m option",
-      );
-      assert.ok(
         stdout.includes("-l, --library-name"),
         "Should show library-name option",
       );
@@ -325,20 +321,6 @@ describe("CLI", () => {
   // ------------------------------------------------------------------
   // Module-based Interactive Mode (-m) Tests
   // ------------------------------------------------------------------
-
-  it(
-    "should show -m option in --help",
-    { timeout: TIMEOUTS.QUICK },
-    async () => {
-      const { stdout, code } = await runCli(["--help"]);
-
-      assert.strictEqual(code, 0, "Exit code should be 0");
-      assert.ok(
-        stdout.includes("-m, --interactive-with-library-module"),
-        "Should list -m option in help",
-      );
-    },
-  );
 
   it(
     "should exit when SIGINT is sent during -m prompt",

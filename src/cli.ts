@@ -6,6 +6,7 @@ import { select, input, search } from "@inquirer/prompts";
 import { Command } from "commander";
 import * as dl from "./dongnelibrary";
 import * as util from "./util";
+import { parseQueryString } from "./queryParser";
 import type { SearchResult } from "./types";
 
 // Read package.json
@@ -360,63 +361,6 @@ const promptInteractive = async (): Promise<{
 };
 
 /**
- * Parse a combined query string into library name(s) and book title.
- * Checks in order:
- *   1. Comma-separated multi-library token (e.g. "판교,정자 해리포터")
- *   2. Exact single library/module name anywhere in query
- *   3. Partial single library per whitespace token
- * Returns null if no library name can be identified.
- */
-const parseQueryString = (
-  query: string,
-): { libraryName: string | string[]; title: string } | null => {
-  const allNames = dl.getAllLibraryNames().sort((a, b) => b.length - a.length);
-
-  // Comma-separated multi-library: find a token like "판교,정자"
-  const tokens = query.split(/\s+/);
-  for (const token of tokens) {
-    if (!token.includes(",")) continue;
-    const parts = token.split(",").filter(Boolean);
-    const resolved = parts
-      .map((p) => getFullLibraryName(p))
-      .filter((n): n is string => !!n);
-    if (resolved.length === parts.length) {
-      const title = tokens
-        .filter((t) => t !== token)
-        .join(" ")
-        .trim();
-      if (title) return { libraryName: resolved, title };
-    }
-  }
-
-  // Exact match: library name appears as-is in the query
-  for (const name of allNames) {
-    if (query.includes(name)) {
-      const title = query.replace(name, "").trim();
-      if (title) return { libraryName: name, title };
-    }
-  }
-
-  // Partial match: each whitespace token checked individually
-  for (const token of tokens) {
-    const matches = getAllMatchingLibraryNames(token);
-    if (matches.length > 0) {
-      const title = tokens
-        .filter((t) => t !== token)
-        .join(" ")
-        .trim();
-      if (title)
-        return {
-          libraryName: matches.length === 1 ? matches[0] : matches,
-          title,
-        };
-    }
-  }
-
-  return null;
-};
-
-/**
  * Interactive prompt for a single query string (library + title combined).
  */
 const promptForQueryString = async (): Promise<{
@@ -430,7 +374,7 @@ const promptForQueryString = async (): Promise<{
       "도서관과 책 이름을 함께 입력하세요 (예: 판교도서관 해리포터, 판교,정자 해리포터)",
   });
 
-  const parsed = parseQueryString(query.trim());
+  const parsed = parseQueryString(query.trim(), dl.getAllLibraryNames());
   if (!parsed) {
     console.log(
       colors.yellow(
@@ -478,7 +422,7 @@ const activate = async (): Promise<void> => {
     // -q without a value → interactive prompt; -q "string" → parse directly
     const queryStr = typeof query === "string" ? query : undefined;
     if (queryStr) {
-      const parsed = parseQueryString(queryStr.trim());
+      const parsed = parseQueryString(queryStr.trim(), dl.getAllLibraryNames());
       if (!parsed) {
         console.log(
           colors.yellow(

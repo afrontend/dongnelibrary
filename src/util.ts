@@ -8,10 +8,11 @@ import type {
 } from "./types";
 
 /**
- * Strip HTML tags from a string.
+ * Strip HTML tags from a string. Returns empty string for nullish input.
  */
-export function stripTags(str: string): string {
-  return str.replace(/<\/?[^>]+(>|$)/g, "");
+export function stripHtml(str: string | undefined | null): string {
+  if (!str) return "";
+  return str.replace(/<[^>]*>/g, "");
 }
 
 /**

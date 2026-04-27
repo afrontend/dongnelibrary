@@ -33,6 +33,16 @@ const libraryList: LibraryInfo[] = [
 
 const getLibraryCode = createLibraryCodeLookup(libraryList);
 
+/** Converts a relative book href from search results into a detail page URL. */
+export function buildBookUrl(bookPath: string): string {
+  if (!bookPath) return "";
+  const url = new URL("https://lib.goe.go.kr/gg/intro/search/" + bookPath);
+  const regNo = url.searchParams.get("regNo");
+  const manageCode = url.searchParams.get("manageCode");
+  const booktype = url.searchParams.get("booktype");
+  return `https://lib.goe.go.kr/gg/intro/search/detail.do?regNo=${regNo}&manageCode=${manageCode}&booktype=${booktype}`;
+}
+
 /**
  * Search for books in Gyeonggi Provincial Educational Libraries.
  */
@@ -76,16 +86,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     const bookTitle =
       titleElement?.querySelector("span")?.textContent?.trim() ?? "";
     const bookPath = titleElement?.getAttribute("href") ?? "";
-    const tmpUrl = bookPath
-      ? "https://lib.goe.go.kr/gg/intro/search/" + bookPath
-      : "";
-
-    const url = new URL(tmpUrl);
-    const regNo = url.searchParams.get("regNo");
-    const manageCode = url.searchParams.get("manageCode");
-    const booktype = url.searchParams.get("booktype");
-
-    const bookUrl = `https://lib.goe.go.kr/gg/intro/search/detail.do?regNo=${regNo}&manageCode=${manageCode}&booktype=${booktype}`;
+    const bookUrl = buildBookUrl(bookPath);
 
     const availability =
       item.querySelector(".state.typeC")?.textContent?.trim() ?? "";

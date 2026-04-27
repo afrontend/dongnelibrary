@@ -8,6 +8,30 @@ const { createLibraryTestSuite } = require("./helpers/libraryTestSuite");
 // Run the standard test suite
 createLibraryTestSuite(lib, "경기교육도서관");
 
+describe("경기교육도서관 buildBookUrl", () => {
+  it("returns empty string for empty bookPath", () => {
+    assert.strictEqual(lib.buildBookUrl(""), "");
+  });
+
+  it("returns empty string for falsy bookPath", () => {
+    assert.strictEqual(lib.buildBookUrl(null), "");
+    assert.strictEqual(lib.buildBookUrl(undefined), "");
+  });
+
+  it("extracts regNo, manageCode, booktype from bookPath", () => {
+    const href =
+      "detail.do?regNo=ABC123&manageCode=MA&booktype=BOOKANDNONBOOK";
+    const result = lib.buildBookUrl(href);
+    assert.ok(result.includes("regNo=ABC123"), `regNo missing: ${result}`);
+    assert.ok(result.includes("manageCode=MA"), `manageCode missing: ${result}`);
+    assert.ok(result.includes("booktype=BOOKANDNONBOOK"), `booktype missing: ${result}`);
+    assert.ok(
+      result.startsWith("https://lib.goe.go.kr/gg/intro/search/detail.do"),
+      `unexpected base URL: ${result}`,
+    );
+  });
+});
+
 // Additional gg-specific tests
 describe("경기교육도서관 bookUrl content verification", () => {
   it(

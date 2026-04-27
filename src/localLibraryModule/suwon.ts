@@ -3,6 +3,7 @@ import {
   createLibraryCodeLookup,
   validateSearchOptions,
   wrapWithCallback,
+  stripHtml,
 } from "../util";
 import { createSession } from "../http";
 import type {
@@ -43,10 +44,6 @@ const libraryList: LibraryInfo[] = [
 ];
 
 const getLibraryCode = createLibraryCodeLookup(libraryList);
-
-function stripHtml(str: string | undefined): string {
-  return str ? str.replace(/<[^>]*>/g, "") : "";
-}
 
 interface SuwonBook {
   TITLE_INFO?: string;
