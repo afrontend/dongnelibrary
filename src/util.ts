@@ -107,6 +107,7 @@ export function validateSearchOptions(opt: SearchOptions): void {
 
 /**
  * Wrap an async function to support both Promise and callback patterns.
+ * Callback follows Node.js convention (err, result) for backward compatibility with older consumers.
  */
 export function wrapWithCallback<T extends SearchOptions>(
   asyncFn: (opt: T) => Promise<SearchResult>,
