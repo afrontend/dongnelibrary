@@ -55,13 +55,16 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
 - [경기교육통합도서관][gg-url] — 11개 도서관
+- [경기광주시도서관][gjcity-url] — 17개 도서관
 - [군포시도서관][gunpo-url] — 24개 도서관
 - [성남시도서관][snlib-url] — 18개 도서관
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
 - [오산시도서관][osan-url] — 10개 도서관
+- [평택시도서관][ptlib-url] — 15개 도서관
 - [화성시립도서관][hscity-url] — 30개 도서관
 - [수원시도서관][suwon-url] — 23개 도서관
 - [용인시도서관][yongin-url] — 40개 도서관
+- [의왕시도서관][uwlib-url] — 24개 도서관
 - [양평군도서관][yplib-url] — 13개 도서관
 - [여주시립도서관][yjlib-url] — 11개 도서관
 - [제주시도서관][jeju-url] — 16개 도서관
@@ -138,12 +141,15 @@ dl.search(
     npm run dongne  # 여러 도서관 검색
     npm run cbelib  # 충청북도 도서관
     npm run gg      # 경기도 도서관
+    npm run gjcity  # 광주시 도서관
     npm run gunpo   # 군포시 도서관
     npm run hscity  # 화성시 도서관
     npm run ice     # 인천시 도서관
     npm run osan    # 오산시 도서관
+    npm run ptlib   # 평택시 도서관
     npm run snlib   # 성남시 도서관
     npm run suwon   # 수원시 도서관
+    npm run uwlib   # 의왕시 도서관
     npm run yjlib   # 여주시 도서관
     npm run yongin  # 용인시 도서관
     npm run yplib   # 양평군 도서관
@@ -166,11 +172,14 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
 [cbelib-url]: https://www.cbelib.go.kr
 [gg-url]: https://lib.goe.go.kr
+[gjcity-url]: https://lib.gjcity.go.kr
 [gunpo-url]: https://www.gunpolib.go.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
+[ptlib-url]: https://www.ptlib.go.kr
 [snlib-url]: https://www.snlib.go.kr
 [suwon-url]: https://www.suwonlib.go.kr
+[uwlib-url]: https://uwlib.or.kr
 [yongin-url]: https://lib.yongin.go.kr
 [yjlib-url]: https://www.yjlib.go.kr
 [ice-url]: https://lib.ice.go.kr/

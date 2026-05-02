@@ -5,16 +5,19 @@
 // Local library modules
 import * as cbelib from "./localLibraryModule/cbelib";
 import * as gg from "./localLibraryModule/gg";
+import * as gjcity from "./localLibraryModule/gjcity";
 import * as gunpo from "./localLibraryModule/gunpo";
 import * as jeju from "./localLibraryModule/jeju";
 import * as hscity from "./localLibraryModule/hscity";
 import * as ice from "./localLibraryModule/ice";
 import * as osan from "./localLibraryModule/osan";
+import * as ptlib from "./localLibraryModule/ptlib";
 import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
 import * as wonju from "./localLibraryModule/wonju";
 import * as yjlib from "./localLibraryModule/yjlib";
 import * as yongin from "./localLibraryModule/yongin";
+import * as uwlib from "./localLibraryModule/uwlib";
 import * as yplib from "./localLibraryModule/yplib";
 import * as yslib from "./localLibraryModule/yslib";
 
@@ -41,16 +44,19 @@ import type {
 const LIBRARY_MODULES: LibraryModule[] = [
   cbelib,
   gg,
+  gjcity,
   gunpo,
   jeju,
   hscity,
   ice,
   osan,
+  ptlib,
   snlib,
   suwon,
   wonju,
   yjlib,
   yongin,
+  uwlib,
   yplib,
   yslib,
 ];
