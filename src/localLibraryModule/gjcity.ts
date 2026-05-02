@@ -55,7 +55,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
         searchKey: "ALL",
         searchLibraryArr: lcode,
         searchKeyword: title,
-        searchRecordCount: 100,
+        searchRecordCount: 1000,
       },
       signal,
     },
