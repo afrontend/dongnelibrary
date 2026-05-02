@@ -63,7 +63,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
         searchField: "TITLE",
         searchPbLibraryArr: lcode,
         searchWord: title,
-        searchRecordCount: 10,
+        searchRecordCount: 1000,
       },
       signal,
     },
