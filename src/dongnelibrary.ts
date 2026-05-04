@@ -3,6 +3,7 @@
 // =============================================================================
 
 // Local library modules
+import * as asan from "./localLibraryModule/asan";
 import * as cbelib from "./localLibraryModule/cbelib";
 import * as gg from "./localLibraryModule/gg";
 import * as gjcity from "./localLibraryModule/gjcity";
@@ -42,6 +43,7 @@ import type {
  * List of all available library modules
  */
 const LIBRARY_MODULES: LibraryModule[] = [
+  asan,
   cbelib,
   gg,
   gjcity,

@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [아산시도서관][asan-url] — 15개 도서관
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
 - [경기교육통합도서관][gg-url] — 11개 도서관
 - [경기광주시도서관][gjcity-url] — 17개 도서관
@@ -139,6 +140,7 @@ dl.search(
 
     npm test
     npm run dongne  # 여러 도서관 검색
+    npm run asan    # 아산시 도서관
     npm run cbelib  # 충청북도 도서관
     npm run gg      # 경기도 도서관
     npm run gjcity  # 광주시 도서관
@@ -170,6 +172,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [web-ui-url]: https://dongne.onrender.com
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
+[asan-url]: https://ascl.asan.go.kr
 [cbelib-url]: https://www.cbelib.go.kr
 [gg-url]: https://lib.goe.go.kr
 [gjcity-url]: https://lib.gjcity.go.kr
