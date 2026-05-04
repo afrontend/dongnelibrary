@@ -58,6 +58,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [경기교육통합도서관][gg-url] — 11개 도서관
 - [경기광주시도서관][gjcity-url] — 17개 도서관
 - [군포시도서관][gunpo-url] — 24개 도서관
+- [하남시도서관][hanamlib-url] — 11개 도서관
 - [성남시도서관][snlib-url] — 18개 도서관
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
 - [오산시도서관][osan-url] — 10개 도서관
@@ -145,6 +146,7 @@ dl.search(
     npm run gg      # 경기도 도서관
     npm run gjcity  # 광주시 도서관
     npm run gunpo   # 군포시 도서관
+    npm run hanamlib # 하남시 도서관
     npm run hscity  # 화성시 도서관
     npm run ice     # 인천시 도서관
     npm run osan    # 오산시 도서관
@@ -177,6 +179,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [gg-url]: https://lib.goe.go.kr
 [gjcity-url]: https://lib.gjcity.go.kr
 [gunpo-url]: https://www.gunpolib.go.kr
+[hanamlib-url]: https://www.hanamlib.go.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
 [ptlib-url]: https://www.ptlib.go.kr

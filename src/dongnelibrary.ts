@@ -8,6 +8,7 @@ import * as cbelib from "./localLibraryModule/cbelib";
 import * as gg from "./localLibraryModule/gg";
 import * as gjcity from "./localLibraryModule/gjcity";
 import * as gunpo from "./localLibraryModule/gunpo";
+import * as hanamlib from "./localLibraryModule/hanamlib";
 import * as jeju from "./localLibraryModule/jeju";
 import * as hscity from "./localLibraryModule/hscity";
 import * as ice from "./localLibraryModule/ice";
@@ -48,6 +49,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gg,
   gjcity,
   gunpo,
+  hanamlib,
   jeju,
   hscity,
   ice,
