@@ -90,10 +90,14 @@ function isHashBasedUrl(url) {
  *
  * @param {object} lib - The library module (must export search, getLibraryNames, homeUrl)
  * @param {string} description - The describe block name (e.g., "경기교육도서관")
+ * @param {object} [options] - Optional overrides
+ * @param {string} [options.englishSearchTerm] - Override the default "javascript" search term
+ *   (useful for servers that WAF-block the word "javascript")
  */
-function createLibraryTestSuite(lib, description) {
+function createLibraryTestSuite(lib, description, options = {}) {
   const libraryNames = lib.getLibraryNames();
   const firstLibraryName = libraryNames[0];
+  const englishSearchTerm = options.englishSearchTerm ?? "javascript";
 
   /**
    * Helper to create search options with defaults
@@ -141,7 +145,7 @@ function createLibraryTestSuite(lib, description) {
 
     it("Use empty library name", { timeout: TIMEOUTS.DEFAULT }, () => {
       return new Promise((resolve) => {
-        lib.search(createSearchOptions("javascript", ""), (err, result) => {
+        lib.search(createSearchOptions(englishSearchTerm, ""), (err, result) => {
           assert.ok(err, "Should return an error for empty library name");
           assert.strictEqual(err.msg, ERROR_MESSAGES.NEED_LIBRARY_NAME);
           assert.strictEqual(
@@ -160,7 +164,7 @@ function createLibraryTestSuite(lib, description) {
 
     it("Show the book list of a library", { timeout: TIMEOUTS.DEFAULT }, () => {
       return new Promise((resolve) => {
-        lib.search(createSearchOptions("javascript"), (err, result) => {
+        lib.search(createSearchOptions(englishSearchTerm), (err, result) => {
           assert.ok(!err, err?.msg || "Search should not fail");
           assert.ok(
             result.booklist.length > 0,
@@ -182,7 +186,7 @@ function createLibraryTestSuite(lib, description) {
       async () => {
         const searchResult = await searchAsync(
           lib,
-          createSearchOptions("javascript"),
+          createSearchOptions(englishSearchTerm),
         );
 
         assert.ok(
@@ -229,7 +233,7 @@ function createLibraryTestSuite(lib, description) {
       async () => {
         const searchResult = await searchAsync(
           lib,
-          createSearchOptions("javascript"),
+          createSearchOptions(englishSearchTerm),
         );
 
         assert.ok(
@@ -310,7 +314,7 @@ function createLibraryTestSuite(lib, description) {
       async () => {
         const searchResult = await searchAsync(
           lib,
-          createSearchOptions("javascript"),
+          createSearchOptions(englishSearchTerm),
         );
 
         assert.ok(
@@ -441,7 +445,7 @@ function createLibraryTestSuite(lib, description) {
 
           libraryNames.forEach((libraryName) => {
             lib.search(
-              createSearchOptions("javascript", libraryName),
+              createSearchOptions(englishSearchTerm, libraryName),
               (err, result) => {
                 completedCount++;
 
