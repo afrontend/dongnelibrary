@@ -20,6 +20,8 @@ export const homeUrl = "https://library.daegu.go.kr";
 
 const SEARCH_URL =
   "https://library.daegu.go.kr/dgulib/intro/search/indexAll.do";
+const PRIVATE_SEARCH_URL =
+  "https://library.daegu.go.kr/dgulib/intro/search/index_All.do";
 
 const libraryList: LibraryInfo[] = [
   { code: "DG", name: "대구도서관" },
@@ -73,34 +75,27 @@ const libraryList: LibraryInfo[] = [
   { code: "HY", name: "내당도서관" },
 ];
 
+const privateLibraryList: LibraryInfo[] = [
+  { code: "NA", name: "더불어숲도서관" },
+  { code: "NB", name: "꿈꾸는마을도서관 도토리" },
+  { code: "NC", name: "동일도서관" },
+  { code: "ND", name: "연암도서관" },
+  { code: "NE", name: "새벗도서관" },
+  { code: "NH", name: "푸른초장공공도서관" },
+  { code: "NJ", name: "한들마을도서관" },
+  { code: "NK", name: "아트도서관" },
+  { code: "NG", name: "대구점자도서관" },
+];
+
 const getLibraryCode = createLibraryCodeLookup(libraryList);
+const getPrivateLibraryCode = createLibraryCodeLookup(privateLibraryList);
 
-async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
-  const { title, libraryName, signal } = opt;
-
-  validateSearchOptions(opt);
-
-  const lcode = getLibraryCode(libraryName);
-
-  const { statusCode, body } = await get(SEARCH_URL, {
-    qs: {
-      menu_idx: 7,
-      booktype: "BOOKANDNONBOOK",
-      libraryCodes: lcode,
-      title,
-      rowCount: 40,
-      viewPage: opt.startPage ?? 1,
-    },
-    signal,
-  });
-
-  if (statusCode !== 200) {
-    throw new Error(`HTTP ${statusCode}`);
-  }
-
-  // WAF가 "javascript" 등 특정 키워드를 차단하면 alert()만 있는 95바이트 HTML 반환
+function parseSearchResult(
+  body: string,
+  startPage: number | undefined,
+): SearchResult {
   if (body.includes("보안상 잘못된 요청이 발생했습니다")) {
-    return { startPage: opt.startPage, totalBookCount: 0, booklist: [] };
+    return { startPage, totalBookCount: 0, booklist: [] };
   }
 
   const dom = new JSDOM(body);
@@ -135,7 +130,6 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     for (const p of paragraphs) {
       const text = p.textContent ?? "";
       if (text.includes("대출가능여부")) {
-        // "대출가능여부 : 대출가능" → exist=true, "대출중" etc → exist=false
         const afterColon = text.split(":").slice(1).join(":").trim();
         exist = afterColon.startsWith("대출가능");
       }
@@ -148,13 +142,47 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     booklist.push({ libraryName: libName, title: bookTitle, bookUrl, exist });
   });
 
-  return { startPage: opt.startPage, totalBookCount, booklist };
+  return { startPage, totalBookCount, booklist };
+}
+
+async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
+  const { title, libraryName, signal } = opt;
+
+  validateSearchOptions(opt);
+
+  const isPrivate = privateLibraryList.some((lib) => lib.name === libraryName);
+
+  const url = isPrivate ? PRIVATE_SEARCH_URL : SEARCH_URL;
+  const lcode = isPrivate
+    ? getPrivateLibraryCode(libraryName)
+    : getLibraryCode(libraryName);
+
+  const qs: Record<string, string | number> = {
+    menu_idx: 7,
+    booktype: "BOOKANDNONBOOK",
+    libraryCodes: lcode,
+    title,
+    rowCount: 40,
+    viewPage: opt.startPage ?? 1,
+  };
+
+  if (isPrivate) {
+    qs.privateYn = "Y";
+  }
+
+  const { statusCode, body } = await get(url, { qs, signal });
+
+  if (statusCode !== 200) {
+    throw new Error(`HTTP ${statusCode}`);
+  }
+
+  return parseSearchResult(body, opt.startPage);
 }
 
 export const search = wrapWithCallback(searchImpl);
 
 export function getLibraryNames(): string[] {
-  return getLibNames(libraryList);
+  return getLibNames([...libraryList, ...privateLibraryList]);
 }
 
 ({ moduleName, homeUrl, search, getLibraryNames }) satisfies LibraryModule;
