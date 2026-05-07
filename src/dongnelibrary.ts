@@ -9,6 +9,7 @@ import * as daegu from "./localLibraryModule/daegu";
 import * as gg from "./localLibraryModule/gg";
 import * as gjcity from "./localLibraryModule/gjcity";
 import * as gunpo from "./localLibraryModule/gunpo";
+import * as gwanak from "./localLibraryModule/gwanak";
 import * as hanamlib from "./localLibraryModule/hanamlib";
 import * as jeju from "./localLibraryModule/jeju";
 import * as hscity from "./localLibraryModule/hscity";
@@ -51,6 +52,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gg,
   gjcity,
   gunpo,
+  gwanak,
   hanamlib,
   jeju,
   hscity,

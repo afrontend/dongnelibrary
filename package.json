@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.17",
+  "version": "0.3.18",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=22.22.0"
@@ -22,6 +22,7 @@
     "gg": "npm run build && node --test test/gg.spec.js",
     "gjcity": "npm run build && node --test test/gjcity.spec.js",
     "gunpo": "npm run build && node --test test/gunpo.spec.js",
+    "gwanak": "npm run build && node --test test/gwanak.spec.js",
     "hanamlib": "npm run build && node --test test/hanamlib.spec.js",
     "hscity": "npm run build && node --test test/hscity.spec.js",
     "ice": "npm run build && node --test test/ice.spec.js",
@@ -54,6 +55,7 @@
     "경기교육통합도서관",
     "경기광주시도서관",
     "군포시도서관",
+    "관악구통합도서관",
     "하남시도서관",
     "성남시도서관",
     "오산시도서관",
