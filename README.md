@@ -13,7 +13,7 @@
 
 처음 실행하면 대화형 모드로 도서관과 책 이름을 입력할 수 있습니다.
 
-[![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304)
+[![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304.svg)
 
 ## 주요 옵션
 
@@ -163,6 +163,9 @@ dl.search(
     npm run yjlib   # 여주시 도서관
     npm run yongin  # 용인시 도서관
     npm run yplib   # 양평군 도서관
+    npm run cancel  # 취소 기능 테스트
+    npm run util    # 유틸리티 테스트
+    npm run cli     # CLI 기능 테스트
     npm run jeju    # 제주시 도서관
     npm run wonju   # 원주시 도서관
     npm run yslib   # 여수시 도서관
