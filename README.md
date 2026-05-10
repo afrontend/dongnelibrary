@@ -62,6 +62,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [군포시도서관][gunpo-url] — 24개 도서관
 - [관악구통합도서관][gwanak-url] — 31개 도서관
 - [하남시도서관][hanamlib-url] — 11개 도서관
+- [노원구립도서관][nowon-url] — 36개 도서관
 - [성남시도서관][snlib-url] — 18개 도서관
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
 - [오산시도서관][osan-url] — 10개 도서관
@@ -154,6 +155,7 @@ dl.search(
     npm run gwanak  # 관악구 도서관
     npm run hanamlib # 하남시 도서관
     npm run hscity  # 화성시 도서관
+    npm run nowon   # 노원구 도서관
     npm run ice     # 인천시 도서관
     npm run osan    # 오산시 도서관
     npm run ptlib   # 평택시 도서관
@@ -192,6 +194,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [gunpo-url]: https://www.gunpolib.go.kr
 [gwanak-url]: https://lib.gwanak.go.kr
 [hanamlib-url]: https://www.hanamlib.go.kr
+[nowon-url]: https://www.nowonlib.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
 [ptlib-url]: https://www.ptlib.go.kr
