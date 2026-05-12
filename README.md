@@ -56,6 +56,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [아산시도서관][asan-url] — 15개 도서관
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
 - [대구광역시통합도서관][daegu-url] — 57개 도서관 (시립/구군립 48개 + 사립공공·전문 9개)
+- [강남구통합도서관][gangnam-url] — 27개 도서관
 - [강서구통합도서관][gangseo-url] — 36개 도서관
 - [경기교육통합도서관][gg-url] — 11개 도서관
 - [경기광주시도서관][gjcity-url] — 17개 도서관
@@ -148,6 +149,7 @@ dl.search(
     npm run asan    # 아산시 도서관
     npm run cbelib  # 충청북도 도서관
     npm run daegu   # 대구광역시 도서관
+    npm run gangnam # 강남구 도서관
     npm run gangseo # 강서구 도서관
     npm run gg      # 경기도 도서관
     npm run gjcity  # 광주시 도서관
@@ -188,6 +190,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [asan-url]: https://ascl.asan.go.kr
 [cbelib-url]: https://www.cbelib.go.kr
 [daegu-url]: https://library.daegu.go.kr
+[gangnam-url]: https://library.gangnam.go.kr
 [gangseo-url]: https://lib.gangseo.seoul.kr
 [gg-url]: https://lib.goe.go.kr
 [gjcity-url]: https://lib.gjcity.go.kr
