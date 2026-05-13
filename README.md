@@ -13,7 +13,7 @@
 
 처음 실행하면 대화형 모드로 도서관과 책 이름을 입력할 수 있습니다.
 
-[![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/359304.svg)
+[![asciicast](https://asciinema.org/a/359304.svg)](https://asciinema.org/a/575436)
 
 ## 주요 옵션
 
