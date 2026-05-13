@@ -77,6 +77,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [제주시도서관][jeju-url] — 16개 도서관
 - [원주시립통합도서관][wonju-url] — 16개 도서관
 - [여수시립도서관][yslib-url] — 35개 도서관
+- [영등포구립도서관][ydplib-url] — 28개 도서관
 
 ## 웹 서비스
 
@@ -166,6 +167,7 @@ dl.search(
     npm run uwlib   # 의왕시 도서관
     npm run yjlib   # 여주시 도서관
     npm run yongin  # 용인시 도서관
+    npm run ydplib  # 영등포구 도서관
     npm run yplib   # 양평군 도서관
     npm run cancel  # 취소 기능 테스트
     npm run util    # 유틸리티 테스트
@@ -209,5 +211,6 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [ice-url]: https://lib.ice.go.kr/
 [jeju-url]: https://www.jeju.go.kr/
 [wonju-url]: https://lib.wonju.go.kr/
+[ydplib-url]: https://ydplib.or.kr
 [yplib-url]: https://www.yplib.go.kr
 [yslib-url]: https://yslib.yeosu.go.kr/

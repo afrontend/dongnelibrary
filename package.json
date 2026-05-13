@@ -36,6 +36,7 @@
     "uwlib": "npm run build && node --test test/uwlib.spec.js",
     "yjlib": "npm run build && node --test test/yjlib.spec.js",
     "yongin": "npm run build && node --test test/yongin.spec.js",
+    "ydplib": "npm run build && node --test test/ydplib.spec.js",
     "yplib": "npm run build && node --test test/yplib.spec.js",
     "jeju": "npm run build && node --test test/jeju.spec.js",
     "wonju": "npm run build && node --test test/wonju.spec.js",
@@ -75,7 +76,8 @@
     "용인시도서관",
     "인천광역시교육청통합공공도서관",
     "제주시도서관",
-    "원주시립통합도서관"
+    "원주시립통합도서관",
+    "영등포구립도서관"
   ],
   "author": "<autoscripts@gmail.com>",
   "license": "MIT",
