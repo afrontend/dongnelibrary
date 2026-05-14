@@ -60,6 +60,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [강서구통합도서관][gangseo-url] — 36개 도서관
 - [경기교육통합도서관][gg-url] — 11개 도서관
 - [경기광주시도서관][gjcity-url] — 17개 도서관
+- [김해통합도서관][gimhae-url] — 7개 도서관 (칠암, 장유, 화정글샘, 진영한빛, 기적, 율하, 어린이영어)
 - [군포시도서관][gunpo-url] — 24개 도서관
 - [관악구통합도서관][gwanak-url] — 31개 도서관
 - [하남시도서관][hanamlib-url] — 11개 도서관
@@ -154,6 +155,7 @@ dl.search(
     npm run gangseo # 강서구 도서관
     npm run gg      # 경기도 도서관
     npm run gjcity  # 광주시 도서관
+    npm run gimhae  # 김해시 도서관
     npm run gunpo   # 군포시 도서관
     npm run gwanak  # 관악구 도서관
     npm run hanamlib # 하남시 도서관
@@ -196,6 +198,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [gangseo-url]: https://lib.gangseo.seoul.kr
 [gg-url]: https://lib.goe.go.kr
 [gjcity-url]: https://lib.gjcity.go.kr
+[gimhae-url]: https://lib.gimhae.go.kr
 [gunpo-url]: https://www.gunpolib.go.kr
 [gwanak-url]: https://lib.gwanak.go.kr
 [hanamlib-url]: https://www.hanamlib.go.kr

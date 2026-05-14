@@ -10,6 +10,7 @@ import * as gangseo from "./localLibraryModule/gangseo";
 import * as gangnam from "./localLibraryModule/gangnam";
 import * as gg from "./localLibraryModule/gg";
 import * as gjcity from "./localLibraryModule/gjcity";
+import * as gimhae from "./localLibraryModule/gimhae";
 import * as gunpo from "./localLibraryModule/gunpo";
 import * as gwanak from "./localLibraryModule/gwanak";
 import * as hanamlib from "./localLibraryModule/hanamlib";
@@ -57,6 +58,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gangnam,
   gg,
   gjcity,
+  gimhae,
   gunpo,
   gwanak,
   hanamlib,
