@@ -29,6 +29,7 @@ const KOREAN_ERROR_PAGE_INDICATORS = [
 ];
 
 const SESSION_REQUIRED_DOMAINS = [
+  "alpasq.bcl.go.kr",
   "lib.gangseo.seoul.kr",
   "lib.goe.go.kr",
   "search.suwonlib.go.kr",

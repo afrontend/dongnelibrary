@@ -4,6 +4,7 @@
 
 // Local library modules
 import * as asan from "./localLibraryModule/asan";
+import * as bcl from "./localLibraryModule/bcl";
 import * as cbelib from "./localLibraryModule/cbelib";
 import * as daegu from "./localLibraryModule/daegu";
 import * as gangseo from "./localLibraryModule/gangseo";
@@ -19,6 +20,7 @@ import * as hscity from "./localLibraryModule/hscity";
 import * as ice from "./localLibraryModule/ice";
 import * as nowon from "./localLibraryModule/nowon";
 import * as osan from "./localLibraryModule/osan";
+import * as pohang from "./localLibraryModule/pohang";
 import * as ptlib from "./localLibraryModule/ptlib";
 import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
@@ -52,6 +54,7 @@ import type {
  */
 const LIBRARY_MODULES: LibraryModule[] = [
   asan,
+  bcl,
   cbelib,
   daegu,
   gangseo,
@@ -67,6 +70,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   ice,
   nowon,
   osan,
+  pohang,
   ptlib,
   snlib,
   suwon,

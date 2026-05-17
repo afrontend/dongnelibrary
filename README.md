@@ -54,6 +54,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 현재 지원하는 통합도서관 시스템:
 
 - [아산시도서관][asan-url] — 15개 도서관
+- [부천시립도서관][bcl-url] — 16개 도서관 (시립도서관, 상동, 원미, 심곡, 북부, 꿈빛, 책마루, 한울빛, 꿈여울, 송내, 오정, 도당, 동화, 역곡, 별빛마루, 수주, 역곡밝은)
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
 - [대구광역시통합도서관][daegu-url] — 57개 도서관 (시립/구군립 48개 + 사립공공·전문 9개)
 - [강남구통합도서관][gangnam-url] — 27개 도서관
@@ -69,6 +70,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
 - [오산시도서관][osan-url] — 10개 도서관
 - [평택시도서관][ptlib-url] — 15개 도서관
+- [포항시립도서관][pohang-url] — 10개 도서관 (포은중앙, 대잠, 영암, 포은오천, 동해석곡, 연일, 구룡포, 포은흥해 등)
 - [화성시립도서관][hscity-url] — 30개 도서관
 - [수원시도서관][suwon-url] — 23개 도서관
 - [용인시도서관][yongin-url] — 40개 도서관
@@ -149,6 +151,7 @@ dl.search(
     npm test
     npm run dongne  # 여러 도서관 검색
     npm run asan    # 아산시 도서관
+    npm run bcl     # 부천시 도서관
     npm run cbelib  # 충청북도 도서관
     npm run daegu   # 대구광역시 도서관
     npm run gangnam # 강남구 도서관
@@ -164,6 +167,7 @@ dl.search(
     npm run ice     # 인천시 도서관
     npm run osan    # 오산시 도서관
     npm run ptlib   # 평택시 도서관
+    npm run pohang  # 포항시 도서관
     npm run snlib   # 성남시 도서관
     npm run suwon   # 수원시 도서관
     npm run uwlib   # 의왕시 도서관
@@ -192,6 +196,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [web-ui-url]: https://dongne.onrender.com
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
 [asan-url]: https://ascl.asan.go.kr
+[bcl-url]: https://bcl.go.kr
 [cbelib-url]: https://www.cbelib.go.kr
 [daegu-url]: https://library.daegu.go.kr
 [gangnam-url]: https://library.gangnam.go.kr
@@ -206,6 +211,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
 [ptlib-url]: https://www.ptlib.go.kr
+[pohang-url]: https://phlib.pohang.go.kr
 [snlib-url]: https://www.snlib.go.kr
 [suwon-url]: https://www.suwonlib.go.kr
 [uwlib-url]: https://uwlib.or.kr
