@@ -72,6 +72,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [평택시도서관][ptlib-url] — 15개 도서관
 - [포항시립도서관][pohang-url] — 10개 도서관 (포은중앙, 대잠, 영암, 포은오천, 동해석곡, 연일, 구룡포, 포은흥해 등)
 - [화성시립도서관][hscity-url] — 30개 도서관
+- [시흥시도서관][siheung-url] — 13개 도서관 (중앙, 대야, 소래빛, 월곶, 정왕어린이, 군자, 능곡, 신천, 매화, 장곡, 목감, 배곧, 은계)
 - [수원시도서관][suwon-url] — 23개 도서관
 - [용인시도서관][yongin-url] — 40개 도서관
 - [의왕시도서관][uwlib-url] — 24개 도서관
@@ -168,6 +169,7 @@ dl.search(
     npm run osan    # 오산시 도서관
     npm run ptlib   # 평택시 도서관
     npm run pohang  # 포항시 도서관
+    npm run siheung # 시흥시 도서관
     npm run snlib   # 성남시 도서관
     npm run suwon   # 수원시 도서관
     npm run uwlib   # 의왕시 도서관
@@ -212,6 +214,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [osan-url]: https://www.osanlibrary.go.kr
 [ptlib-url]: https://www.ptlib.go.kr
 [pohang-url]: https://phlib.pohang.go.kr
+[siheung-url]: https://lib.siheung.go.kr
 [snlib-url]: https://www.snlib.go.kr
 [suwon-url]: https://www.suwonlib.go.kr
 [uwlib-url]: https://uwlib.or.kr

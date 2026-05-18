@@ -22,6 +22,7 @@ import * as nowon from "./localLibraryModule/nowon";
 import * as osan from "./localLibraryModule/osan";
 import * as pohang from "./localLibraryModule/pohang";
 import * as ptlib from "./localLibraryModule/ptlib";
+import * as siheung from "./localLibraryModule/siheung";
 import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
 import * as wonju from "./localLibraryModule/wonju";
@@ -72,6 +73,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   osan,
   pohang,
   ptlib,
+  siheung,
   snlib,
   suwon,
   wonju,
