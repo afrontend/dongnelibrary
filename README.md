@@ -59,6 +59,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [대구광역시통합도서관][daegu-url] — 57개 도서관 (시립/구군립 48개 + 사립공공·전문 9개)
 - [강남구통합도서관][gangnam-url] — 27개 도서관
 - [강서구통합도서관][gangseo-url] — 36개 도서관
+- [경상북도교육청통합도서관][gbelib-url] — 28개 도서관
 - [경기교육통합도서관][gg-url] — 11개 도서관
 - [거제시도서관][geoje-url] — 5개 도서관 (장평, 장승포, 수양, 하청, 아주)
 - [경기광주시도서관][gjcity-url] — 17개 도서관
@@ -158,6 +159,7 @@ dl.search(
     npm run daegu   # 대구광역시 도서관
     npm run gangnam # 강남구 도서관
     npm run gangseo # 강서구 도서관
+    npm run gbelib  # 경상북도교육청 도서관
     npm run gg      # 경기도 도서관
     npm run geoje   # 거제시 도서관
     npm run gjcity  # 광주시 도서관
@@ -205,6 +207,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [daegu-url]: https://library.daegu.go.kr
 [gangnam-url]: https://library.gangnam.go.kr
 [gangseo-url]: https://lib.gangseo.seoul.kr
+[gbelib-url]: https://www.gbelib.kr
 [gg-url]: https://lib.goe.go.kr
 [geoje-url]: https://lib.geoje.go.kr
 [gjcity-url]: https://lib.gjcity.go.kr
