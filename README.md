@@ -63,6 +63,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [경상북도교육청통합도서관][gbelib-url] — 28개 도서관
 - [경기교육통합도서관][gg-url] — 11개 도서관
 - [거제시도서관][geoje-url] — 5개 도서관 (장평, 장승포, 수양, 하청, 아주)
+- [군산시도서관][gunsan-url] — 23개 도서관 (군산시립, 늘푸른, 설림, 산들, 금강, 임피채만식, 구암·나포·미룡·미성·월명·흥남·나운·산단·서수·성산·중동·개정·회현작은도서관 외)
 - [경기광주시도서관][gjcity-url] — 17개 도서관
 - [김해통합도서관][gimhae-url] — 7개 도서관 (칠암, 장유, 화정글샘, 진영한빛, 기적, 율하, 어린이영어)
 - [군포시도서관][gunpo-url] — 24개 도서관
@@ -166,6 +167,7 @@ dl.search(
     npm run gbelib  # 경상북도교육청 도서관
     npm run gg      # 경기도 도서관
     npm run geoje   # 거제시 도서관
+    npm run gunsan  # 군산시 도서관
     npm run gjcity  # 광주시 도서관
     npm run gimhae  # 김해시 도서관
     npm run gunpo   # 군포시 도서관
@@ -217,6 +219,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [gbelib-url]: https://www.gbelib.kr
 [gg-url]: https://lib.goe.go.kr
 [geoje-url]: https://lib.geoje.go.kr
+[gunsan-url]: https://lib.gunsan.go.kr
 [gjcity-url]: https://lib.gjcity.go.kr
 [gimhae-url]: https://lib.gimhae.go.kr
 [gunpo-url]: https://www.gunpolib.go.kr
