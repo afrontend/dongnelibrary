@@ -42,6 +42,7 @@
     "snlib": "npm run build && node --test test/snlib.spec.js",
     "suwon": "npm run build && node --test test/suwon.spec.js",
     "uwlib": "npm run build && node --test test/uwlib.spec.js",
+    "yangcheon": "npm run build && node --test test/yangcheon.spec.js",
     "yjlib": "npm run build && node --test test/yjlib.spec.js",
     "yongin": "npm run build && node --test test/yongin.spec.js",
     "ydplib": "npm run build && node --test test/ydplib.spec.js",
@@ -93,6 +94,7 @@
     "인천광역시교육청통합공공도서관",
     "제주시도서관",
     "원주시립통합도서관",
+    "양천구도서관",
     "영등포구립도서관"
   ],
   "author": "<autoscripts@gmail.com>",

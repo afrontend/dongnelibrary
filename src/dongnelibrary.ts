@@ -33,6 +33,7 @@ import * as wonju from "./localLibraryModule/wonju";
 import * as yjlib from "./localLibraryModule/yjlib";
 import * as yongin from "./localLibraryModule/yongin";
 import * as uwlib from "./localLibraryModule/uwlib";
+import * as yangcheon from "./localLibraryModule/yangcheon";
 import * as ydplib from "./localLibraryModule/ydplib";
 import * as yplib from "./localLibraryModule/yplib";
 import * as yslib from "./localLibraryModule/yslib";
@@ -89,6 +90,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   yjlib,
   yongin,
   uwlib,
+  yangcheon,
   yplib,
   yslib,
 ];
