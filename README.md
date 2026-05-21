@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [안산시도서관][ansan-url] — 17개 도서관 (시립도서관: 중앙, 감골, 관산, 단원어린이, 대부, 미디어, 반월, 본오, 부곡, 상록수, 상록어린이, 선부, 성포, 수암, 원고잔, 월피예술, 와동교육)
 - [아산시도서관][asan-url] — 15개 도서관
 - [부천시립도서관][bcl-url] — 16개 도서관 (시립도서관, 상동, 원미, 심곡, 북부, 꿈빛, 책마루, 한울빛, 꿈여울, 송내, 오정, 도당, 동화, 역곡, 별빛마루, 수주, 역곡밝은)
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
@@ -66,6 +67,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [김해통합도서관][gimhae-url] — 7개 도서관 (칠암, 장유, 화정글샘, 진영한빛, 기적, 율하, 어린이영어)
 - [군포시도서관][gunpo-url] — 24개 도서관
 - [관악구통합도서관][gwanak-url] — 31개 도서관
+- [강원특별자치도교육청도서관][gwe-url] — 22개 도서관
 - [하남시도서관][hanamlib-url] — 11개 도서관
 - [노원구립도서관][nowon-url] — 36개 도서관
 - [성남시도서관][snlib-url] — 18개 도서관
@@ -153,6 +155,7 @@ dl.search(
 
     npm test
     npm run dongne  # 여러 도서관 검색
+    npm run ansan   # 안산시 도서관
     npm run asan    # 아산시 도서관
     npm run bcl     # 부천시 도서관
     npm run cbelib  # 충청북도 도서관
@@ -166,6 +169,7 @@ dl.search(
     npm run gimhae  # 김해시 도서관
     npm run gunpo   # 군포시 도서관
     npm run gwanak  # 관악구 도서관
+    npm run gwe     # 강원교육청 도서관
     npm run hanamlib # 하남시 도서관
     npm run hscity  # 화성시 도서관
     npm run nowon   # 노원구 도서관
@@ -201,6 +205,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [npm-url]: https://npmjs.org/package/dongnelibrary
 [web-ui-url]: https://dongne.onrender.com
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
+[ansan-url]: https://lib.ansan.go.kr
 [asan-url]: https://ascl.asan.go.kr
 [bcl-url]: https://bcl.go.kr
 [cbelib-url]: https://www.cbelib.go.kr
@@ -214,6 +219,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [gimhae-url]: https://lib.gimhae.go.kr
 [gunpo-url]: https://www.gunpolib.go.kr
 [gwanak-url]: https://lib.gwanak.go.kr
+[gwe-url]: https://lib.gwe.go.kr
 [hanamlib-url]: https://www.hanamlib.go.kr
 [nowon-url]: https://www.nowonlib.kr
 [hscity-url]: https://hscitylib.or.kr

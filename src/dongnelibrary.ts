@@ -3,6 +3,7 @@
 // =============================================================================
 
 // Local library modules
+import * as ansan from "./localLibraryModule/ansan";
 import * as asan from "./localLibraryModule/asan";
 import * as bcl from "./localLibraryModule/bcl";
 import * as cbelib from "./localLibraryModule/cbelib";
@@ -16,6 +17,7 @@ import * as geoje from "./localLibraryModule/geoje";
 import * as gimhae from "./localLibraryModule/gimhae";
 import * as gunpo from "./localLibraryModule/gunpo";
 import * as gwanak from "./localLibraryModule/gwanak";
+import * as gwe from "./localLibraryModule/gwe";
 import * as hanamlib from "./localLibraryModule/hanamlib";
 import * as jeju from "./localLibraryModule/jeju";
 import * as hscity from "./localLibraryModule/hscity";
@@ -56,6 +58,7 @@ import type {
  * List of all available library modules
  */
 const LIBRARY_MODULES: LibraryModule[] = [
+  ansan,
   asan,
   bcl,
   cbelib,
@@ -69,6 +72,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gimhae,
   gunpo,
   gwanak,
+  gwe,
   hanamlib,
   jeju,
   hscity,
