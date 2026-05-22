@@ -73,6 +73,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [노원구립도서관][nowon-url] — 36개 도서관
 - [성남시도서관][snlib-url] — 18개 도서관
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
+- [목포시통합도서관][mokpolib-url] — 23개 도서관 (시립, 어울림, 어린이, 영어, 작은도서관 19개)
 - [오산시도서관][osan-url] — 10개 도서관
 - [평택시도서관][ptlib-url] — 15개 도서관
 - [포항시립도서관][pohang-url] — 10개 도서관 (포은중앙, 대잠, 영암, 포은오천, 동해석곡, 연일, 구룡포, 포은흥해 등)
@@ -177,6 +178,7 @@ dl.search(
     npm run hscity  # 화성시 도서관
     npm run nowon   # 노원구 도서관
     npm run ice     # 인천시 도서관
+    npm run mokpolib # 목포시 도서관
     npm run osan    # 오산시 도서관
     npm run ptlib   # 평택시 도서관
     npm run pohang  # 포항시 도서관
@@ -238,6 +240,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [yongin-url]: https://lib.yongin.go.kr
 [yjlib-url]: https://www.yjlib.go.kr
 [ice-url]: https://lib.ice.go.kr/
+[mokpolib-url]: https://www.mokpolib.or.kr
 [jeju-url]: https://www.jeju.go.kr/
 [wonju-url]: https://lib.wonju.go.kr/
 [ydplib-url]: https://ydplib.or.kr
