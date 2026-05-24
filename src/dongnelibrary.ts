@@ -26,6 +26,7 @@ import * as ice from "./localLibraryModule/ice";
 import * as mokpolib from "./localLibraryModule/mokpolib";
 import * as nowon from "./localLibraryModule/nowon";
 import * as osan from "./localLibraryModule/osan";
+import * as paju from "./localLibraryModule/paju";
 import * as pohang from "./localLibraryModule/pohang";
 import * as ptlib from "./localLibraryModule/ptlib";
 import * as siheung from "./localLibraryModule/siheung";
@@ -84,6 +85,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   mokpolib,
   nowon,
   osan,
+  paju,
   pohang,
   ptlib,
   siheung,

@@ -74,6 +74,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [성남시도서관][snlib-url] — 18개 도서관
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
 - [목포시통합도서관][mokpolib-url] — 23개 도서관 (시립, 어울림, 어린이, 영어, 작은도서관 19개)
+- [파주시도서관][paju-url] — 22개 도서관 (중앙, 금촌, 문산, 법원, 적성, 교하, 한빛, 해솔, 탄현, 가람, 조리, 금촌3동솔빛, 물푸레, 파평, 한울, 월롱, 광탄, 술이홀, 금촌무지개작은, 금곡작은, 탄현작은, 부엉이책장)
 - [오산시도서관][osan-url] — 10개 도서관
 - [평택시도서관][ptlib-url] — 15개 도서관
 - [포항시립도서관][pohang-url] — 10개 도서관 (포은중앙, 대잠, 영암, 포은오천, 동해석곡, 연일, 구룡포, 포은흥해 등)
@@ -179,6 +180,7 @@ dl.search(
     npm run nowon   # 노원구 도서관
     npm run ice     # 인천시 도서관
     npm run mokpolib # 목포시 도서관
+    npm run paju    # 파주시 도서관
     npm run osan    # 오산시 도서관
     npm run ptlib   # 평택시 도서관
     npm run pohang  # 포항시 도서관
@@ -231,6 +233,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [nowon-url]: https://www.nowonlib.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
+[paju-url]: https://lib.paju.go.kr
 [ptlib-url]: https://www.ptlib.go.kr
 [pohang-url]: https://phlib.pohang.go.kr
 [siheung-url]: https://lib.siheung.go.kr
