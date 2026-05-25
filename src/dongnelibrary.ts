@@ -21,6 +21,7 @@ import * as gwanak from "./localLibraryModule/gwanak";
 import * as gwe from "./localLibraryModule/gwe";
 import * as hanamlib from "./localLibraryModule/hanamlib";
 import * as jeju from "./localLibraryModule/jeju";
+import * as junggulib from "./localLibraryModule/junggulib";
 import * as hscity from "./localLibraryModule/hscity";
 import * as ice from "./localLibraryModule/ice";
 import * as mokpolib from "./localLibraryModule/mokpolib";
@@ -80,6 +81,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gwe,
   hanamlib,
   jeju,
+  junggulib,
   hscity,
   ice,
   mokpolib,
