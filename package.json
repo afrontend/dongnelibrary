@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.21",
+  "version": "0.3.22",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=22.22.0"
@@ -24,6 +24,7 @@
     "gangnam": "npm run build && node --test test/gangnam.spec.js",
     "gangseo": "npm run build && node --test test/gangseo.spec.js",
     "gbelib": "npm run build && node --test test/gbelib.spec.js",
+    "goyanglib": "npm run build && node --test test/goyanglib.spec.js",
     "geoje": "npm run build && node --test test/geoje.spec.js",
     "gg": "npm run build && node --test test/gg.spec.js",
     "gjcity": "npm run build && node --test test/gjcity.spec.js",
