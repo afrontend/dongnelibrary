@@ -75,6 +75,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [노원구립도서관][nowon-url] — 36개 도서관
 - [성남시도서관][snlib-url] — 18개 도서관
 - [인천광역시교육청통합공공도서관][ice-url] — 9개 도서관
+- [남원시도서관][namwon-url] — 21개 도서관 (어울림, 시립, 어린이청소년, 새싹·황죽·혼불·독우물·송동·금동·이그린·휴먼시아·빨간사과·메카센트럴·오들·품안·아영·향교동·산동면·이백면·보절면·주천면 작은도서관)
 - [목포시통합도서관][mokpolib-url] — 23개 도서관 (시립, 어울림, 어린이, 영어, 작은도서관 19개)
 - [파주시도서관][paju-url] — 22개 도서관 (중앙, 금촌, 문산, 법원, 적성, 교하, 한빛, 해솔, 탄현, 가람, 조리, 금촌3동솔빛, 물푸레, 파평, 한울, 월롱, 광탄, 술이홀, 금촌무지개작은, 금곡작은, 탄현작은, 부엉이책장)
 - [오산시도서관][osan-url] — 10개 도서관
@@ -183,6 +184,7 @@ dl.search(
     npm run ice     # 인천시 도서관
     npm run goyanglib # 고양시 도서관
     npm run junggulib # 중구구립도서관
+    npm run namwon   # 남원시 도서관
     npm run mokpolib # 목포시 도서관
     npm run paju    # 파주시 도서관
     npm run osan    # 오산시 도서관
@@ -235,6 +237,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [gwanak-url]: https://lib.gwanak.go.kr
 [gwe-url]: https://lib.gwe.go.kr
 [hanamlib-url]: https://www.hanamlib.go.kr
+[namwon-url]: https://www.namwon.go.kr/lib
 [nowon-url]: https://www.nowonlib.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr

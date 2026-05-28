@@ -26,6 +26,7 @@ import * as junggulib from "./localLibraryModule/junggulib";
 import * as hscity from "./localLibraryModule/hscity";
 import * as ice from "./localLibraryModule/ice";
 import * as mokpolib from "./localLibraryModule/mokpolib";
+import * as namwon from "./localLibraryModule/namwon";
 import * as nowon from "./localLibraryModule/nowon";
 import * as osan from "./localLibraryModule/osan";
 import * as paju from "./localLibraryModule/paju";
@@ -87,6 +88,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   hscity,
   ice,
   mokpolib,
+  namwon,
   nowon,
   osan,
   paju,
