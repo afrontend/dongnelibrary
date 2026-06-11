@@ -7,6 +7,7 @@ import * as ansan from "./localLibraryModule/ansan";
 import * as asan from "./localLibraryModule/asan";
 import * as bcl from "./localLibraryModule/bcl";
 import * as cbelib from "./localLibraryModule/cbelib";
+import * as cheonan from "./localLibraryModule/cheonan";
 import * as daegu from "./localLibraryModule/daegu";
 import * as gangseo from "./localLibraryModule/gangseo";
 import * as gangnam from "./localLibraryModule/gangnam";
@@ -69,6 +70,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   asan,
   bcl,
   cbelib,
+  cheonan,
   daegu,
   gangseo,
   gangnam,
