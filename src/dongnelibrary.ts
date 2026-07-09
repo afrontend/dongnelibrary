@@ -35,6 +35,7 @@ import * as osan from "./localLibraryModule/osan";
 import * as paju from "./localLibraryModule/paju";
 import * as pohang from "./localLibraryModule/pohang";
 import * as ptlib from "./localLibraryModule/ptlib";
+import * as sblib from "./localLibraryModule/sblib";
 import * as siheung from "./localLibraryModule/siheung";
 import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
@@ -100,6 +101,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   paju,
   pohang,
   ptlib,
+  sblib,
   siheung,
   snlib,
   suwon,

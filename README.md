@@ -96,6 +96,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [여수시립도서관][yslib-url] — 35개 도서관
 - [양천구도서관][yangcheon-url] — 22개 도서관 (갈산, 목마교육, 방아다리문학, 신월음악, 영어특성화, 해맞이역사, 개울건강, 양천중앙, 미감 등)
 - [영등포구립도서관][ydplib-url] — 28개 도서관
+- [성북구립도서관][sblib-url] — 17개 도서관 (성북정보, 아리랑, 해오름, 새날, 꿈마루, 미리내, 달빛마루, 정릉, 청수, 월곡꿈그림, 아리랑어린이, 장위행복누림, 성북길빛, 글빛, 오동숲속, 보문숲길, 어린이청소년)
 
 ## 웹 서비스
 
@@ -266,3 +267,4 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [yplib-url]: https://www.yplib.go.kr
 [yangcheon-url]: https://lib.yangcheon.or.kr
 [yslib-url]: https://yslib.yeosu.go.kr/
+[sblib-url]: https://sblib.seoul.kr
