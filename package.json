@@ -53,6 +53,7 @@
     "suwon": "npm run build && node --test test/suwon.spec.js",
     "uwlib": "npm run build && node --test test/uwlib.spec.js",
     "yangcheon": "npm run build && node --test test/yangcheon.spec.js",
+    "yeonsu": "npm run build && node --test test/yeonsu.spec.js",
     "yjlib": "npm run build && node --test test/yjlib.spec.js",
     "yongin": "npm run build && node --test test/yongin.spec.js",
     "ydplib": "npm run build && node --test test/ydplib.spec.js",
@@ -114,7 +115,8 @@
     "영등포구립도서관",
     "전북특별자치도교육청도서관",
     "의정부시도서관",
-    "성북구립도서관"
+    "성북구립도서관",
+    "연수구립도서관"
   ],
   "author": "<autoscripts@gmail.com>",
   "license": "MIT",

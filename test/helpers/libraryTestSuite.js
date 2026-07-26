@@ -39,6 +39,7 @@ const SESSION_REQUIRED_DOMAINS = [
   "search.suwonlib.go.kr",
   "www.nowonlib.kr",
   "www.yplib.go.kr",
+  "yspubliclib.go.kr",
 ];
 
 const KOREAN_TEST_TITLES = ["별", "자바", "소설"];

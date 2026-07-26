@@ -40,6 +40,7 @@ import * as siheung from "./localLibraryModule/siheung";
 import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
 import * as wonju from "./localLibraryModule/wonju";
+import * as yeonsu from "./localLibraryModule/yeonsu";
 import * as yjlib from "./localLibraryModule/yjlib";
 import * as yongin from "./localLibraryModule/yongin";
 import * as uwlib from "./localLibraryModule/uwlib";
@@ -107,6 +108,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   suwon,
   wonju,
   ydplib,
+  yeonsu,
   yjlib,
   yongin,
   uwlib,
