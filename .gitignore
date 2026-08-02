@@ -50,3 +50,7 @@ opencode.json
 .playwright-cli
 .playwright-mcp
 scripts
+CLAUDE.md
+.codegraph
+.codegraphignore
+*.png
