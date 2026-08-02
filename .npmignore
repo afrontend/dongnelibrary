@@ -15,3 +15,7 @@ test/
 # Development files
 .github/
 Dockerfile
+docs/
+scripts/
+opencode.json
+*.png
