@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.25",
+  "version": "0.3.26",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=22.22.0"
@@ -10,6 +10,9 @@
   "bin": {
     "dongnelibrary": "dist/cli.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
