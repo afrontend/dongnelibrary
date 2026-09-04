@@ -1,9 +1,9 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.27",
+  "version": "0.3.28",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
-    "node": ">=22.22.0"
+    "node": ">=18.0.0"
   },
   "main": "dist/dongnelibrary.js",
   "types": "dist/dongnelibrary.d.ts",
