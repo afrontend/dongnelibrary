@@ -64,6 +64,7 @@
     "jeju": "npm run build && node --test test/jeju.spec.js",
     "wonju": "npm run build && node --test test/wonju.spec.js",
     "yslib": "npm run build && node --test test/yslib.spec.js",
+    "yuseong": "npm run build && node --test test/yuseong.spec.js",
     "cancel": "npm run build && node --test test/cancel.spec.js",
     "util": "npm run build && node --test test/util.spec.js",
     "cli": "npm run build && node --test test/cli.spec.js"
@@ -119,7 +120,8 @@
     "전북특별자치도교육청도서관",
     "의정부시도서관",
     "성북구립도서관",
-    "연수구립도서관"
+    "연수구립도서관",
+    "유성구통합도서관"
   ],
   "author": "<autoscripts@gmail.com>",
   "license": "MIT",

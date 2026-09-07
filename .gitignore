@@ -54,3 +54,6 @@ CLAUDE.md
 .codegraph
 .codegraphignore
 *.png
+
+# 도서관 분석용 임시 파일
+.tmp/

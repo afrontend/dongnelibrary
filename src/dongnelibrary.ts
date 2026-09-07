@@ -48,6 +48,7 @@ import * as yangcheon from "./localLibraryModule/yangcheon";
 import * as ydplib from "./localLibraryModule/ydplib";
 import * as yplib from "./localLibraryModule/yplib";
 import * as yslib from "./localLibraryModule/yslib";
+import * as yuseong from "./localLibraryModule/yuseong";
 
 // Type definitions
 import type {
@@ -115,6 +116,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   yangcheon,
   yplib,
   yslib,
+  yuseong,
 ];
 
 /**
