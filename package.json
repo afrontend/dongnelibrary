@@ -50,6 +50,7 @@
     "osan": "npm run build && node --test test/osan.spec.js",
     "pohang": "npm run build && node --test test/pohang.spec.js",
     "ptlib": "npm run build && node --test test/ptlib.spec.js",
+    "saha": "npm run build && node --test test/saha.spec.js",
     "sblib": "npm run build && node --test test/sblib.spec.js",
     "siheung": "npm run build && node --test test/siheung.spec.js",
     "snlib": "npm run build && node --test test/snlib.spec.js",
@@ -121,7 +122,8 @@
     "의정부시도서관",
     "성북구립도서관",
     "연수구립도서관",
-    "유성구통합도서관"
+    "유성구통합도서관",
+    "사하구도서관"
   ],
   "author": "<autoscripts@gmail.com>",
   "license": "MIT",

@@ -99,6 +99,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [영등포구립도서관][ydplib-url] — 28개 도서관
 - [성북구립도서관][sblib-url] — 17개 도서관 (성북정보, 아리랑, 해오름, 새날, 꿈마루, 미리내, 달빛마루, 정릉, 청수, 월곡꿈그림, 아리랑어린이, 장위행복누림, 성북길빛, 글빛, 오동숲속, 보문숲길, 어린이청소년)
 - [유성구통합도서관][yuseong-url] — 11개 도서관 (노은, 유성, 진잠, 구즉, 구암, 원신흥, 아가랑, 관평, 전민, 유성엑스포, 용산)
+- [사하구도서관][saha-url] — 17개 도서관 (다대, 하단, 회화나무·까치마을·괴정3동오작교·당리·동매누리·꿈꾸는·장림무지개·수풀·두송·낫개·푸른누리·감천횃불·구평예들·에코·노을나루길 작은도서관)
 
 ## 웹 서비스
 
@@ -196,6 +197,7 @@ dl.search(
     npm run paju    # 파주시 도서관
     npm run osan    # 오산시 도서관
     npm run ptlib   # 평택시 도서관
+    npm run saha    # 사하구 도서관
     npm run pohang  # 포항시 도서관
     npm run siheung # 시흥시 도서관
     npm run snlib   # 성남시 도서관
@@ -274,3 +276,4 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [sblib-url]: https://sblib.seoul.kr
 [yeonsu-url]: https://yspubliclib.go.kr
 [yuseong-url]: https://lib.yuseong.go.kr
+[saha-url]: https://www.saha.go.kr/dadaelib
