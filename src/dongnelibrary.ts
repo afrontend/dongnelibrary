@@ -12,6 +12,7 @@ import * as daegu from "./localLibraryModule/daegu";
 import * as gangseo from "./localLibraryModule/gangseo";
 import * as gangnam from "./localLibraryModule/gangnam";
 import * as gbelib from "./localLibraryModule/gbelib";
+import * as geumcheon from "./localLibraryModule/geumcheon";
 import * as goyanglib from "./localLibraryModule/goyanglib";
 import * as gg from "./localLibraryModule/gg";
 import * as gjcity from "./localLibraryModule/gjcity";
@@ -81,6 +82,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gangseo,
   gangnam,
   gbelib,
+  geumcheon,
   goyanglib,
   gg,
   gjcity,

@@ -28,6 +28,7 @@
     "gangnam": "npm run build && node --test test/gangnam.spec.js",
     "gangseo": "npm run build && node --test test/gangseo.spec.js",
     "gbelib": "npm run build && node --test test/gbelib.spec.js",
+    "geumcheon": "npm run build && node --test test/geumcheon.spec.js",
     "goyanglib": "npm run build && node --test test/goyanglib.spec.js",
     "geoje": "npm run build && node --test test/geoje.spec.js",
     "gg": "npm run build && node --test test/gg.spec.js",
@@ -123,7 +124,8 @@
     "성북구립도서관",
     "연수구립도서관",
     "유성구통합도서관",
-    "사하구도서관"
+    "사하구도서관",
+    "금천구립도서관"
   ],
   "author": "<autoscripts@gmail.com>",
   "license": "MIT",
