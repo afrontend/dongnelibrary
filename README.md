@@ -101,6 +101,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [유성구통합도서관][yuseong-url] — 11개 도서관 (노은, 유성, 진잠, 구즉, 구암, 원신흥, 아가랑, 관평, 전민, 유성엑스포, 용산)
 - [사하구도서관][saha-url] — 17개 도서관 (다대, 하단, 회화나무·까치마을·괴정3동오작교·당리·동매누리·꿈꾸는·장림무지개·수풀·두송·낫개·푸른누리·감천횃불·구평예들·에코·노을나루길 작은도서관)
 - [금천구립도서관][geumcheon-url] — 23개 도서관 (독산, 가산, 금나래, 시흥, 책이든거리·참새·청개구리·꿈씨어린이·도란도란·해오름·미래향기·맑은누리·꿈꾸는·행궁마을·책달샘숲속·지혜의숲·책읽는마을·산돌어린이·은행나무어린이·나누리·소망의나무어린이·길빛·가산퍼블릭디자인 작은도서관)
+- [용산구립도서관][yongsan-url] — 16개 도서관 (꿈나무, 청파, 용마루어린이, 청파어린이영어, 용암어린이영어, 후암동 북앤캠프·해다올·원효로제2동 두드림·효창동·한강로동·이촌2동·회나무·서빙고동·꿈꾸는책마을·별밭·청소년푸르미르 작은도서관)
 
 ## 웹 서비스
 
@@ -209,6 +210,7 @@ dl.search(
     npm run yeonsu  # 연수구 도서관
     npm run yjlib   # 여주시 도서관
     npm run yongin  # 용인시 도서관
+    npm run yongsan # 용산구 도서관
     npm run ydplib  # 영등포구 도서관
     npm run yplib   # 양평군 도서관
     npm run cancel  # 취소 기능 테스트
@@ -280,3 +282,4 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [yuseong-url]: https://lib.yuseong.go.kr
 [saha-url]: https://www.saha.go.kr/dadaelib
 [geumcheon-url]: https://geumcheonlib.seoul.kr
+[yongsan-url]: https://yslibrary.or.kr
