@@ -82,6 +82,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [목포시통합도서관][mokpolib-url] — 23개 도서관 (시립, 어울림, 어린이, 영어, 작은도서관 19개)
 - [파주시도서관][paju-url] — 22개 도서관 (중앙, 금촌, 문산, 법원, 적성, 교하, 한빛, 해솔, 탄현, 가람, 조리, 금촌3동솔빛, 물푸레, 파평, 한울, 월롱, 광탄, 술이홀, 금촌무지개작은, 금곡작은, 탄현작은, 부엉이책장)
 - [오산시도서관][osan-url] — 10개 도서관
+- [부산광역시교육청도서관][pen-url] — 13개 도서관 (시민, 구덕, 구포, 반송, 부전, 사하, 서동, 중앙, 중앙수정분관, 연산, 해운대, 해운대우동분관, 명장)
 - [평택시도서관][ptlib-url] — 15개 도서관
 - [포항시립도서관][pohang-url] — 10개 도서관 (포은중앙, 대잠, 영암, 포은오천, 동해석곡, 연일, 구룡포, 포은흥해 등)
 - [화성시립도서관][hscity-url] — 30개 도서관
@@ -199,6 +200,7 @@ dl.search(
     npm run mokpolib # 목포시 도서관
     npm run paju    # 파주시 도서관
     npm run osan    # 오산시 도서관
+    npm run pen     # 부산광역시교육청 도서관
     npm run ptlib   # 평택시 도서관
     npm run saha    # 사하구 도서관
     npm run pohang  # 포항시 도서관
@@ -258,6 +260,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
 [paju-url]: https://lib.paju.go.kr
+[pen-url]: https://home.pen.go.kr
 [ptlib-url]: https://www.ptlib.go.kr
 [pohang-url]: https://phlib.pohang.go.kr
 [siheung-url]: https://lib.siheung.go.kr

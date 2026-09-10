@@ -34,6 +34,7 @@ import * as namwon from "./localLibraryModule/namwon";
 import * as nowon from "./localLibraryModule/nowon";
 import * as osan from "./localLibraryModule/osan";
 import * as paju from "./localLibraryModule/paju";
+import * as pen from "./localLibraryModule/pen";
 import * as pohang from "./localLibraryModule/pohang";
 import * as ptlib from "./localLibraryModule/ptlib";
 import * as saha from "./localLibraryModule/saha";
@@ -105,6 +106,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   nowon,
   osan,
   paju,
+  pen,
   pohang,
   ptlib,
   saha,
