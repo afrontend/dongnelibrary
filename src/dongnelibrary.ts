@@ -39,6 +39,7 @@ import * as pohang from "./localLibraryModule/pohang";
 import * as ptlib from "./localLibraryModule/ptlib";
 import * as saha from "./localLibraryModule/saha";
 import * as sblib from "./localLibraryModule/sblib";
+import * as sdm from "./localLibraryModule/sdm";
 import * as siheung from "./localLibraryModule/siheung";
 import * as snlib from "./localLibraryModule/snlib";
 import * as suwon from "./localLibraryModule/suwon";
@@ -111,6 +112,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   ptlib,
   saha,
   sblib,
+  sdm,
   siheung,
   snlib,
   suwon,
