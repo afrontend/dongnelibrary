@@ -20,6 +20,7 @@ import * as geoje from "./localLibraryModule/geoje";
 import * as gimhae from "./localLibraryModule/gimhae";
 import * as gunpo from "./localLibraryModule/gunpo";
 import * as gunsan from "./localLibraryModule/gunsan";
+import * as guro from "./localLibraryModule/guro";
 import * as gwanak from "./localLibraryModule/gwanak";
 import * as gwe from "./localLibraryModule/gwe";
 import * as hanamlib from "./localLibraryModule/hanamlib";
@@ -96,6 +97,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gimhae,
   gunpo,
   gunsan,
+  guro,
   gwanak,
   gwe,
   hanamlib,
