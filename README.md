@@ -54,6 +54,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 현재 지원하는 통합도서관 시스템:
 
 - [중구구립도서관][junggulib-url] — 19개 도서관 (가온, 어울림, 남산타운·손기정 어린이, 신당누리, 다산성곽, 손기정문화, 작은도서관 12개)
+- [종로구립도서관][jongno-url] — 15개 도서관 (청운문학, 어린이청소년 국학, 창신소담, 아름꿈, 우리소리, 도담도담 한옥, 통인 어린이·꿈꾸는 평창동·지혜만들기·이화마을·숭인마루 작은도서관, 청운효자동·홍파랑·혜화마을 북카페, 무악다솜방)
 - [안산시도서관][ansan-url] — 17개 도서관 (시립도서관: 중앙, 감골, 관산, 단원어린이, 대부, 미디어, 반월, 본오, 부곡, 상록수, 상록어린이, 선부, 성포, 수암, 원고잔, 월피예술, 와동교육)
 - [아산시도서관][asan-url] — 15개 도서관
 - [부천시립도서관][bcl-url] — 16개 도서관 (시립도서관, 상동, 원미, 심곡, 북부, 꿈빛, 책마루, 한울빛, 꿈여울, 송내, 오정, 도당, 동화, 역곡, 별빛마루, 수주, 역곡밝은)
@@ -198,6 +199,7 @@ dl.search(
     npm run ice     # 인천시 도서관
     npm run goyanglib # 고양시 도서관
     npm run junggulib # 중구구립도서관
+    npm run jongno  # 종로구립도서관
     npm run namwon   # 남원시 도서관
     npm run mokpolib # 목포시 도서관
     npm run paju    # 파주시 도서관
@@ -277,6 +279,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [jbe-url]: https://lib.jbe.go.kr
 [uilib-url]: https://www.uilib.go.kr
 [junggulib-url]: https://www.junggulib.or.kr
+[jongno-url]: https://lib.jongno.go.kr
 [mokpolib-url]: https://www.mokpolib.or.kr
 [jeju-url]: https://www.jeju.go.kr/
 [wonju-url]: https://lib.wonju.go.kr/
