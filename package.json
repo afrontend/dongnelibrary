@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.28",
+  "version": "0.3.29",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=18.0.0"
