@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [청주시립도서관][cheongju-url] — 28개 도서관 (청주시립, 가로수, 강내, 금빛, 기적의, 내수, 상당, 서원, 신율봉, 오송, 오창, 오창호수, 옥산, 청원, 흥덕, 자료보존관, 성화개신·농협물류·흥덕보건소·강서2동·율봉 스마트도서관, 글마루·두꺼비생태·맹꽁이생태·봄눈·봉명·참도깨비·평생학습관 작은도서관)
 - [구로통합도서관][guro-url] — 14개 도서관 (개봉, 고척열린, 구로기적의, 궁동어린이, 글마루한옥어린이, 꿈나무어린이, 꿈마을, 온누리, 하늘, 항동푸른, 개봉어린이, 구로미래, 구로문화누리, 구로천왕)
 - [마포구립도서관][mapo-url] — 16개 도서관 (마포중앙, 소금나루, 서강, 푸르메어린이, 마포나루스페이스, 어린이영어·꿈나래어린이영어, 성산글마루·꿈을이루는·늘푸른소나무·복사골·성메·아름드리·용강동·초록숲·해오름 작은도서관)
 - [중구구립도서관][junggulib-url] — 19개 도서관 (가온, 어울림, 남산타운·손기정 어린이, 신당누리, 다산성곽, 손기정문화, 작은도서관 12개)
@@ -182,6 +183,7 @@ dl.search(
     npm run bcl     # 부천시 도서관
     npm run cbelib   # 충청북도 도서관
     npm run cheonan  # 천안시 도서관
+    npm run cheongju # 청주시립 도서관
     npm run daegu   # 대구광역시 도서관
     npm run gangnam # 강남구 도서관
     npm run gangseo # 강서구 도서관
@@ -251,6 +253,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [bcl-url]: https://bcl.go.kr
 [cbelib-url]: https://www.cbelib.go.kr
 [cheonan-url]: https://kolas.cheonan.go.kr
+[cheongju-url]: https://library.cheongju.go.kr
 [daegu-url]: https://library.daegu.go.kr
 [gangnam-url]: https://library.gangnam.go.kr
 [gangseo-url]: https://lib.gangseo.seoul.kr
