@@ -32,6 +32,7 @@ import * as hscity from "./localLibraryModule/hscity";
 import * as ice from "./localLibraryModule/ice";
 import * as jbe from "./localLibraryModule/jbe";
 import * as uilib from "./localLibraryModule/uilib";
+import * as ulju from "./localLibraryModule/ulju";
 import * as mapo from "./localLibraryModule/mapo";
 import * as mokpolib from "./localLibraryModule/mokpolib";
 import * as namwon from "./localLibraryModule/namwon";
@@ -111,6 +112,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   ice,
   jbe,
   uilib,
+  ulju,
   mapo,
   mokpolib,
   namwon,
