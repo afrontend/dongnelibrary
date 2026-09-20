@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [남양주시도서관][nyj-url] — 20개 도서관 (정약용, 와부, 진접, 진접푸른숲, 화도, 이석영뉴미디어, 오남, 진건, 별내, 퇴계원, 호평, 평내, 별빛, 조안씨앗·금곡푸른꿈·수동·호평 작은도서관, 덕소역·시청·다산역 스마트도서관)
 - [청주시립도서관][cheongju-url] — 28개 도서관 (청주시립, 가로수, 강내, 금빛, 기적의, 내수, 상당, 서원, 신율봉, 오송, 오창, 오창호수, 옥산, 청원, 흥덕, 자료보존관, 성화개신·농협물류·흥덕보건소·강서2동·율봉 스마트도서관, 글마루·두꺼비생태·맹꽁이생태·봄눈·봉명·참도깨비·평생학습관 작은도서관)
 - [구로통합도서관][guro-url] — 14개 도서관 (개봉, 고척열린, 구로기적의, 궁동어린이, 글마루한옥어린이, 꿈나무어린이, 꿈마을, 온누리, 하늘, 항동푸른, 개봉어린이, 구로미래, 구로문화누리, 구로천왕)
 - [마포구립도서관][mapo-url] — 16개 도서관 (마포중앙, 소금나루, 서강, 푸르메어린이, 마포나루스페이스, 어린이영어·꿈나래어린이영어, 성산글마루·꿈을이루는·늘푸른소나무·복사골·성메·아름드리·용강동·초록숲·해오름 작은도서관)
@@ -200,6 +201,7 @@ dl.search(
     npm run hanamlib # 하남시 도서관
     npm run hscity  # 화성시 도서관
     npm run nowon   # 노원구 도서관
+    npm run nyj     # 남양주시 도서관
     npm run ice     # 인천시 도서관
     npm run goyanglib # 고양시 도서관
     npm run junggulib # 중구구립도서관
@@ -270,6 +272,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [hanamlib-url]: https://www.hanamlib.go.kr
 [namwon-url]: https://www.namwon.go.kr/lib
 [nowon-url]: https://www.nowonlib.kr
+[nyj-url]: https://lib.nyj.go.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
 [paju-url]: https://lib.paju.go.kr

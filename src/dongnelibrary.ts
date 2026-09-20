@@ -36,6 +36,7 @@ import * as mapo from "./localLibraryModule/mapo";
 import * as mokpolib from "./localLibraryModule/mokpolib";
 import * as namwon from "./localLibraryModule/namwon";
 import * as nowon from "./localLibraryModule/nowon";
+import * as nyj from "./localLibraryModule/nyj";
 import * as osan from "./localLibraryModule/osan";
 import * as paju from "./localLibraryModule/paju";
 import * as pen from "./localLibraryModule/pen";
@@ -114,6 +115,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   mokpolib,
   namwon,
   nowon,
+  nyj,
   osan,
   paju,
   pen,
