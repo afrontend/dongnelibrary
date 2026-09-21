@@ -23,6 +23,7 @@ import * as gunpo from "./localLibraryModule/gunpo";
 import * as gunsan from "./localLibraryModule/gunsan";
 import * as guro from "./localLibraryModule/guro";
 import * as gwanak from "./localLibraryModule/gwanak";
+import * as gwangjinsmall from "./localLibraryModule/gwangjinsmall";
 import * as gwe from "./localLibraryModule/gwe";
 import * as hanamlib from "./localLibraryModule/hanamlib";
 import * as jeju from "./localLibraryModule/jeju";
@@ -103,6 +104,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gunsan,
   guro,
   gwanak,
+  gwangjinsmall,
   gwe,
   hanamlib,
   jeju,
