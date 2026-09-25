@@ -10,6 +10,7 @@ import * as cbelib from "./localLibraryModule/cbelib";
 import * as cheonan from "./localLibraryModule/cheonan";
 import * as cheongju from "./localLibraryModule/cheongju";
 import * as daegu from "./localLibraryModule/daegu";
+import * as djdonggu from "./localLibraryModule/djdonggu";
 import * as gangseo from "./localLibraryModule/gangseo";
 import * as gangnam from "./localLibraryModule/gangnam";
 import * as gbelib from "./localLibraryModule/gbelib";
@@ -92,6 +93,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   cheonan,
   cheongju,
   daegu,
+  djdonggu,
   gangseo,
   gangnam,
   gbelib,

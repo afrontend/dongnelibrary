@@ -68,6 +68,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [천안시도서관][cheonan-url] — 20개 도서관 (중앙, 쌍용, 두정, 신방, 도솔, 청수, 아우내, 성거, 직산, 일봉동·중앙동·목천·풍세면·신안동·성정1동·성남면·원성2동·천안축구센터·북면바로내·차암동작은도서관)
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
 - [대구광역시통합도서관][daegu-url] — 57개 도서관 (시립/구군립 48개 + 사립공공·전문 9개)
+- [대전동구공공도서관][djdonggu-url] — 6개 도서관 (가오, 용운, 판암, 무지개, 홍도, 자양)
 - [강남구통합도서관][gangnam-url] — 27개 도서관
 - [강서구통합도서관][gangseo-url] — 36개 도서관
 - [경상북도교육청통합도서관][gbelib-url] — 28개 도서관
@@ -189,6 +190,7 @@ dl.search(
     npm run cheonan  # 천안시 도서관
     npm run cheongju # 청주시립 도서관
     npm run daegu   # 대구광역시 도서관
+    npm run djdonggu # 대전동구 도서관
     npm run gangnam # 강남구 도서관
     npm run gangseo # 강서구 도서관
     npm run gbelib  # 경상북도교육청 도서관
@@ -263,6 +265,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [cheonan-url]: https://kolas.cheonan.go.kr
 [cheongju-url]: https://library.cheongju.go.kr
 [daegu-url]: https://library.daegu.go.kr
+[djdonggu-url]: https://www.donggu.go.kr/dg/lib
 [gangnam-url]: https://library.gangnam.go.kr
 [gangseo-url]: https://lib.gangseo.seoul.kr
 [gbelib-url]: https://www.gbelib.kr
