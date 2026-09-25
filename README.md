@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [전주시립도서관][jeonju-url] — 52개 도서관 (꽃심, 완산, 삼천, 서신, 평화, 효자, 송천, 금암, 인후, 아중, 쪽구름, 건지, 아중호수, 에코, 전주시청책기둥, 다가여행자, 서학예술마을, 한옥마을, 동문헌책, 옛이야기, 작은도서관 32개)
 - [광진구립작은도서관][gwangjinsmall-url] — 12개 도서관 (중곡1동·중곡2동·중곡3동·중곡4동·능동·구의1동·광장동·자양1동·자양2동·자양3동·자양4동·화양동 작은도서관)
 - [울주군통합도서관][ulju-url] — 13개 도서관 (울주선바위, 울주옹기종기, 울주천상, 온산, 삼동느티나무, 온양BOOKCAFE, 청량늘푸름·서생해오름·상북가지산·웅촌·언양읍성·작천정·책마을 작은도서관)
 - [남양주시도서관][nyj-url] — 20개 도서관 (정약용, 와부, 진접, 진접푸른숲, 화도, 이석영뉴미디어, 오남, 진건, 별내, 퇴계원, 호평, 평내, 별빛, 조안씨앗·금곡푸른꿈·수동·호평 작은도서관, 덕소역·시청·다산역 스마트도서관)
@@ -237,6 +238,7 @@ dl.search(
     npm run util    # 유틸리티 테스트
     npm run cli     # CLI 기능 테스트
     npm run jeju    # 제주시 도서관
+    npm run jeonju  # 전주시립 도서관
     npm run wonju   # 원주시 도서관
     npm run yslib   # 여수시 도서관
     npm run yuseong # 유성구 도서관
@@ -300,6 +302,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [jongno-url]: https://lib.jongno.go.kr
 [mokpolib-url]: https://www.mokpolib.or.kr
 [jeju-url]: https://www.jeju.go.kr/
+[jeonju-url]: https://lib.jeonju.go.kr
 [wonju-url]: https://lib.wonju.go.kr/
 [ydplib-url]: https://ydplib.or.kr
 [yplib-url]: https://www.yplib.go.kr

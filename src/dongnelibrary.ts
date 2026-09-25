@@ -27,6 +27,7 @@ import * as gwangjinsmall from "./localLibraryModule/gwangjinsmall";
 import * as gwe from "./localLibraryModule/gwe";
 import * as hanamlib from "./localLibraryModule/hanamlib";
 import * as jeju from "./localLibraryModule/jeju";
+import * as jeonju from "./localLibraryModule/jeonju";
 import * as jongno from "./localLibraryModule/jongno";
 import * as junggulib from "./localLibraryModule/junggulib";
 import * as hscity from "./localLibraryModule/hscity";
@@ -108,6 +109,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   gwe,
   hanamlib,
   jeju,
+  jeonju,
   jongno,
   junggulib,
   hscity,
