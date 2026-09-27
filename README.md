@@ -65,6 +65,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 - [안산시도서관][ansan-url] — 17개 도서관 (시립도서관: 중앙, 감골, 관산, 단원어린이, 대부, 미디어, 반월, 본오, 부곡, 상록수, 상록어린이, 선부, 성포, 수암, 원고잔, 월피예술, 와동교육)
 - [아산시도서관][asan-url] — 15개 도서관
 - [부천시립도서관][bcl-url] — 16개 도서관 (시립도서관, 상동, 원미, 심곡, 북부, 꿈빛, 책마루, 한울빛, 꿈여울, 송내, 오정, 도당, 동화, 역곡, 별빛마루, 수주, 역곡밝은)
+- [부평구립도서관][bppl-url] — 20개 도서관 (부개, 삼산, 부평기적, 청천, 갈산, 부개어린이, 작은도서관 14개)
 - [천안시도서관][cheonan-url] — 20개 도서관 (중앙, 쌍용, 두정, 신방, 도솔, 청수, 아우내, 성거, 직산, 일봉동·중앙동·목천·풍세면·신안동·성정1동·성남면·원성2동·천안축구센터·북면바로내·차암동작은도서관)
 - [충청북도교육도서관][cbelib-url] — 15개 도서관
 - [대구광역시통합도서관][daegu-url] — 57개 도서관 (시립/구군립 48개 + 사립공공·전문 9개)
@@ -186,6 +187,7 @@ dl.search(
     npm run ansan   # 안산시 도서관
     npm run asan    # 아산시 도서관
     npm run bcl     # 부천시 도서관
+    npm run bppl    # 부평구립 도서관
     npm run cbelib   # 충청북도 도서관
     npm run cheonan  # 천안시 도서관
     npm run cheongju # 청주시립 도서관
@@ -261,6 +263,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [ansan-url]: https://lib.ansan.go.kr
 [asan-url]: https://ascl.asan.go.kr
 [bcl-url]: https://bcl.go.kr
+[bppl-url]: https://www.bppl.or.kr
 [cbelib-url]: https://www.cbelib.go.kr
 [cheonan-url]: https://kolas.cheonan.go.kr
 [cheongju-url]: https://library.cheongju.go.kr
