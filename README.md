@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [창원시도서관][changwon-url] — 13개 도서관 (창원중앙, 성산, 고향의봄, 상남, 마산회원, 마산합포, 마산중리초등복합시설, 진해, 동부, 명곡, 진해기적의, 최윤덕, 진해아트홀)
 - [전주시립도서관][jeonju-url] — 52개 도서관 (꽃심, 완산, 삼천, 서신, 평화, 효자, 송천, 금암, 인후, 아중, 쪽구름, 건지, 아중호수, 에코, 전주시청책기둥, 다가여행자, 서학예술마을, 한옥마을, 동문헌책, 옛이야기, 작은도서관 32개)
 - [광진구립작은도서관][gwangjinsmall-url] — 12개 도서관 (중곡1동·중곡2동·중곡3동·중곡4동·능동·구의1동·광장동·자양1동·자양2동·자양3동·자양4동·화양동 작은도서관)
 - [울주군통합도서관][ulju-url] — 13개 도서관 (울주선바위, 울주옹기종기, 울주천상, 온산, 삼동느티나무, 온양BOOKCAFE, 청량늘푸름·서생해오름·상북가지산·웅촌·언양읍성·작천정·책마을 작은도서관)
@@ -189,6 +190,7 @@ dl.search(
     npm run bcl     # 부천시 도서관
     npm run bppl    # 부평구립 도서관
     npm run cbelib   # 충청북도 도서관
+    npm run changwon # 창원시 도서관
     npm run cheonan  # 천안시 도서관
     npm run cheongju # 청주시립 도서관
     npm run daegu   # 대구광역시 도서관
@@ -265,6 +267,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [bcl-url]: https://bcl.go.kr
 [bppl-url]: https://www.bppl.or.kr
 [cbelib-url]: https://www.cbelib.go.kr
+[changwon-url]: https://lib.changwon.go.kr
 [cheonan-url]: https://kolas.cheonan.go.kr
 [cheongju-url]: https://library.cheongju.go.kr
 [daegu-url]: https://library.daegu.go.kr
