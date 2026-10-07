@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [안양시도서관][anyang-url] — 15개 도서관 (석수, 만안, 삼덕, 박달, 평촌, 관양, 비산, 호계, 안양어린이, 벌말, 큰샘어린이, 스마트도서관 4개)
 - [창원시도서관][changwon-url] — 13개 도서관 (창원중앙, 성산, 고향의봄, 상남, 마산회원, 마산합포, 마산중리초등복합시설, 진해, 동부, 명곡, 진해기적의, 최윤덕, 진해아트홀)
 - [전주시립도서관][jeonju-url] — 52개 도서관 (꽃심, 완산, 삼천, 서신, 평화, 효자, 송천, 금암, 인후, 아중, 쪽구름, 건지, 아중호수, 에코, 전주시청책기둥, 다가여행자, 서학예술마을, 한옥마을, 동문헌책, 옛이야기, 작은도서관 32개)
 - [광진구립작은도서관][gwangjinsmall-url] — 12개 도서관 (중곡1동·중곡2동·중곡3동·중곡4동·능동·구의1동·광장동·자양1동·자양2동·자양3동·자양4동·화양동 작은도서관)
@@ -186,6 +187,7 @@ dl.search(
     npm test
     npm run dongne  # 여러 도서관 검색
     npm run ansan   # 안산시 도서관
+    npm run anyang  # 안양시 도서관
     npm run asan    # 아산시 도서관
     npm run bcl     # 부천시 도서관
     npm run bppl    # 부평구립 도서관
@@ -263,6 +265,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [web-ui-url]: https://dongne.onrender.com
 [web-api]: https://github.com/afrontend/dlserver "같은 기능을 지원하는 Web API"
 [ansan-url]: https://lib.ansan.go.kr
+[anyang-url]: https://lib.anyang.go.kr
 [asan-url]: https://ascl.asan.go.kr
 [bcl-url]: https://bcl.go.kr
 [bppl-url]: https://www.bppl.or.kr

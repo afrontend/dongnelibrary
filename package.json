@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.30",
+  "version": "0.3.31",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=18.0.0"
@@ -21,6 +21,7 @@
     "test": "npm run build && node --test test/*.spec.js",
     "dongne": "npm run build && node --test test/dongne.spec.js",
     "ansan": "npm run build && node --test test/ansan.spec.js",
+    "anyang": "npm run build && node --test test/anyang.spec.js",
     "asan": "npm run build && node --test test/asan.spec.js",
     "bcl": "npm run build && node --test test/bcl.spec.js",
     "bppl": "npm run build && node --test test/bppl.spec.js",
@@ -96,6 +97,7 @@
     "public library",
     "도서 검색",
     "안산시도서관",
+    "안양시도서관",
     "아산시도서관",
     "부천시립도서관",
     "부평구립도서관",

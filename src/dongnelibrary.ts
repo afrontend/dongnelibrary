@@ -4,6 +4,7 @@
 
 // Local library modules
 import * as ansan from "./localLibraryModule/ansan";
+import * as anyang from "./localLibraryModule/anyang";
 import * as asan from "./localLibraryModule/asan";
 import * as bcl from "./localLibraryModule/bcl";
 import * as bppl from "./localLibraryModule/bppl";
@@ -89,6 +90,7 @@ import type {
  */
 const LIBRARY_MODULES: LibraryModule[] = [
   ansan,
+  anyang,
   asan,
   bcl,
   bppl,
