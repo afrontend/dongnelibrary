@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [완주군립도서관][wanju-url] — 15개 도서관 (중앙, 고산, 삼례, 둔산영어, 콩쥐팥쥐, 고운삼봉, 작은도서관 9개)
 - [안양시도서관][anyang-url] — 15개 도서관 (석수, 만안, 삼덕, 박달, 평촌, 관양, 비산, 호계, 안양어린이, 벌말, 큰샘어린이, 스마트도서관 4개)
 - [창원시도서관][changwon-url] — 13개 도서관 (창원중앙, 성산, 고향의봄, 상남, 마산회원, 마산합포, 마산중리초등복합시설, 진해, 동부, 명곡, 진해기적의, 최윤덕, 진해아트홀)
 - [전주시립도서관][jeonju-url] — 52개 도서관 (꽃심, 완산, 삼천, 서신, 평화, 효자, 송천, 금암, 인후, 아중, 쪽구름, 건지, 아중호수, 에코, 전주시청책기둥, 다가여행자, 서학예술마을, 한옥마을, 동문헌책, 옛이야기, 작은도서관 32개)
@@ -247,6 +248,7 @@ dl.search(
     npm run cli     # CLI 기능 테스트
     npm run jeju    # 제주시 도서관
     npm run jeonju  # 전주시립 도서관
+    npm run wanju   # 완주군립 도서관
     npm run wonju   # 원주시 도서관
     npm run yslib   # 여수시 도서관
     npm run yuseong # 유성구 도서관
@@ -315,6 +317,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [mokpolib-url]: https://www.mokpolib.or.kr
 [jeju-url]: https://www.jeju.go.kr/
 [jeonju-url]: https://lib.jeonju.go.kr
+[wanju-url]: https://lib.wanju.go.kr
 [wonju-url]: https://lib.wonju.go.kr/
 [ydplib-url]: https://ydplib.or.kr
 [yplib-url]: https://www.yplib.go.kr

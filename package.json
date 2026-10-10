@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.31",
+  "version": "0.3.32",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=18.0.0"
@@ -80,6 +80,7 @@
     "yplib": "npm run build && node --test test/yplib.spec.js",
     "jeju": "npm run build && node --test test/jeju.spec.js",
     "jeonju": "npm run build && node --test test/jeonju.spec.js",
+    "wanju": "npm run build && node --test test/wanju.spec.js",
     "wonju": "npm run build && node --test test/wonju.spec.js",
     "yslib": "npm run build && node --test test/yslib.spec.js",
     "yongsan": "npm run build && node --test test/yongsan.spec.js",
@@ -146,6 +147,7 @@
     "목포시통합도서관",
     "제주시도서관",
     "전주시립도서관",
+    "완주군립도서관",
     "원주시립통합도서관",
     "양천구도서관",
     "영등포구립도서관",
