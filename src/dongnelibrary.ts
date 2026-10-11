@@ -40,6 +40,7 @@ import * as jbe from "./localLibraryModule/jbe";
 import * as uilib from "./localLibraryModule/uilib";
 import * as ulju from "./localLibraryModule/ulju";
 import * as mapo from "./localLibraryModule/mapo";
+import * as michu from "./localLibraryModule/michu";
 import * as mokpolib from "./localLibraryModule/mokpolib";
 import * as namwon from "./localLibraryModule/namwon";
 import * as nowon from "./localLibraryModule/nowon";
@@ -127,6 +128,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   uilib,
   ulju,
   mapo,
+  michu,
   mokpolib,
   namwon,
   nowon,

@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.32",
+  "version": "0.3.33",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=18.0.0"
@@ -54,6 +54,7 @@
     "jbe": "npm run build && node --test test/jbe.spec.js",
     "guro": "npm run build && node --test test/guro.spec.js",
     "mapo": "npm run build && node --test test/mapo.spec.js",
+    "michu": "npm run build && node --test test/michu.spec.js",
     "jongno": "npm run build && node --test test/jongno.spec.js",
     "uilib": "npm run build && node --test test/uilib.spec.js",
     "junggulib": "npm run build && node --test test/junggulib.spec.js",
@@ -148,6 +149,7 @@
     "제주시도서관",
     "전주시립도서관",
     "완주군립도서관",
+    "미추홀구립도서관",
     "원주시립통합도서관",
     "양천구도서관",
     "영등포구립도서관",

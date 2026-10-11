@@ -37,6 +37,7 @@ const SESSION_REQUIRED_DOMAINS = [
   "lib.goe.go.kr",
   "lib.siheung.go.kr",
   "lib.wanju.go.kr",
+  "hnrl.michu.incheon.kr",
   "search.suwonlib.go.kr",
   "www.nowonlib.kr",
   "www.yplib.go.kr",
