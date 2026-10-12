@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [울산중구도서관][ulsanjunggu-url] — 10개 도서관 (울산종갓집, 약숫골, 함월, 태화루, 옥골샘, 외솔한옥, 우정, 학성, 산전만화, 남외어린이)
 - [미추홀구립도서관][michu-url] — 11개 도서관 (학나래, 용비, 이랑, 숭의누리어린이, 장사래어린이, 소금꽃어린이, 한우리어린이, 쑥골어린이, 석바위어린이, 관교어린이, 독정골어린이)
 - [완주군립도서관][wanju-url] — 15개 도서관 (중앙, 고산, 삼례, 둔산영어, 콩쥐팥쥐, 고운삼봉, 작은도서관 9개)
 - [안양시도서관][anyang-url] — 15개 도서관 (석수, 만안, 삼덕, 박달, 평촌, 관양, 비산, 호계, 안양어린이, 벌말, 큰샘어린이, 스마트도서관 4개)
@@ -217,6 +218,7 @@ dl.search(
     npm run nowon   # 노원구 도서관
     npm run nyj     # 남양주시 도서관
     npm run ulju    # 울주군 통합도서관
+    npm run ulsanjunggu # 울산중구 도서관
     npm run ice     # 인천시 도서관
     npm run goyanglib # 고양시 도서관
     npm run junggulib # 중구구립도서관
@@ -297,6 +299,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [nowon-url]: https://www.nowonlib.kr
 [nyj-url]: https://lib.nyj.go.kr
 [ulju-url]: https://uljulib.ulju.ulsan.kr
+[ulsanjunggu-url]: https://lib.junggu.ulsan.kr
 [hscity-url]: https://hscitylib.or.kr
 [osan-url]: https://www.osanlibrary.go.kr
 [paju-url]: https://lib.paju.go.kr
