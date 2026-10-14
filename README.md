@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [송파구통합도서관][splib-url] — 21개 도서관 (송파글마루, 송파어린이, 송파위례, 거마, 돌마리, 풍납, 소나무언덕2호·3호·잠실본동, 송파어린이영어, 가락몰, 송이골작은, 스마트도서관 9개)
 - [울산중구도서관][ulsanjunggu-url] — 10개 도서관 (울산종갓집, 약숫골, 함월, 태화루, 옥골샘, 외솔한옥, 우정, 학성, 산전만화, 남외어린이)
 - [미추홀구립도서관][michu-url] — 11개 도서관 (학나래, 용비, 이랑, 숭의누리어린이, 장사래어린이, 소금꽃어린이, 한우리어린이, 쑥골어린이, 석바위어린이, 관교어린이, 독정골어린이)
 - [완주군립도서관][wanju-url] — 15개 도서관 (중앙, 고산, 삼례, 둔산영어, 콩쥐팥쥐, 고운삼봉, 작은도서관 9개)
@@ -238,6 +239,7 @@ dl.search(
     npm run pohang  # 포항시 도서관
     npm run siheung # 시흥시 도서관
     npm run snlib   # 성남시 도서관
+    npm run splib   # 송파구 통합도서관
     npm run suwon   # 수원시 도서관
     npm run uwlib      # 의왕시 도서관
     npm run yangcheon  # 양천구 도서관
@@ -308,6 +310,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [pohang-url]: https://phlib.pohang.go.kr
 [siheung-url]: https://lib.siheung.go.kr
 [snlib-url]: https://www.snlib.go.kr
+[splib-url]: https://splib.or.kr
 [suwon-url]: https://www.suwonlib.go.kr
 [uwlib-url]: https://uwlib.or.kr
 [yongin-url]: https://lib.yongin.go.kr

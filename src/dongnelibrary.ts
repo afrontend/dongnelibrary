@@ -57,6 +57,7 @@ import * as sdm from "./localLibraryModule/sdm";
 import * as sejong from "./localLibraryModule/sejong";
 import * as siheung from "./localLibraryModule/siheung";
 import * as snlib from "./localLibraryModule/snlib";
+import * as splib from "./localLibraryModule/splib";
 import * as suwon from "./localLibraryModule/suwon";
 import * as wanju from "./localLibraryModule/wanju";
 import * as wonju from "./localLibraryModule/wonju";
@@ -146,6 +147,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   sejong,
   siheung,
   snlib,
+  splib,
   suwon,
   wanju,
   wonju,

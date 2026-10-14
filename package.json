@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.3.34",
+  "version": "0.3.35",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=18.0.0"
@@ -72,6 +72,7 @@
     "sejong": "npm run build && node --test test/sejong.spec.js",
     "siheung": "npm run build && node --test test/siheung.spec.js",
     "snlib": "npm run build && node --test test/snlib.spec.js",
+    "splib": "npm run build && node --test test/splib.spec.js",
     "suwon": "npm run build && node --test test/suwon.spec.js",
     "uwlib": "npm run build && node --test test/uwlib.spec.js",
     "yangcheon": "npm run build && node --test test/yangcheon.spec.js",
@@ -128,6 +129,7 @@
     "울산중구도서관",
     "광진구립작은도서관",
     "성남시도서관",
+    "송파구통합도서관",
     "파주시도서관",
     "오산시도서관",
     "부산광역시교육청도서관",
