@@ -2,7 +2,7 @@ import {
   getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
-  wrapWithCallback,
+  wrapWithCallback, extractNumber,
 } from "../util";
 import { post } from "../http";
 import { JSDOM } from "jsdom";
@@ -71,8 +71,8 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const totalMatch = body.match(/검색결과 총 <b>(\d+)<\/b>건/);
-  const totalBookCount = totalMatch ? parseInt(totalMatch[1], 10) : 0;
+  const totalMatch = body.match(/검색결과 총 <b>([\d,]+)<\/b>건/);
+  const totalBookCount = totalMatch ? parseInt(extractNumber(totalMatch[1]), 10) : 0;
 
   const {
     window: { document },

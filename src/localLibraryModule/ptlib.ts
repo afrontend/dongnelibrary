@@ -69,7 +69,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
 
   // Extract total count from "전체(40)" in the category list current item
   const currentLink = document.querySelector(".categoryList li a.current");
-  const countMatch = currentLink?.textContent?.match(/전체\((\d+)\)/);
+  const countMatch = currentLink?.textContent?.match(/전체\(([\d,]+)\)/);
   const count = countMatch ? extractNumber(countMatch[1]) : 0;
 
   const booklist: Book[] = [];

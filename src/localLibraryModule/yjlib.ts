@@ -72,7 +72,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   // Extract total count from "총 <strong class="highlight">15</strong> 건"
   const resultText =
     document.querySelector(".result_box .result_screen")?.textContent ?? "";
-  const countMatch = resultText.match(/총\s*(\d+)\s*건/);
+  const countMatch = resultText.match(/총\s*([\d,]+)\s*건/);
   const count = countMatch ? countMatch[1] : "0";
 
   const booklist: Book[] = [];

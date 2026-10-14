@@ -2,7 +2,7 @@ import {
   getLibraryNames as getLibNames,
   createLibraryCodeLookup,
   validateSearchOptions,
-  wrapWithCallback,
+  wrapWithCallback, extractNumber,
 } from "../util";
 import { get } from "../http";
 import { JSDOM } from "jsdom";
@@ -65,8 +65,8 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const document = dom.window.document;
 
   const bodyText = document.body?.textContent ?? "";
-  const countMatch = bodyText.match(/총\s*(\d+)건/);
-  const count = countMatch ? Number(countMatch[1]) : 0;
+  const countMatch = bodyText.match(/총\s*([\d,]+)건/);
+  const count = countMatch ? Number(extractNumber(countMatch[1])) : 0;
 
   const booklist: Book[] = [];
   const bookItems = document.querySelectorAll(".bif");

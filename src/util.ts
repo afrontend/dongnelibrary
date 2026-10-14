@@ -81,13 +81,14 @@ export function createLibraryCodeLookup(
 /**
  * Extract the first number from a string.
  * Useful for parsing count values from text like "총 123건".
+ * Thousands separators are dropped: "1,930건" → "1930".
  */
 export function extractNumber(
   text: string | undefined | null,
   defaultValue: string = "0",
 ): string {
-  const match = (text ?? "").match(/\d+/);
-  return match ? match[0] : defaultValue;
+  const match = (text ?? "").match(/\d{1,3}(?:,\d{3})+(?!\d)|\d+/);
+  return match ? match[0].replace(/,/g, "") : defaultValue;
 }
 
 /**
