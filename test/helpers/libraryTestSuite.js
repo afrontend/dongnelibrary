@@ -1,7 +1,11 @@
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
+const path = require("path");
 const { request } = require("undici");
 const util = require("../../dist/util.js");
+const { startCapture } = require("./httpRecorder");
+const { classifyError, classifyEmpty, saveFailure } = require("./diagnose");
+const { getSearchTerms } = require("./searchTerms");
 
 // ============================================================================
 // Constants
@@ -101,13 +105,16 @@ function isHashBasedUrl(url) {
  * @param {object} lib - The library module (must export search, getLibraryNames, homeUrl)
  * @param {string} description - The describe block name (e.g., "경기교육도서관")
  * @param {object} [options] - Optional overrides
- * @param {string} [options.englishSearchTerm] - Override the default "javascript" search term
+ * @param {string} [options.englishSearchTerm] - Override the first search term candidate
  *   (useful for servers that WAF-block the word "javascript")
+ * @param {string[]} [options.searchTerms] - Replace all search term candidates
  */
 function createLibraryTestSuite(lib, description, options = {}) {
   const libraryNames = lib.getLibraryNames();
   const firstLibraryName = libraryNames[0];
-  const englishSearchTerm = options.englishSearchTerm ?? "javascript";
+  const searchTerms = getSearchTerms(options);
+  const englishSearchTerm = searchTerms[0];
+  const moduleKey = path.basename(process.argv[1] ?? description, ".spec.js");
 
   /**
    * Helper to create search options with defaults
@@ -117,6 +124,49 @@ function createLibraryTestSuite(lib, description, options = {}) {
     libraryName,
     startPage: 1,
   });
+
+  /**
+   * 검색어 후보를 차례로 시도해 책이 나오는 첫 검색 결과를 찾는다.
+   * 한 번만 실행하고 이후 테스트는 결과를 재사용한다 (사이트 요청 수를 줄인다).
+   * @returns {Promise<{term: string, result: object} | {failure: string}>}
+   */
+  let searchablePromise;
+  const findSearchableBooks = () => {
+    searchablePromise ??= (async () => {
+      const tried = [];
+      for (const term of searchTerms) {
+        const capture = startCapture();
+        try {
+          const result = await searchAsync(lib, createSearchOptions(term));
+          const exchanges = capture.stop();
+          if (result.booklist.length > 0) return { term, result };
+          tried.push({ term, reason: classifyEmpty(result, exchanges), exchanges });
+        } catch (err) {
+          // 에러는 검색어와 무관하므로 다른 후보를 시도하지 않는다.
+          tried.push({ term, reason: classifyError(err.message), exchanges: capture.stop() });
+          break;
+        }
+      }
+
+      const lines = tried.map(({ term, reason, exchanges }) => {
+        const saved = saveFailure(moduleKey, `search-${term}`, exchanges);
+        return `  "${term}": ${reason}${saved ? ` (응답: ${saved})` : ""}`;
+      });
+      return {
+        failure: `${firstLibraryName} 에서 책을 찾지 못함\n${lines.join("\n")}`,
+      };
+    })();
+    return searchablePromise;
+  };
+
+  const requireSearchableBooks = async ({ brief = false } = {}) => {
+    const found = await findSearchableBooks();
+    assert.ok(
+      !found.failure,
+      brief ? '검색 결과 없음 — "Show the book list" 의 진단 참고' : found.failure,
+    );
+    return found;
+  };
 
   describe(`${description}`, () => {
     // ------------------------------------------------------------------
@@ -141,8 +191,16 @@ function createLibraryTestSuite(lib, description, options = {}) {
       return new Promise((resolve) => {
         const nonsenseTitle =
           "zyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxyz";
+        const capture = startCapture();
         lib.search(createSearchOptions(nonsenseTitle), (err, result) => {
-          assert.ok(!err, "Should not return error for nonsense title");
+          const exchanges = capture.stop();
+          if (err) {
+            const saved = saveFailure(moduleKey, "invalid-title", exchanges);
+            assert.fail(
+              `Should not return error for nonsense title: ${classifyError(err.msg)}` +
+                (saved ? ` (응답: ${saved})` : ""),
+            );
+          }
           assert.strictEqual(
             result.booklist.length,
             0,
@@ -172,19 +230,15 @@ function createLibraryTestSuite(lib, description, options = {}) {
     // Basic Search Tests
     // ------------------------------------------------------------------
 
-    it("Show the book list of a library", { timeout: TIMEOUTS.DEFAULT }, () => {
-      return new Promise((resolve) => {
-        lib.search(createSearchOptions(englishSearchTerm), (err, result) => {
-          assert.ok(!err, err?.msg || "Search should not fail");
-          assert.ok(
-            result.booklist.length > 0,
-            "Should find at least one book",
-          );
-          util.printTotalBookCount(result);
-          resolve();
-        });
-      });
-    });
+    it(
+      `Show the book list of a library (${searchTerms.join(" → ")})`,
+      { timeout: TIMEOUTS.MULTI_SEARCH },
+      async () => {
+        const { term, result } = await requireSearchableBooks();
+        console.log(`  ✓ "${term}" 로 검색`);
+        util.printTotalBookCount(result);
+      },
+    );
 
     // ------------------------------------------------------------------
     // URL Validation Tests
@@ -194,10 +248,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
       "Verify bookUrl format is valid",
       { timeout: TIMEOUTS.NETWORK },
       async () => {
-        const searchResult = await searchAsync(
-          lib,
-          createSearchOptions(englishSearchTerm),
-        );
+        const { result: searchResult } = await requireSearchableBooks({ brief: true });
 
         assert.ok(
           searchResult.booklist.length > 0,
@@ -241,10 +292,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
       "Verify bookUrl is accessible",
       { timeout: TIMEOUTS.NETWORK },
       async () => {
-        const searchResult = await searchAsync(
-          lib,
-          createSearchOptions(englishSearchTerm),
-        );
+        const { result: searchResult } = await requireSearchableBooks({ brief: true });
 
         assert.ok(
           searchResult.booklist.length > 0,
@@ -322,10 +370,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
       "Verify bookUrl page contains book title",
       { timeout: TIMEOUTS.NETWORK },
       async () => {
-        const searchResult = await searchAsync(
-          lib,
-          createSearchOptions(englishSearchTerm),
-        );
+        const { result: searchResult } = await requireSearchableBooks({ brief: true });
 
         assert.ok(
           searchResult.booklist.length > 0,
@@ -447,58 +492,48 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       "Make sure the book is searchable in each library",
       { timeout: TIMEOUTS.MULTI_SEARCH },
-      () => {
-        return new Promise((resolve) => {
-          let completedCount = 0;
-          let successCount = 0;
-          const failedLibraries = [];
+      async () => {
+        const found = await findSearchableBooks();
+        const term = found.term ?? englishSearchTerm;
+        const outcomes = await Promise.all(
+          libraryNames.map((libraryName) =>
+            searchAsync(lib, createSearchOptions(term, libraryName)).then(
+              (result) => ({ libraryName, result }),
+              (error) => ({ libraryName, error }),
+            ),
+          ),
+        );
 
-          libraryNames.forEach((libraryName) => {
-            lib.search(
-              createSearchOptions(englishSearchTerm, libraryName),
-              (err, result) => {
-                completedCount++;
-
-                if (err) {
-                  console.log(`  ✗ ${libraryName}: ${err.msg}`);
-                  failedLibraries.push(libraryName);
-                } else {
-                  assert.ok(
-                    result.booklist !== undefined,
-                    `${libraryName} should return a booklist`,
-                  );
-
-                  if (result.totalBookCount > 0) {
-                    console.log(
-                      `  ✓ ${libraryName}: ${result.totalBookCount} books found`,
-                    );
-                    successCount++;
-                  } else {
-                    console.log(
-                      `  - ${libraryName}: 0 books found (may be expected for small collections)`,
-                    );
-                  }
-                }
-
-                // Check if all libraries have been searched
-                if (completedCount === libraryNames.length) {
-                  console.log(
-                    `  Summary: ${successCount} libraries with results, ${failedLibraries.length} errors`,
-                  );
-                  assert.ok(
-                    failedLibraries.length < libraryNames.length,
-                    "At least one library should be searchable",
-                  );
-                  assert.ok(
-                    successCount > 0,
-                    "At least one library should return results",
-                  );
-                  resolve();
-                }
-              },
+        let successCount = 0;
+        const failedLibraries = [];
+        for (const { libraryName, result, error } of outcomes) {
+          if (error) {
+            console.log(`  ✗ ${libraryName}: ${error.message}`);
+            failedLibraries.push(`${libraryName}: ${classifyError(error.message)}`);
+            continue;
+          }
+          assert.ok(
+            result.booklist !== undefined,
+            `${libraryName} should return a booklist`,
+          );
+          if (result.totalBookCount > 0) {
+            console.log(`  ✓ ${libraryName}: ${result.totalBookCount} books found`);
+            successCount++;
+          } else {
+            console.log(
+              `  - ${libraryName}: 0 books found (may be expected for small collections)`,
             );
-          });
-        });
+          }
+        }
+
+        console.log(
+          `  Summary: ${successCount} libraries with results, ${failedLibraries.length} errors`,
+        );
+        assert.ok(
+          failedLibraries.length < libraryNames.length,
+          `At least one library should be searchable\n  ${failedLibraries.slice(0, 3).join("\n  ")}`,
+        );
+        assert.ok(successCount > 0, "At least one library should return results");
       },
     );
   });

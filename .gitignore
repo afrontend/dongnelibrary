@@ -57,3 +57,6 @@ CLAUDE.md
 
 # 도서관 분석용 임시 파일
 .tmp/
+
+# 테스트 fixture: 사이트 응답 원본(세션 쿠키 포함), 로컬 전용
+test/fixtures/

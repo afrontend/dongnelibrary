@@ -19,6 +19,8 @@
     "build:watch": "tsc --watch",
     "prepublishOnly": "npm run build",
     "test": "npm run build && node --test test/*.spec.js",
+    "test:offline": "npm run build && node --test test/offline.spec.js",
+    "record": "npm run build && node test/tools/record.js",
     "dongne": "npm run build && node --test test/dongne.spec.js",
     "ansan": "npm run build && node --test test/ansan.spec.js",
     "anyang": "npm run build && node --test test/anyang.spec.js",

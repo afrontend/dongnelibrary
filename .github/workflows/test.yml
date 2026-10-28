@@ -1,0 +1,79 @@
+name: Test
+
+# push·PR: 빌드 + 바뀐 모듈만 실제 사이트 테스트
+# 오프라인 테스트(fixture 재생)는 fixture 를 커밋하지 않으므로 로컬에서만 돈다
+# 수동 실행(Run workflow): 전체 또는 지정 모듈을 실제 사이트로 테스트 (월 1회 정도)
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: '실제 사이트로 테스트할 모듈 ("all" 또는 쉼표 구분 예: nyj,ulju)'
+        required: true
+        default: all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: 빌드
+        run: npm run build
+
+      - name: 실제 사이트로 테스트할 모듈 고르기
+        id: pick
+        env:
+          EVENT: ${{ github.event_name }}
+          MODULES: ${{ inputs.modules }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          case "$EVENT" in
+            workflow_dispatch) args=(--modules "$MODULES") ;;
+            pull_request)      args=(--base "$PR_BASE") ;;
+            *)
+              # 새 브랜치 첫 push 는 before 가 0000… 이라 직전 커밋과 비교한다
+              if [[ "$PUSH_BEFORE" =~ ^0+$ ]]; then args=(--base HEAD~1); else args=(--base "$PUSH_BEFORE"); fi
+              ;;
+          esac
+          specs=$(node test/tools/changed-specs.js "${args[@]}" | tr '\n' ' ')
+          echo "specs=$specs" >> "$GITHUB_OUTPUT"
+          echo "실제 사이트 테스트 대상: ${specs:-(없음)}"
+
+      - name: 실제 사이트 테스트
+        if: steps.pick.outputs.specs != ''
+        env:
+          SPECS: ${{ steps.pick.outputs.specs }}
+        run: node --test --test-concurrency=4 $SPECS
+
+      - name: 실패 응답 업로드
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-failures
+          path: .tmp/test-failures/
+          if-no-files-found: ignore
+          retention-days: 14
