@@ -203,12 +203,11 @@ describe("CLI", () => {
   );
 
   it(
-    "should handle comma-separated names (searches first match only)",
+    "should handle comma-separated names",
     { timeout: TIMEOUTS.SEARCH },
     async () => {
-      // Note: The CLI currently doesn't split comma-separated library names.
-      // It passes "성남,군포" as a single string to the search API, which
-      // finds no match. This test documents the current behavior.
+      // "성남,군포" 는 각각 처음 맞는 도서관 하나씩, 두 곳을 검색한다
+      // (도서관 수는 cliLibraryFilter.spec.js 가 네트워크 없이 확인한다)
       const { stdout, code } = await runCli(["-t", "java", "-l", "성남,군포"]);
 
       assert.strictEqual(code, 0, "Exit code should be 0");
@@ -218,7 +217,6 @@ describe("CLI", () => {
         "Should show search summary",
       );
 
-      // Currently returns 0 results since comma-separated parsing isn't implemented
       const match = stdout.match(/(\d+) 개의 도서관에서/);
       assert.ok(match, "Should match library count pattern");
     },
@@ -243,7 +241,7 @@ describe("CLI", () => {
     "should show book URLs when --url flag is used",
     { timeout: TIMEOUTS.SEARCH },
     async () => {
-      const { stdout, code } = await runCli(["-t", "javascript", "-l", "성남", "--url"]);
+      const { stdout, code } = await runCli(["-t", "javascript", "-l", "판교", "--url"]);
 
       assert.strictEqual(code, 0, "Exit code should be 0");
       // Book URLs are prefixed with → and contain http
