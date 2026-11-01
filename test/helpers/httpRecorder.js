@@ -5,7 +5,12 @@
  * `Agent.prototype.dispatch` 를 가로채면 전역 dispatcher 와 자체 Agent 를 함께 잡을 수 있어
  * 모듈 코드를 고치지 않고 응답을 녹화(진단·fixture 생성)하거나 fixture 로 재생(오프라인 테스트)한다.
  */
-const { Agent, getGlobalDispatcher, setGlobalDispatcher } = require("undici");
+const {
+  Agent,
+  getGlobalDispatcher,
+  setGlobalDispatcher,
+  util,
+} = require("undici");
 
 const originalDispatch = Agent.prototype.dispatch;
 
@@ -51,34 +56,37 @@ function wrapHandler(handler, exchange) {
     for (const capture of captures) capture.exchanges.push(exchange);
   };
 
+  // undici 7+ 핸들러 API (onResponseStart·onResponseData·onResponseEnd·onResponseError)
   return new Proxy(handler, {
     get(target, prop) {
-      if (prop === "onHeaders") {
-        return (statusCode, rawHeaders, resume, statusMessage) => {
+      if (prop === "onResponseStart") {
+        return (controller, statusCode, headers, statusMessage) => {
           if (statusCode >= 200) {
             exchange.status = statusCode;
-            exchange.headers = rawHeaders.map((h) => h.toString("utf8"));
+            exchange.headers = (controller?.rawHeaders ?? []).map((h) =>
+              h.toString("utf8"),
+            );
           }
-          return target.onHeaders(statusCode, rawHeaders, resume, statusMessage);
+          return target.onResponseStart?.(controller, statusCode, headers, statusMessage);
         };
       }
-      if (prop === "onData") {
-        return (chunk) => {
+      if (prop === "onResponseData") {
+        return (controller, chunk) => {
           chunks.push(Buffer.from(chunk));
-          return target.onData(chunk);
+          return target.onResponseData?.(controller, chunk);
         };
       }
-      if (prop === "onComplete") {
-        return (trailers) => {
+      if (prop === "onResponseEnd") {
+        return (controller, trailers) => {
           finish();
-          return target.onComplete(trailers);
+          return target.onResponseEnd?.(controller, trailers);
         };
       }
-      if (prop === "onError") {
-        return (err) => {
+      if (prop === "onResponseError") {
+        return (controller, err) => {
           exchange.error = err.message;
           finish();
-          return target.onError(err);
+          return target.onResponseError?.(controller, err);
         };
       }
       const value = target[prop];
@@ -115,19 +123,46 @@ function takeReplay(opts) {
   return replayQueue.splice(index, 1)[0];
 }
 
+// undici 핸들러에 넘기는 controller. 재생은 한 번에 끝나므로 pause·resume 은 할 일이 없다
+class ReplayController {
+  rawHeaders = null;
+  aborted = false;
+  reason = null;
+  paused = false;
+
+  constructor(onAbort) {
+    this.onAbort = onAbort;
+  }
+
+  pause() {}
+
+  resume() {}
+
+  abort(reason) {
+    if (this.aborted) return;
+    this.aborted = true;
+    this.reason = reason ?? new Error("aborted");
+    this.onAbort(this.reason);
+  }
+}
+
 function replayDispatch(opts, handler) {
   const exchange = takeReplay(opts);
-  let aborted = null;
+  let done = false;
+  const fail = (err) => {
+    if (done) return;
+    done = true;
+    handler.onResponseError?.(controller, err);
+  };
+  const controller = new ReplayController(fail);
 
   setImmediate(() => {
     try {
-      handler.onConnect((reason) => {
-        aborted = reason ?? new Error("aborted");
-      });
-      if (aborted) return handler.onError(aborted);
+      handler.onRequestStart?.(controller, {});
+      if (done) return;
 
       if (exchange.status === undefined) {
-        return handler.onError(
+        return fail(
           new Error(
             exchange.error ??
               `fixture 에 없는 요청: ${exchange.method} ${exchange.url}`,
@@ -136,12 +171,21 @@ function replayDispatch(opts, handler) {
       }
 
       const rawHeaders = (exchange.headers ?? []).map((h) => Buffer.from(h));
-      handler.onHeaders(exchange.status, rawHeaders, () => {}, "");
+      controller.rawHeaders = rawHeaders;
+      handler.onResponseStart?.(
+        controller,
+        exchange.status,
+        util.parseHeaders(rawHeaders),
+        "",
+      );
       const body = decodeBody(exchange);
-      if (body.length > 0) handler.onData(body);
-      handler.onComplete([]);
+      if (!done && body.length > 0) handler.onResponseData?.(controller, body);
+      if (!done) {
+        done = true;
+        handler.onResponseEnd?.(controller, {});
+      }
     } catch (err) {
-      handler.onError(err);
+      fail(err);
     }
   });
   return true;
