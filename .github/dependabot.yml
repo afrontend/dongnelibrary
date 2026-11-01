@@ -8,6 +8,14 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    # 메이저 업그레이드는 따로 진행한다
+    # - typescript: 7 은 moduleResolution node10 을 지원하지 않아 tsconfig 수정이 필요하다
+    # - @types/node: 지원하는 가장 낮은 Node 버전(Docker node:20)에 맞춘다
+    ignore:
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
