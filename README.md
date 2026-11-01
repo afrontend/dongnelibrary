@@ -205,11 +205,14 @@ dl.search(
 | 종류 | 파일 | 네트워크 | 확인하는 것 |
 |---|---|---|---|
 | 오프라인 테스트 | `test/offline.spec.js` | 안 씀 | 녹화해 둔 응답(`test/fixtures/<모듈>.json`, 로컬 전용)을 모듈이 예전과 같게 읽는지 |
-| 실제 사이트 테스트 | `test/<모듈>.spec.js` | 씀 | 지금 사이트에서 검색이 되는지 |
+| | `test/searchErrors.spec.js`, `test/cliLibraryFilter.spec.js`, `test/util.spec.js` | 안 씀 | 실패 결과 처리, CLI `-l` 도서관 지정, 유틸 함수 (fixture 없이 돈다) |
+| 실제 사이트 테스트 | `test/<모듈>.spec.js`, `test/cli.spec.js`, `test/cancel.spec.js`, `test/dongne.spec.js` | 씀 | 지금 사이트에서 검색이 되는지 |
 
-    npm test                  # 둘 다 (전체 실제 사이트 포함, 오래 걸린다)
-    npm run test:offline      # 오프라인 테스트만 (1초 안팎)
+    npm test                  # 오프라인 테스트만 (1초 안팎)
+    npm run test:live         # 실제 사이트 테스트까지 전부 (오래 걸린다)
     npm run <모듈>            # 모듈 하나의 실제 사이트 테스트
+
+네트워크를 쓰지 않는 spec 을 새로 만들면 `package.json` 의 `test` 스크립트 목록에도 넣는다.
 
 두 결과를 함께 보면 원인이 갈린다.
 
@@ -252,7 +255,7 @@ fixture 는 사이트 응답을 세션 쿠키까지 그대로 담으므로 **커
 
 `.github/workflows/test.yml`
 
-- **push·PR (master)**: 빌드 → 바뀐 모듈만 실제 사이트 테스트. 모듈 `.ts`·spec 중 하나가 바뀐 모듈을 고른다(`test/tools/changed-specs.js`). 공통 코드만 바뀌면 빌드만 확인한다. fixture 가 커밋되지 않으므로 오프라인 테스트는 로컬에서 돌린다.
+- **push·PR (master)**: 빌드·`npm test` → 바뀐 모듈만 실제 사이트 테스트. 모듈 `.ts`·spec 중 하나가 바뀐 모듈을 고른다(`test/tools/changed-specs.js`). 공통 코드만 바뀌면 빌드와 `npm test` 만 돈다. fixture 가 커밋되지 않으므로 `offline.spec.js` 는 Actions 에서 건너뛰고 로컬에서 돌린다.
 - **수동 실행**: Actions → Test → Run workflow. `modules` 에 `all`(기본) 또는 `nyj,ulju` 처럼 적는다. 월 1회 정도 전체를 점검하는 용도다.
 - 실패하면 `.tmp/test-failures/` 가 `test-failures` artifact 로 올라간다(14일 보관). 실행 페이지에서 받거나 `gh run download <실행ID> -n test-failures`.
 
@@ -260,8 +263,8 @@ fixture 는 사이트 응답을 세션 쿠키까지 그대로 담으므로 **커
 
 #### 명령 목록
 
-    npm test
-    npm run test:offline  # 오프라인 테스트
+    npm test              # 오프라인 테스트
+    npm run test:live     # 실제 사이트 테스트까지 전부
     npm run record -- <모듈> # 응답 녹화
     npm run dongne  # 여러 도서관 검색
     npm run ansan   # 안산시 도서관

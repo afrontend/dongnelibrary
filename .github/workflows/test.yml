@@ -1,7 +1,7 @@
 name: Test
 
-# push·PR: 빌드 + 바뀐 모듈만 실제 사이트 테스트
-# 오프라인 테스트(fixture 재생)는 fixture 를 커밋하지 않으므로 로컬에서만 돈다
+# push·PR: 빌드·오프라인 테스트(npm test) + 바뀐 모듈만 실제 사이트 테스트
+# fixture 재생(offline.spec)은 fixture 를 커밋하지 않으므로 건너뛰고 로컬에서만 돈다
 # 수동 실행(Run workflow): 전체 또는 지정 모듈을 실제 사이트로 테스트 (월 1회 정도)
 
 on:
@@ -40,8 +40,8 @@ jobs:
 
       - run: npm ci
 
-      - name: 빌드
-        run: npm run build
+      - name: 빌드·오프라인 테스트
+        run: npm test
 
       - name: 실제 사이트로 테스트할 모듈 고르기
         id: pick
