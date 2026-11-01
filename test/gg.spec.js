@@ -1,6 +1,6 @@
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
-const { request } = require("undici");
+const { request, getGlobalDispatcher, interceptors } = require("undici");
 const { parseHtml } = require("../dist/html");
 const lib = require("../dist/localLibraryModule/gg");
 const { createLibraryTestSuite } = require("./helpers/libraryTestSuite");
@@ -55,7 +55,10 @@ describe("경기교육도서관 bookUrl content verification", () => {
       // Fetch the detail page
       const response = await request(book.bookUrl, {
         method: "GET",
-        maxRedirections: 5,
+        // undici 8 은 maxRedirections 옵션 대신 redirect interceptor 를 쓴다.
+        dispatcher: getGlobalDispatcher().compose(
+          interceptors.redirect({ maxRedirections: 5 }),
+        ),
         headersTimeout: 20000,
         bodyTimeout: 20000,
         headers: {

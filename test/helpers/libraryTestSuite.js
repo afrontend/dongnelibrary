@@ -4,6 +4,7 @@ const path = require("path");
 const { requestWithExtraCa } = require("../../dist/http.js");
 const { SECTIGO_DV_R36 } = require("../../dist/certs/sectigoDvR36.js");
 const util = require("../../dist/util.js");
+const { getGlobalDispatcher, interceptors } = require("undici");
 const { startCapture } = require("./httpRecorder");
 const {
   isNetworkError,
@@ -21,6 +22,13 @@ const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 // 서버가 중간 인증서를 잘못 보내는 호스트 — 모듈과 같은 인증서로 재시도
+// undici 8 은 request() 의 maxRedirections 옵션을 없앴다. 리다이렉트는 interceptor 로 따라간다.
+function redirectingDispatcher() {
+  return getGlobalDispatcher().compose(
+    interceptors.redirect({ maxRedirections: 5 }),
+  );
+}
+
 const EXTRA_CA_BY_HOST = {
   "lib.nyj.go.kr": SECTIGO_DV_R36,
 };
@@ -370,7 +378,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
             bookUrl,
             {
               method: "GET",
-              maxRedirections: 5,
+              dispatcher: redirectingDispatcher(),
               headersTimeout: TIMEOUTS.DEFAULT,
               bodyTimeout: TIMEOUTS.DEFAULT,
               headers: {
@@ -457,7 +465,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
             bookUrl,
             {
               method: "GET",
-              maxRedirections: 5,
+              dispatcher: redirectingDispatcher(),
               headersTimeout: TIMEOUTS.DEFAULT,
               bodyTimeout: TIMEOUTS.DEFAULT,
               headers: {

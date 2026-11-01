@@ -45,6 +45,15 @@ function requestBody(opts) {
   return null;
 }
 
+// HTTP/1.1 은 [이름, 값, ...] Buffer 배열, HTTP/2 는 { 이름: 값 | 값[] } 객체를 준다.
+// fixture 에는 둘 다 [이름, 값, ...] 문자열 배열로 저장한다.
+function rawHeaderStrings(raw) {
+  if (Array.isArray(raw)) return raw.map((h) => h.toString("utf8"));
+  return Object.entries(raw ?? {}).flatMap(([name, value]) =>
+    (Array.isArray(value) ? value : [value]).flatMap((v) => [name, String(v)]),
+  );
+}
+
 // ============================================================================
 // Capture
 // ============================================================================
@@ -63,9 +72,7 @@ function wrapHandler(handler, exchange) {
         return (controller, statusCode, headers, statusMessage) => {
           if (statusCode >= 200) {
             exchange.status = statusCode;
-            exchange.headers = (controller?.rawHeaders ?? []).map((h) =>
-              h.toString("utf8"),
-            );
+            exchange.headers = rawHeaderStrings(controller?.rawHeaders ?? headers);
           }
           return target.onResponseStart?.(controller, statusCode, headers, statusMessage);
         };
