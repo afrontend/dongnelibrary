@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -68,8 +68,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   // "총 <span class="themeFC">541건</span>" 처럼 총 건수가 span 밖에 걸쳐 있어
   // p.rtitle 전체 textContent 로 매칭한다 (첫 span 은 "자료 검색 결과" 라 무관)

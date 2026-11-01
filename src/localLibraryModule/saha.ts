@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -90,9 +90,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     return { startPage: opt.startPage, totalBookCount: 0, booklist: [] };
   }
 
-  const {
-    window: { document },
-  } = new JSDOM(body);
+  const document = parseHtml(body);
 
   const countText =
     document.querySelector("div.dadaelib-total-search-count")?.textContent ?? "";

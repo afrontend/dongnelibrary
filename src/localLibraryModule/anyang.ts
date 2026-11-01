@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get, post } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -57,7 +57,7 @@ async function isAvailable(
       signal,
     });
     if (statusCode !== 200) return false;
-    const document = new JSDOM(body).window.document;
+    const document = parseHtml(body);
     return Array.from(document.querySelectorAll(`tr.${lcode}`)).some((tr) =>
       tr.textContent?.includes("대출가능"),
     );
@@ -88,7 +88,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const document = new JSDOM(body).window.document;
+  const document = parseHtml(body);
 
   const count = extractNumber(
     document.querySelector("#totalCnt")?.textContent ?? "",

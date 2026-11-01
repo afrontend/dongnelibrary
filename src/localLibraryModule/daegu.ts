@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -98,8 +98,7 @@ function parseSearchResult(
     return { startPage, totalBookCount: 0, booklist: [] };
   }
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   const countEl = document.querySelector("div.search-info b");
   const totalBookCount = extractNumber(countEl?.textContent ?? "0");

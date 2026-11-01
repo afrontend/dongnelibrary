@@ -5,7 +5,7 @@ import {
   wrapWithCallback, extractNumber,
 } from "../util";
 import { post } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -74,9 +74,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const totalMatch = body.match(/검색결과 총 <b>([\d,]+)<\/b>건/);
   const totalBookCount = totalMatch ? parseInt(extractNumber(totalMatch[1]), 10) : 0;
 
-  const {
-    window: { document },
-  } = new JSDOM(body);
+  const document = parseHtml(body);
 
   const booklist: Book[] = [];
   const rows = document.querySelectorAll<HTMLElement>("#search-results .row");

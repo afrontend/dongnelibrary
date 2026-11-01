@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -62,8 +62,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   // Extract total count from "총 <span class="highlight">44</span>건"
   const highlightSpan = document.querySelector("span.highlight");

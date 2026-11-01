@@ -5,7 +5,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -112,7 +112,7 @@ async function fetchPage(
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  return new JSDOM(body).window.document;
+  return parseHtml(body);
 }
 
 /**

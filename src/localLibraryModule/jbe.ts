@@ -5,7 +5,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { post } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -68,9 +68,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const {
-    window: { document },
-  } = new JSDOM(body);
+  const document = parseHtml(body);
 
   const pageButtons = document.querySelectorAll<HTMLAnchorElement>(
     "a.paginate_button",

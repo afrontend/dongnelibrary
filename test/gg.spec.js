@@ -1,7 +1,7 @@
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
 const { request } = require("undici");
-const { JSDOM } = require("jsdom");
+const { parseHtml } = require("../dist/html");
 const lib = require("../dist/localLibraryModule/gg");
 const { createLibraryTestSuite } = require("./helpers/libraryTestSuite");
 
@@ -74,8 +74,7 @@ describe("경기교육도서관 bookUrl content verification", () => {
       );
 
       // Parse HTML and extract title from hidden input
-      const dom = new JSDOM(body);
-      const document = dom.window.document;
+      const document = parseHtml(body);
 
       const pageTitle = document.querySelector("#item_name")?.value;
 

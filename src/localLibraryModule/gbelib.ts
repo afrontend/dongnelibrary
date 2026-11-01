@@ -5,7 +5,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -58,8 +58,7 @@ const libraryList: LibraryInfo[] = [
 const getLibraryCode = createLibraryCodeLookup(libraryList);
 
 function parseBookRows(html: string): Book[] {
-  const dom = new JSDOM(html);
-  const document = dom.window.document;
+  const document = parseHtml(html);
   const booklist: Book[] = [];
 
   document.querySelectorAll("div.row").forEach((row) => {
@@ -121,9 +120,9 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const { statusCode, body } = await get(SEARCH_URL, { qs, signal });
   if (statusCode !== 200) throw new Error(`HTTP ${statusCode}`);
 
-  const dom = new JSDOM(body);
+  const document = parseHtml(body);
   const totalText =
-    dom.window.document.getElementById("bookTotalCnt")?.textContent ?? "0";
+    document.getElementById("bookTotalCnt")?.textContent ?? "0";
   const totalBookCount = parseInt(totalText.replace(/,/g, ""), 10) || 0;
 
   const booklist = parseBookRows(body);

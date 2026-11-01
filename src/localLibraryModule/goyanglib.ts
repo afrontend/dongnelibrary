@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { post } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -59,9 +59,7 @@ function parseSearchResult(
     ? parseInt(totalMatch[1].replace(/,/g, ""), 10)
     : 0;
 
-  const {
-    window: { document },
-  } = new JSDOM(body);
+  const document = parseHtml(body);
 
   const booklist: Book[] = [];
 

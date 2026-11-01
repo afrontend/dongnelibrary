@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -67,8 +67,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   // themeFC 클래스는 검색어 하이라이트에도 쓰이므로 p.rtitle 안으로 한정
   const countEl = document.querySelector("p.rtitle span.themeFC");
