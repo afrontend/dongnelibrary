@@ -2,7 +2,6 @@ import type {
   Book,
   LibraryInfo,
   SearchCallback,
-  SearchError,
   SearchOptions,
   SearchResult,
 } from "./types";
@@ -124,8 +123,12 @@ export function wrapWithCallback<T extends SearchOptions>(
       const result = await asyncFn(opt);
       callback(null, result);
     } catch (err) {
-      const error = err as Error;
-      callback({ msg: error.message || error.toString() } as SearchError);
+      const error = err as Error & { code?: string; cause?: { code?: string } };
+      const code = error.code ?? error.cause?.code;
+      callback({
+        msg: error.message || error.toString(),
+        ...(code && { code }),
+      });
     }
   };
 }
