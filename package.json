@@ -3,7 +3,7 @@
   "version": "0.3.36",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.19.0"
   },
   "main": "dist/dongnelibrary.js",
   "types": "dist/dongnelibrary.d.ts",
@@ -192,7 +192,7 @@
     "@types/figlet": "^1.7.0",
     "@types/jsdom": "^27.0.0",
     "@types/lodash": "^4.17.23",
-    "@types/node": "^20.19.30",
+    "@types/node": "^22.20.5",
     "typescript": "^5.9.3"
   },
   "overrides": {
