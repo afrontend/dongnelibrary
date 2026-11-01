@@ -1,6 +1,7 @@
 /**
- * CLI 의 -l 이 지정한 도서관만 검색하는지 확인한다.
+ * CLI 의 -l 이 지정한 도서관만 검색하는지, -l 이 없으면 전체를 검색하는지 확인한다.
  * 모든 요청을 즉시 실패시켜(failAllRequests) 실패 줄 수로 검색한 도서관 수를 센다.
+ * 실제 사이트에 요청하지 않으므로 전체 검색도 1초 안에 끝난다.
  */
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
@@ -11,10 +12,12 @@ const dl = require("../dist/dongnelibrary");
 const CLI_PATH = path.join(__dirname, "..", "dist", "cli.js");
 const FAIL_ALL = path.join(__dirname, "helpers", "failAllRequests.js");
 
+// libraryName 을 주지 않으면 -l 없이 실행한다
 function searchedLibraryCount(libraryName) {
+  const libraryArgs = libraryName === undefined ? [] : ["-l", libraryName];
   const { stdout, status } = spawnSync(
     "node",
-    ["-r", FAIL_ALL, CLI_PATH, "-t", "자바", "-l", libraryName],
+    ["-r", FAIL_ALL, CLI_PATH, "-t", "자바", ...libraryArgs],
     { encoding: "utf8", env: { ...process.env, FORCE_COLOR: "0" } },
   );
   assert.equal(status, 0);
@@ -23,6 +26,10 @@ function searchedLibraryCount(libraryName) {
 }
 
 describe("CLI -l 도서관 지정", () => {
+  it("-l 이 없으면 모든 도서관을 검색한다", () => {
+    assert.equal(searchedLibraryCount(), dl.getAllLibraryNames().length);
+  });
+
   it("도서관 하나만 검색한다", () => {
     assert.equal(searchedLibraryCount("산본도서관"), 1);
   });
