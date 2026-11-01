@@ -1,15 +1,63 @@
-import { request } from "undici";
+import tls from "node:tls";
+import { Agent, request } from "undici";
 import type { HttpOptions, HttpResponse, HttpSession } from "./types";
 
 const DEFAULT_TIMEOUT = 30000;
 const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
+// 서버가 중간 인증서를 빠뜨리거나 잘못 보낼 때 나는 오류
+const CHAIN_ERRORS = new Set([
+  "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+  "UNABLE_TO_GET_ISSUER_CERT_LOCALLY",
+]);
+
+const extraCaAgents = new Map<string, Agent>();
+
+// 기본 신뢰 목록에 extraCa 를 더한 Agent. ca 를 주면 기본 목록이 대체되므로
+// 기본 목록을 함께 넣는다. getCACertificates (Node 22.15+) 는
+// NODE_EXTRA_CA_CERTS 까지 포함하고, 없는 버전은 내장 루트만 쓴다.
+function agentWithExtraCa(extraCa: string): Agent {
+  let agent = extraCaAgents.get(extraCa);
+  if (!agent) {
+    const { getCACertificates } = tls as {
+      getCACertificates?: (type: "default") => string[];
+    };
+    const base = getCACertificates?.("default") ?? tls.rootCertificates;
+    agent = new Agent({ connect: { ca: [...base, extraCa] } });
+    extraCaAgents.set(extraCa, agent);
+  }
+  return agent;
+}
+
+// 평소대로 요청하고, 인증서 체인 오류가 나고 extraCa 가 있을 때만 다시 요청한다
+export async function requestWithExtraCa(
+  url: string,
+  opts: Parameters<typeof request>[1],
+  extraCa?: string,
+) {
+  try {
+    return await request(url, opts);
+  } catch (err) {
+    const code =
+      (err as { code?: string }).code ??
+      (err as { cause?: { code?: string } }).cause?.code;
+    if (!extraCa || !code || !CHAIN_ERRORS.has(code)) throw err;
+    return request(url, { ...opts, dispatcher: agentWithExtraCa(extraCa) });
+  }
+}
+
 export async function get(
   url: string,
   options: HttpOptions = {},
 ): Promise<HttpResponse> {
-  const { qs, headers = {}, timeout = DEFAULT_TIMEOUT, signal } = options;
+  const {
+    qs,
+    headers = {},
+    timeout = DEFAULT_TIMEOUT,
+    signal,
+    extraCa,
+  } = options;
 
   let fullUrl = url;
   if (qs && Object.keys(qs).length > 0) {
@@ -20,13 +68,17 @@ export async function get(
     fullUrl = `${url}?${params}`;
   }
 
-  const res = await request(fullUrl, {
-    method: "GET",
-    headersTimeout: timeout,
-    bodyTimeout: timeout,
-    headers: { "User-Agent": DEFAULT_USER_AGENT, ...headers },
-    signal,
-  });
+  const res = await requestWithExtraCa(
+    fullUrl,
+    {
+      method: "GET",
+      headersTimeout: timeout,
+      bodyTimeout: timeout,
+      headers: { "User-Agent": DEFAULT_USER_AGENT, ...headers },
+      signal,
+    },
+    extraCa,
+  );
 
   return { statusCode: res.statusCode, body: await res.body.text() };
 }

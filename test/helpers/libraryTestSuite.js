@@ -1,7 +1,8 @@
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
 const path = require("path");
-const { request } = require("undici");
+const { requestWithExtraCa } = require("../../dist/http.js");
+const { SECTIGO_DV_R36 } = require("../../dist/certs/sectigoDvR36.js");
 const util = require("../../dist/util.js");
 const { startCapture } = require("./httpRecorder");
 const { classifyError, classifyEmpty, saveFailure } = require("./diagnose");
@@ -13,6 +14,11 @@ const { getSearchTerms } = require("./searchTerms");
 
 const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+// 서버가 중간 인증서를 잘못 보내는 호스트 — 모듈과 같은 인증서로 재시도
+const EXTRA_CA_BY_HOST = {
+  "lib.nyj.go.kr": SECTIGO_DV_R36,
+};
 
 const TIMEOUTS = {
   DEFAULT: 20000,
@@ -323,16 +329,20 @@ function createLibraryTestSuite(lib, description, options = {}) {
         }
 
         try {
-          const response = await request(bookUrl, {
-            method: "GET",
-            maxRedirections: 5,
-            headersTimeout: TIMEOUTS.DEFAULT,
-            bodyTimeout: TIMEOUTS.DEFAULT,
-            headers: {
-              "User-Agent": DEFAULT_USER_AGENT,
-              Referer: `${urlObj.origin}/`,
+          const response = await requestWithExtraCa(
+            bookUrl,
+            {
+              method: "GET",
+              maxRedirections: 5,
+              headersTimeout: TIMEOUTS.DEFAULT,
+              bodyTimeout: TIMEOUTS.DEFAULT,
+              headers: {
+                "User-Agent": DEFAULT_USER_AGENT,
+                Referer: `${urlObj.origin}/`,
+              },
             },
-          });
+            EXTRA_CA_BY_HOST[urlObj.hostname],
+          );
 
           const body = await response.body.text();
 
@@ -403,16 +413,20 @@ function createLibraryTestSuite(lib, description, options = {}) {
         }
 
         try {
-          const response = await request(bookUrl, {
-            method: "GET",
-            maxRedirections: 5,
-            headersTimeout: TIMEOUTS.DEFAULT,
-            bodyTimeout: TIMEOUTS.DEFAULT,
-            headers: {
-              "User-Agent": DEFAULT_USER_AGENT,
-              Referer: `${urlObj.origin}/`,
+          const response = await requestWithExtraCa(
+            bookUrl,
+            {
+              method: "GET",
+              maxRedirections: 5,
+              headersTimeout: TIMEOUTS.DEFAULT,
+              bodyTimeout: TIMEOUTS.DEFAULT,
+              headers: {
+                "User-Agent": DEFAULT_USER_AGENT,
+                Referer: `${urlObj.origin}/`,
+              },
             },
-          });
+            EXTRA_CA_BY_HOST[urlObj.hostname],
+          );
 
           const body = await response.body.text();
 

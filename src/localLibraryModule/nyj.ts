@@ -6,6 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
+import { SECTIGO_DV_R36 } from "../certs/sectigoDvR36";
 import { JSDOM } from "jsdom";
 import type {
   Book,
@@ -68,6 +69,8 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
       currentPageNo: String(startPage),
     },
     signal,
+    // 서버가 중간 인증서를 잘못 보낸다 — certs/sectigoDvR36.ts 참고
+    extraCa: SECTIGO_DV_R36,
   });
 
   if (statusCode !== 200) {

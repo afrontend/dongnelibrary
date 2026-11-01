@@ -75,6 +75,8 @@ export interface HttpOptions {
   headers?: Record<string, string>;
   timeout?: number;
   signal?: AbortSignal;
+  /** 인증서 체인 오류가 날 때만 신뢰 목록에 더해 다시 요청할 PEM (get 전용) */
+  extraCa?: string;
 }
 
 /**
