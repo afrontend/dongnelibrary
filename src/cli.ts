@@ -161,21 +161,15 @@ const getBookCount = (results: SearchResult[]): number =>
 
 /**
  * Convert comma-separated library names to full name list.
+ * 모듈 이름(예: "군포시도서관")은 그대로 두어 검색 때 그 모듈의 도서관 전체로 펼친다.
  */
-const getLibraryFullNameList = (libraryNameWithCommas: string): string[] => {
-  const list = util
+const getLibraryFullNameList = (libraryNameWithCommas: string): string[] =>
+  util
     .getArrayFromCommaSeparatedString(libraryNameWithCommas)
-    .map((name) => getFullLibraryName(name) || "")
-    .filter((name) => !dl.isModuleName(name) && name);
-  return list;
-};
-
-/**
- * Prepend module names to library name list for search.
- */
-const prependModuleNames = (libraryNameList: string[]): string[] => {
-  return [...dl.getAllModuleNames(), ...libraryNameList];
-};
+    .map((name) =>
+      dl.isModuleName(name) ? name : (getFullLibraryName(name) ?? ""),
+    )
+    .filter((name) => name);
 
 /**
  * Set up SIGINT handler for graceful cancellation.
@@ -445,12 +439,9 @@ const activate = async (): Promise<void> => {
       console.log(`${libDisplay}에서 "${searchOptions.title}" 검색`);
     }
   } else if (libraryName && title) {
-    const libraryNames = prependModuleNames(
-      getLibraryFullNameList(libraryName),
-    );
     searchOptions = {
       title,
-      libraryName: libraryNames,
+      libraryName: getLibraryFullNameList(libraryName),
     };
   } else if (title) {
     searchOptions = { title, libraryName: "" };
