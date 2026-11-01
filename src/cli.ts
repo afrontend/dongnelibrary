@@ -247,7 +247,8 @@ const searchBooks = ({
         spinner.stop();
         if (err) {
           if (err.msg?.toLowerCase().includes("abort")) return;
-          console.log(err.msg ?? MESSAGES.unknownError);
+          const msg = err.msg ?? MESSAGES.unknownError;
+          console.log(err.libraryName ? `${err.libraryName}: ${msg}` : msg);
         } else if (book) {
           printBooks(book, showUrl);
           results.push(book);

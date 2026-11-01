@@ -41,6 +41,8 @@ export interface SearchResult {
   totalBookCount: number | string;
   startPage?: number;
   booklist: Book[];
+  /** 검색에 실패한 도서관이면 그 오류. 이때 booklist 는 비어 있다 */
+  error?: SearchError;
 }
 
 /**
@@ -48,6 +50,10 @@ export interface SearchResult {
  */
 export interface SearchError {
   msg: string;
+  /** 오류가 난 도서관 (search 결과로 나갈 때 채워진다) */
+  libraryName?: string;
+  /** Node·undici 오류 코드 (예: UND_ERR_CONNECT_TIMEOUT, ECONNRESET) */
+  code?: string;
 }
 
 /**

@@ -144,12 +144,20 @@ const results = await dl.searchAsync({
 });
 
 results.forEach((result) => {
+  if (result.error) {
+    console.log(result.libraryName + " 검색 실패: " + result.error.msg);
+    return;
+  }
   console.log(result.libraryName + ' "' + result.title + '"');
   result.booklist.forEach((book) => {
     console.log((book.exist ? " ✓  " : " ✖  ") + " " + book.title);
   });
 });
 ```
+
+검색에 실패한 도서관도 결과 배열에 남습니다. 그 항목은 `error`(`msg`, `libraryName`,
+있으면 `code`)가 있고 `booklist` 가 비어 있어, "검색했지만 0건" 과 "검색하지 못함" 을
+구분할 수 있습니다. `signal` 로 취소한 도서관은 배열에 넣지 않습니다.
 
 ### Callback 스타일
 
@@ -159,6 +167,10 @@ const dl = require("dongnelibrary");
 dl.search(
   { title: "채식주의자", libraryName: ["여주", "판교"] },
   function (err, book) {
+    if (err) {
+      console.log(err.libraryName + " 검색 실패: " + err.msg);
+      return;
+    }
     console.log(book.libraryName + ' "' + book.title + '"');
     book.booklist.forEach(function (book) {
       console.log((book.exist ? " ✓  " : " ✖  ") + " " + book.title);

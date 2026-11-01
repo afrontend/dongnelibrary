@@ -354,11 +354,13 @@ const searchLibrary = (
   new Promise((resolve) => {
     lib.search({ title, libraryName: lib.name, signal }, (err, data) => {
       if (err) {
-        resolve({ error: err });
+        resolve({ error: { ...err, libraryName: lib.name } });
         return;
       }
       if (!data?.booklist) {
-        resolve({ error: { msg: "invalid Data response" } });
+        resolve({
+          error: { msg: "invalid Data response", libraryName: lib.name },
+        });
         return;
       }
       resolve({
@@ -376,6 +378,9 @@ const searchLibrary = (
 
 /**
  * Asynchronously search across multiple libraries
+ *
+ * 실패한 도서관도 결과 배열에 남는다. 그 항목은 `error` 가 있고 booklist 가 비어 있어
+ * "검색했지만 0건" 과 "검색하지 못함" 을 구분할 수 있다. 취소(signal)된 도서관은 넣지 않는다.
  * @param opt - Search options including title and library names
  * @param onResult - Callback for individual search results
  * @returns Promise resolving to array of search results
@@ -392,7 +397,15 @@ export const searchAsync = (
     const { error, result } = await searchLibrary(lib, title, signal);
     if (error) {
       onResult?.(error);
-      return null;
+      if (signal?.aborted) return null;
+      return {
+        title,
+        libraryName: lib.name,
+        homeUrl: lib.homeUrl,
+        totalBookCount: 0,
+        booklist: [],
+        error,
+      };
     }
     onResult?.(null, result);
     return result;
