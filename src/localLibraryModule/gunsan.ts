@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -74,8 +74,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
   const countMatch = body.match(/\$\('#totalCnt'\)\.text\("([\d,]+)"\)/);
   const count = extractNumber(countMatch?.[1]);
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   const booklist: Book[] = [];
   const bookItems = document.querySelectorAll("ul.listWrap > li");

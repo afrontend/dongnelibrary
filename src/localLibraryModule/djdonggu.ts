@@ -6,7 +6,7 @@ import {
   extractNumber,
 } from "../util";
 import { get } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -119,7 +119,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const { document } = new JSDOM(body).window;
+  const document = parseHtml(body);
 
   return {
     startPage,

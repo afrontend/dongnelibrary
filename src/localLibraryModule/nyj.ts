@@ -7,7 +7,7 @@ import {
 } from "../util";
 import { get } from "../http";
 import { SECTIGO_DV_R36 } from "../certs/sectigoDvR36";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -77,8 +77,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   // "총 <span class="themeFC">463건</span>" — 숫자만 span 안에 있어
   // p.rtitle 전체 textContent 로 매칭한다

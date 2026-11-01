@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { createSession } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -85,9 +85,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const {
-    window: { document },
-  } = new JSDOM(body);
+  const document = parseHtml(body);
 
   const totalBookCount = extractNumber(
     document.querySelector("#totalCount")?.textContent ?? "",

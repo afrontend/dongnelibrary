@@ -6,7 +6,7 @@ import {
   wrapWithCallback,
 } from "../util";
 import { createSession } from "../http";
-import { JSDOM } from "jsdom";
+import { parseHtml } from "../html";
 import type {
   Book,
   LibraryInfo,
@@ -67,8 +67,7 @@ async function searchImpl(opt: SearchOptions): Promise<SearchResult> {
     throw new Error(`HTTP ${statusCode}`);
   }
 
-  const dom = new JSDOM(body);
-  const document = dom.window.document;
+  const document = parseHtml(body);
 
   const h3Text =
     document.querySelector("div#content h3")?.textContent ?? "";
