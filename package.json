@@ -192,8 +192,8 @@
     "@types/figlet": "^1.7.0",
     "@types/jsdom": "^27.0.0",
     "@types/lodash": "^4.17.23",
-    "@types/node": "^20.19.30",
-    "typescript": "^5.9.3"
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "acorn": ">=5.7.4",
