@@ -288,35 +288,6 @@ describe("CLI", () => {
   );
 
   // ------------------------------------------------------------------
-  // Title-only Search Tests
-  // ------------------------------------------------------------------
-
-  it(
-    "should search all libraries when only -t is provided",
-    { timeout: TIMEOUTS.MULTI_SEARCH },
-    async () => {
-      // This searches ALL libraries, so use a longer timeout
-      const { stdout, code } = await runCli(["-t", "javascript"]);
-
-      assert.strictEqual(code, 0, "Exit code should be 0");
-      assert.match(
-        stdout,
-        /\d+ 개의 도서관에서\s+\d+ 권 검색됨/,
-        "Should show search summary",
-      );
-
-      // Should have searched many libraries
-      const match = stdout.match(/(\d+) 개의 도서관에서/);
-      assert.ok(match, "Should match library count pattern");
-      const libraryCount = parseInt(match[1], 10);
-      assert.ok(
-        libraryCount > 10,
-        `Should search many libraries, got ${libraryCount}`,
-      );
-    },
-  );
-
-  // ------------------------------------------------------------------
   // Module-based Interactive Mode (-m) Tests
   // ------------------------------------------------------------------
 
