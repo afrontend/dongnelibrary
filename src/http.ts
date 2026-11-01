@@ -30,12 +30,20 @@ function agentWithExtraCa(extraCa: string): Agent {
   return agent;
 }
 
+// 체인 오류가 한 번 난 호스트. 이후 요청은 기본 접속을 건너뛰어
+// 실패하는 TLS 연결이 요청마다 하나씩 늘지 않게 한다 (느린 서버는 접속이 몰리면 막힌다)
+const brokenChainHosts = new Set<string>();
+
 // 평소대로 요청하고, 인증서 체인 오류가 나고 extraCa 가 있을 때만 다시 요청한다
 export async function requestWithExtraCa(
   url: string,
   opts: Parameters<typeof request>[1],
   extraCa?: string,
 ) {
+  const host = new URL(url).host;
+  if (extraCa && brokenChainHosts.has(host)) {
+    return request(url, { ...opts, dispatcher: agentWithExtraCa(extraCa) });
+  }
   try {
     return await request(url, opts);
   } catch (err) {
@@ -43,6 +51,7 @@ export async function requestWithExtraCa(
       (err as { code?: string }).code ??
       (err as { cause?: { code?: string } }).cause?.code;
     if (!extraCa || !code || !CHAIN_ERRORS.has(code)) throw err;
+    brokenChainHosts.add(host);
     return request(url, { ...opts, dispatcher: agentWithExtraCa(extraCa) });
   }
 }
