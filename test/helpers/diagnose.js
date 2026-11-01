@@ -25,6 +25,20 @@ const BLOCK_INDICATORS = [
 
 const TINY_BODY_BYTES = 512;
 
+const TLS_PATTERN = /certificate|CERT_|SSL|TLS|self[- ]signed/i;
+const NETWORK_PATTERN =
+  /ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|UND_ERR_.*TIMEOUT|socket|timeout/i;
+
+/**
+ * 사이트 접속 자체가 안 된 에러인가 (TLS 는 제외 — 그건 모듈에서 고칠 수 있다)
+ * @param {string} message
+ * @returns {boolean}
+ */
+function isNetworkError(message = "") {
+  const text = String(message);
+  return !TLS_PATTERN.test(text) && NETWORK_PATTERN.test(text);
+}
+
 /**
  * 모듈이 던진 에러 메시지로 원인을 분류한다.
  * @param {string} message
@@ -32,10 +46,10 @@ const TINY_BODY_BYTES = 512;
  */
 function classifyError(message = "") {
   const text = String(message);
-  if (/certificate|CERT_|SSL|TLS|self[- ]signed/i.test(text)) {
-    return `[TLS 인증서] ${text} — 사이트 인증서 체인 문제. 모듈에서 rejectUnauthorized:false Agent 사용을 검토`;
+  if (TLS_PATTERN.test(text)) {
+    return `[TLS 인증서] ${text} — 사이트 인증서 체인 문제. 빠진 중간 인증서를 src/certs/ 에 두고 extraCa 로 넘긴다 (nyj 참고)`;
   }
-  if (/ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|UND_ERR_.*TIMEOUT|socket|timeout/i.test(text)) {
+  if (isNetworkError(text)) {
     return `[네트워크] ${text} — 사이트 접속 불가·지연. 잠시 후 재시도, 계속되면 해외 IP 차단 여부 확인`;
   }
   const status = text.match(/HTTP\s*(\d{3})/i);
@@ -104,4 +118,4 @@ function saveFailure(moduleKey, label, exchanges) {
   return path.relative(process.cwd(), dir);
 }
 
-module.exports = { classifyError, classifyEmpty, saveFailure };
+module.exports = { isNetworkError, classifyError, classifyEmpty, saveFailure };

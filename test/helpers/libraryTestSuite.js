@@ -1,10 +1,16 @@
 const { describe, it } = require("node:test");
 const assert = require("assert").strict;
 const path = require("path");
-const { request } = require("undici");
+const { requestWithExtraCa } = require("../../dist/http.js");
+const { SECTIGO_DV_R36 } = require("../../dist/certs/sectigoDvR36.js");
 const util = require("../../dist/util.js");
 const { startCapture } = require("./httpRecorder");
-const { classifyError, classifyEmpty, saveFailure } = require("./diagnose");
+const {
+  isNetworkError,
+  classifyError,
+  classifyEmpty,
+  saveFailure,
+} = require("./diagnose");
 const { getSearchTerms } = require("./searchTerms");
 
 // ============================================================================
@@ -13,6 +19,11 @@ const { getSearchTerms } = require("./searchTerms");
 
 const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+// 서버가 중간 인증서를 잘못 보내는 호스트 — 모듈과 같은 인증서로 재시도
+const EXTRA_CA_BY_HOST = {
+  "lib.nyj.go.kr": SECTIGO_DV_R36,
+};
 
 const TIMEOUTS = {
   DEFAULT: 20000,
@@ -85,6 +96,21 @@ function searchAsync(lib, options) {
 }
 
 /**
+ * CI(GitHub 러너, 해외 IP)에서는 사이트 접속 자체가 막히거나 늦어지는 일이 잦다.
+ * 네트워크 오류만 skip 으로 돌리고 TLS·HTTP·파서 오류는 그대로 실패시킨다.
+ * 로컬에서는 항상 실패로 본다. 사이트 가용성 감시는 PR CI 의 몫이 아니다.
+ * @param {import("node:test").TestContext} t
+ * @param {string} message
+ * @returns {boolean} skip 했으면 true — 호출한 테스트는 바로 return 한다
+ */
+function skipOnCiNetworkError(t, message) {
+  if (!process.env.CI || !isNetworkError(message)) return false;
+  console.log(`::warning title=사이트 접속 실패(skip)::${t.name}: ${message}`);
+  t.skip(`[CI 네트워크] ${message}`);
+  return true;
+}
+
+/**
  * Checks if a URL uses hash-based client-side routing
  * @param {string} url - The URL to check
  * @returns {boolean} True if URL is hash-based
@@ -134,6 +160,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
   const findSearchableBooks = () => {
     searchablePromise ??= (async () => {
       const tried = [];
+      let networkError;
       for (const term of searchTerms) {
         const capture = startCapture();
         try {
@@ -144,6 +171,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
         } catch (err) {
           // 에러는 검색어와 무관하므로 다른 후보를 시도하지 않는다.
           tried.push({ term, reason: classifyError(err.message), exchanges: capture.stop() });
+          networkError = isNetworkError(err.message) ? err.message : undefined;
           break;
         }
       }
@@ -154,13 +182,18 @@ function createLibraryTestSuite(lib, description, options = {}) {
       });
       return {
         failure: `${firstLibraryName} 에서 책을 찾지 못함\n${lines.join("\n")}`,
+        networkError,
       };
     })();
     return searchablePromise;
   };
 
-  const requireSearchableBooks = async ({ brief = false } = {}) => {
+  // 검색 결과가 없으면 실패, CI 네트워크 오류면 skip 하고 null 을 돌려준다
+  const requireSearchableBooks = async (t, { brief = false } = {}) => {
     const found = await findSearchableBooks();
+    if (found.networkError && skipOnCiNetworkError(t, found.networkError)) {
+      return null;
+    }
     assert.ok(
       !found.failure,
       brief ? '검색 결과 없음 — "Show the book list" 의 진단 참고' : found.failure,
@@ -187,13 +220,17 @@ function createLibraryTestSuite(lib, description, options = {}) {
       });
     });
 
-    it("Use invalid book title", { timeout: TIMEOUTS.DEFAULT }, () => {
+    it("Use invalid book title", { timeout: TIMEOUTS.DEFAULT }, (t) => {
       return new Promise((resolve) => {
         const nonsenseTitle =
           "zyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxyz";
         const capture = startCapture();
         lib.search(createSearchOptions(nonsenseTitle), (err, result) => {
           const exchanges = capture.stop();
+          if (err && skipOnCiNetworkError(t, err.msg)) {
+            resolve();
+            return;
+          }
           if (err) {
             const saved = saveFailure(moduleKey, "invalid-title", exchanges);
             assert.fail(
@@ -233,8 +270,10 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       `Show the book list of a library (${searchTerms.join(" → ")})`,
       { timeout: TIMEOUTS.MULTI_SEARCH },
-      async () => {
-        const { term, result } = await requireSearchableBooks();
+      async (t) => {
+        const found = await requireSearchableBooks(t);
+        if (!found) return;
+        const { term, result } = found;
         console.log(`  ✓ "${term}" 로 검색`);
         util.printTotalBookCount(result);
       },
@@ -247,8 +286,10 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       "Verify bookUrl format is valid",
       { timeout: TIMEOUTS.NETWORK },
-      async () => {
-        const { result: searchResult } = await requireSearchableBooks({ brief: true });
+      async (t) => {
+        const found = await requireSearchableBooks(t, { brief: true });
+        if (!found) return;
+        const { result: searchResult } = found;
 
         assert.ok(
           searchResult.booklist.length > 0,
@@ -291,8 +332,10 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       "Verify bookUrl is accessible",
       { timeout: TIMEOUTS.NETWORK },
-      async () => {
-        const { result: searchResult } = await requireSearchableBooks({ brief: true });
+      async (t) => {
+        const found = await requireSearchableBooks(t, { brief: true });
+        if (!found) return;
+        const { result: searchResult } = found;
 
         assert.ok(
           searchResult.booklist.length > 0,
@@ -323,16 +366,20 @@ function createLibraryTestSuite(lib, description, options = {}) {
         }
 
         try {
-          const response = await request(bookUrl, {
-            method: "GET",
-            maxRedirections: 5,
-            headersTimeout: TIMEOUTS.DEFAULT,
-            bodyTimeout: TIMEOUTS.DEFAULT,
-            headers: {
-              "User-Agent": DEFAULT_USER_AGENT,
-              Referer: `${urlObj.origin}/`,
+          const response = await requestWithExtraCa(
+            bookUrl,
+            {
+              method: "GET",
+              maxRedirections: 5,
+              headersTimeout: TIMEOUTS.DEFAULT,
+              bodyTimeout: TIMEOUTS.DEFAULT,
+              headers: {
+                "User-Agent": DEFAULT_USER_AGENT,
+                Referer: `${urlObj.origin}/`,
+              },
             },
-          });
+            EXTRA_CA_BY_HOST[urlObj.hostname],
+          );
 
           const body = await response.body.text();
 
@@ -359,6 +406,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
           if (error.code === "ERR_ASSERTION") {
             throw error;
           }
+          if (skipOnCiNetworkError(t, error.message)) return;
           assert.fail(
             `bookUrl is not accessible (network error: ${error.message}): ${bookUrl}`,
           );
@@ -369,8 +417,10 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       "Verify bookUrl page contains book title",
       { timeout: TIMEOUTS.NETWORK },
-      async () => {
-        const { result: searchResult } = await requireSearchableBooks({ brief: true });
+      async (t) => {
+        const found = await requireSearchableBooks(t, { brief: true });
+        if (!found) return;
+        const { result: searchResult } = found;
 
         assert.ok(
           searchResult.booklist.length > 0,
@@ -403,16 +453,20 @@ function createLibraryTestSuite(lib, description, options = {}) {
         }
 
         try {
-          const response = await request(bookUrl, {
-            method: "GET",
-            maxRedirections: 5,
-            headersTimeout: TIMEOUTS.DEFAULT,
-            bodyTimeout: TIMEOUTS.DEFAULT,
-            headers: {
-              "User-Agent": DEFAULT_USER_AGENT,
-              Referer: `${urlObj.origin}/`,
+          const response = await requestWithExtraCa(
+            bookUrl,
+            {
+              method: "GET",
+              maxRedirections: 5,
+              headersTimeout: TIMEOUTS.DEFAULT,
+              bodyTimeout: TIMEOUTS.DEFAULT,
+              headers: {
+                "User-Agent": DEFAULT_USER_AGENT,
+                Referer: `${urlObj.origin}/`,
+              },
             },
-          });
+            EXTRA_CA_BY_HOST[urlObj.hostname],
+          );
 
           const body = await response.body.text();
 
@@ -431,6 +485,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
           if (error.code === "ERR_ASSERTION") {
             throw error;
           }
+          if (skipOnCiNetworkError(t, error.message)) return;
           assert.fail(
             `bookUrl title check failed (network error: ${error.message}): ${bookUrl}`,
           );
@@ -445,7 +500,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       `Search with Korean titles (${KOREAN_TEST_TITLES.join(", ")})`,
       { timeout: TIMEOUTS.MULTI_SEARCH },
-      async () => {
+      async (t) => {
         const results = [];
 
         for (const title of KOREAN_TEST_TITLES) {
@@ -475,6 +530,13 @@ function createLibraryTestSuite(lib, description, options = {}) {
         }
 
         const anySuccess = results.some((r) => r.success);
+        if (
+          !anySuccess &&
+          results.every((r) => r.error && isNetworkError(r.error)) &&
+          skipOnCiNetworkError(t, results[0].error)
+        ) {
+          return;
+        }
         const summary = results
           .map((r) => `"${r.title}"(${r.count})`)
           .join(", ");
@@ -492,7 +554,7 @@ function createLibraryTestSuite(lib, description, options = {}) {
     it(
       "Make sure the book is searchable in each library",
       { timeout: TIMEOUTS.MULTI_SEARCH },
-      async () => {
+      async (t) => {
         const found = await findSearchableBooks();
         const term = found.term ?? englishSearchTerm;
         const outcomes = await Promise.all(
@@ -506,10 +568,12 @@ function createLibraryTestSuite(lib, description, options = {}) {
 
         let successCount = 0;
         const failedLibraries = [];
+        const networkErrors = [];
         for (const { libraryName, result, error } of outcomes) {
           if (error) {
             console.log(`  ✗ ${libraryName}: ${error.message}`);
             failedLibraries.push(`${libraryName}: ${classifyError(error.message)}`);
+            if (isNetworkError(error.message)) networkErrors.push(error.message);
             continue;
           }
           assert.ok(
@@ -529,6 +593,14 @@ function createLibraryTestSuite(lib, description, options = {}) {
         console.log(
           `  Summary: ${successCount} libraries with results, ${failedLibraries.length} errors`,
         );
+        if (
+          successCount === 0 &&
+          networkErrors.length === failedLibraries.length &&
+          networkErrors.length > 0 &&
+          skipOnCiNetworkError(t, networkErrors[0])
+        ) {
+          return;
+        }
         assert.ok(
           failedLibraries.length < libraryNames.length,
           `At least one library should be searchable\n  ${failedLibraries.slice(0, 3).join("\n  ")}`,
