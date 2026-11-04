@@ -182,6 +182,20 @@ dl.search(
 );
 ```
 
+### 모듈 목록
+
+```javascript
+const dl = require("dongnelibrary");
+
+for (const mod of dl.getLibraryModules()) {
+  console.log(mod.moduleName, mod.homeUrl, mod.getLibraryNames().length);
+}
+```
+
+`getLibraryModules()` 는 모듈 객체(`moduleName`, `homeUrl`, `getLibraryNames()`, `search()`)의
+복사본을 돌려줍니다. `dongnelibrary/dist/localLibraryModule/*` 를 하나씩 import 하지 않아도
+패키지를 올리면 새 모듈이 바로 들어옵니다.
+
 ---
 
 ## 개발자용

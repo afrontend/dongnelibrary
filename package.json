@@ -1,6 +1,6 @@
 {
   "name": "dongnelibrary",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "책을 빌릴 수 있는지 확인한다.",
   "engines": {
     "node": ">=22.19.0"
@@ -18,7 +18,7 @@
     "build": "npm run clean && tsc",
     "build:watch": "tsc --watch",
     "prepublishOnly": "npm run build",
-    "test": "npm run build && node --test test/offline.spec.js test/searchErrors.spec.js test/cliLibraryFilter.spec.js test/util.spec.js",
+    "test": "npm run build && node --test test/offline.spec.js test/searchErrors.spec.js test/libraryModules.spec.js test/cliLibraryFilter.spec.js test/util.spec.js",
     "test:live": "npm run build && node --test test/*.spec.js",
     "record": "npm run build && node test/tools/record.js",
     "dongne": "npm run build && node --test test/dongne.spec.js",
