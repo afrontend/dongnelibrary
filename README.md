@@ -202,7 +202,7 @@ for (const mod of dl.getLibraryModules()) {
 
 ### Requirements
 
-- Node.js >= 22.22.0
+- Node.js >= 22.22.2
 
 ### 로컬 실행
 

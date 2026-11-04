@@ -1,6 +1,7 @@
 name: Test
 
 # push·PR: 빌드·오프라인 테스트(npm test) + 바뀐 모듈만 실제 사이트 테스트
+# min-node: engines.node 하한에서 npm ci --engine-strict·npm test (의존성의 Node 요구를 검사)
 # fixture 재생(offline.spec)은 fixture 를 커밋하지 않으므로 건너뛰고 로컬에서만 돈다
 # 수동 실행(Run workflow): 전체 또는 지정 모듈을 실제 사이트로 테스트 (월 1회 정도)
 
@@ -77,3 +78,28 @@ jobs:
           path: .tmp/test-failures/
           if-no-files-found: ignore
           retention-days: 14
+
+  # engines.node 의 하한에서 설치·테스트한다. --engine-strict 때문에
+  # 이 버전을 지원하지 않는 의존성이 들어오면 npm ci 에서 실패한다.
+  # 실제 사이트 테스트는 위 test job 에서만 돈다.
+  min-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: engines.node 하한 읽기
+        id: engines
+        run: echo "min=$(node -p "require('./package.json').engines.node.match(/\d+\.\d+\.\d+/)[0]")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ steps.engines.outputs.min }}
+          cache: npm
+
+      - run: npm ci --engine-strict
+
+      - name: 빌드·오프라인 테스트
+        run: npm test
