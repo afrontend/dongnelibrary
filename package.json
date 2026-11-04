@@ -18,7 +18,7 @@
     "build": "npm run clean && tsc",
     "build:watch": "tsc --watch",
     "prepublishOnly": "npm run build",
-    "test": "npm run build && node --test test/offline.spec.js test/searchErrors.spec.js test/cliLibraryFilter.spec.js test/util.spec.js",
+    "test": "npm run build && node --test test/offline.spec.js test/searchErrors.spec.js test/libraryModules.spec.js test/cliLibraryFilter.spec.js test/util.spec.js",
     "test:live": "npm run build && node --test test/*.spec.js",
     "record": "npm run build && node test/tools/record.js",
     "dongne": "npm run build && node --test test/dongne.spec.js",

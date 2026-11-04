@@ -210,6 +210,12 @@ export const getAllModuleNames = (): string[] =>
   LIBRARY_MODULES.map((module) => module.moduleName);
 
 /**
+ * Get all library modules
+ * @returns Copy of the registered modules (moduleName, homeUrl, getLibraryNames, search)
+ */
+export const getLibraryModules = (): readonly LibraryModule[] => [...LIBRARY_MODULES];
+
+/**
  * Get home URLs for all modules
  * @returns Record mapping module names to their home URLs
  */
@@ -446,6 +452,7 @@ export type {
   SearchCallback,
   SearchCompleteCallback,
   Book,
+  LibraryModule,
 } from "./types";
 
 // =============================================================================
@@ -463,6 +470,7 @@ export const resolveLibraryCount = (
 export const dongneLibrary: DongneLibraryAPI = {
    getAllLibraryNames,
    getAllModuleNames,
+   getLibraryModules,
    getModuleHomeUrls,
    isModuleName,
    resolveLibraryCount,

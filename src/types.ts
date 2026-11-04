@@ -139,6 +139,7 @@ export interface DongneLibraryAPI {
   resolveLibraryCount: (libraryName: string | string[]) => number;
   getAllLibraryNames: () => string[];
   getAllModuleNames: () => string[];
+  getLibraryModules: () => readonly LibraryModule[];
   getModuleHomeUrls: () => Record<string, string>;
   isModuleName: (name: string) => boolean;
   searchAsync: (
