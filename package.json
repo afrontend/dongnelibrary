@@ -178,7 +178,7 @@
   "homepage": "https://github.com/afrontend/dongnelibrary#readme",
   "dependencies": {
     "@inquirer/prompts": "^8.7.5",
-    "async": "^2.5.0",
+    "async": "^3.2.6",
     "colors": "^1.4.0",
     "commander": "^15.0.0",
     "configstore": "^4.0.0",
