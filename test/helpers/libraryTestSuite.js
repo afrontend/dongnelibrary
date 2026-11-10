@@ -564,6 +564,11 @@ function createLibraryTestSuite(lib, description, options = {}) {
       { timeout: TIMEOUTS.MULTI_SEARCH },
       async (t) => {
         const found = await findSearchableBooks();
+        // 첫 검색에서 이미 접속이 안 됐으면 도서관마다 다시 기다리지 않는다
+        // (도서관이 많으면 접속 시간 초과가 쌓여 테스트 시간 제한에 먼저 걸린다)
+        if (found.networkError && skipOnCiNetworkError(t, found.networkError)) {
+          return;
+        }
         const term = found.term ?? englishSearchTerm;
         const outcomes = await Promise.all(
           libraryNames.map((libraryName) =>
