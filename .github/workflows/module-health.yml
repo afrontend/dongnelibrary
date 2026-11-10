@@ -1,0 +1,98 @@
+name: Module health
+
+# 모듈 상태 점검: 실제 사이트 테스트를 2주마다 모듈 10개씩 돌아가며 실행한다.
+# 68개 기준 7묶음이라 약 3개월 반에 한 바퀴 돈다. 묶음은 날짜로 정한다 (changed-specs.js --rotate).
+# 실패한 모듈이 있으면 "모듈 상태 점검" 이슈에 남기고(열린 이슈가 있으면 댓글) 실행을 실패로 끝낸다.
+# 접속 오류는 CI 에서 skip 된다(해외 IP 를 막는 사이트 등). 실패로 치지 않고 요약에만 적는다.
+# 공개 저장소는 60일 동안 활동이 없으면 일정 실행이 꺼진다. Actions 화면에서 다시 켠다.
+
+on:
+  schedule:
+    - cron: "0 0 1,15 * *" # 매월 1일·15일 09:00 KST
+  workflow_dispatch:
+    inputs:
+      round:
+        description: "묶음 번호 (0부터. 비우면 날짜로 정한다)"
+        required: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: module-health
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: 이번 묶음 고르기
+        id: pick
+        env:
+          ROUND: ${{ inputs.round }}
+        run: |
+          specs=$(node test/tools/changed-specs.js --rotate 10 ${ROUND:+--round "$ROUND"} | tr '\n' ' ')
+          echo "specs=$specs" >> "$GITHUB_OUTPUT"
+          echo "실제 사이트 테스트 대상: $specs"
+
+      # 모듈마다 따로 실행해 어느 모듈이 실패했는지 가린다
+      - name: 실제 사이트 테스트
+        id: live
+        env:
+          SPECS: ${{ steps.pick.outputs.specs }}
+        run: |
+          passed=(); skipped=(); failed=()
+          for spec in $SPECS; do
+            mod=$(basename "$spec" .spec.js)
+            if node --test "$spec" > "$RUNNER_TEMP/$mod.log" 2>&1; then
+              if grep -q "\[CI 네트워크\]" "$RUNNER_TEMP/$mod.log"; then skipped+=("$mod"); else passed+=("$mod"); fi
+            else
+              failed+=("$mod")
+              echo "::group::$mod 실패 로그"
+              tail -n 80 "$RUNNER_TEMP/$mod.log"
+              echo "::endgroup::"
+            fi
+          done
+          {
+            echo "## 모듈 상태 점검"
+            echo "- 통과: ${passed[*]:-없음}"
+            echo "- 접속 실패(skip): ${skipped[*]:-없음}"
+            echo "- 실패: ${failed[*]:-없음}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "failed=${failed[*]}" >> "$GITHUB_OUTPUT"
+
+      - name: 실패를 이슈에 남기기
+        if: steps.live.outputs.failed != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          FAILED: ${{ steps.live.outputs.failed }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="모듈 상태 점검: 실제 사이트 테스트 실패"
+          body="실패한 모듈: ${FAILED}"$'\n\n'"실행 기록: ${RUN_URL}"$'\n\n'"로컬 재현: \`npm run build && node --test test/<모듈>.spec.js\`"
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
+
+      - name: 실패하면 실행을 실패로
+        if: steps.live.outputs.failed != ''
+        run: exit 1

@@ -3,7 +3,8 @@ name: Test
 # push·PR: 빌드·오프라인 테스트(npm test) + 바뀐 모듈만 실제 사이트 테스트
 # min-node: engines.node 하한에서 npm ci --engine-strict·npm test (의존성의 Node 요구를 검사)
 # fixture 재생(offline.spec)은 fixture 를 커밋하지 않으므로 건너뛰고 로컬에서만 돈다
-# 수동 실행(Run workflow): 전체 또는 지정 모듈을 실제 사이트로 테스트 (월 1회 정도)
+# 수동 실행(Run workflow): 전체 또는 지정 모듈을 실제 사이트로 테스트 (필요할 때만)
+# 정기 점검은 module-health.yml 이 2주마다 10개씩 돌아가며 한다
 
 on:
   push:
