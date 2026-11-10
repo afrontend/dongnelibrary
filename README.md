@@ -270,7 +270,8 @@ fixture 는 사이트 응답을 세션 쿠키까지 그대로 담으므로 **커
 `.github/workflows/test.yml`
 
 - **push·PR (master)**: 빌드·`npm test` → 바뀐 모듈만 실제 사이트 테스트. 모듈 `.ts`·spec 중 하나가 바뀐 모듈을 고른다(`test/tools/changed-specs.js`). 공통 코드만 바뀌면 빌드와 `npm test` 만 돈다. fixture 가 커밋되지 않으므로 `offline.spec.js` 는 Actions 에서 건너뛰고 로컬에서 돌린다.
-- **수동 실행**: Actions → Test → Run workflow. `modules` 에 `all`(기본) 또는 `nyj,ulju` 처럼 적는다. 월 1회 정도 전체를 점검하는 용도다.
+- **수동 실행**: Actions → Test → Run workflow. `modules` 에 `all`(기본) 또는 `nyj,ulju` 처럼 적는다. 필요할 때 전체나 일부를 점검한다.
+- **모듈 상태 점검** (`.github/workflows/module-health.yml`): 매월 1일·15일 09:00(KST)에 모듈 10개씩 돌아가며 실제 사이트 테스트를 한다. 7묶음이라 약 3개월 반에 전체를 한 번 돈다. 실패한 모듈은 이슈 "모듈 상태 점검: 실제 사이트 테스트 실패" 에 남는다(열려 있으면 댓글). 접속 실패(skip)는 실패로 치지 않고 실행 요약에만 적는다. 특정 묶음은 Actions → Module health → Run workflow 에서 `round`(0부터)로 고른다. 묶음 목록은 `node test/tools/changed-specs.js --rotate 10 --round <n>`. 공개 저장소는 60일 동안 커밋이 없으면 일정 실행이 꺼지니 Actions 화면에서 다시 켠다.
 - 실패하면 `.tmp/test-failures/` 가 `test-failures` artifact 로 올라간다(14일 보관). 실행 페이지에서 받거나 `gh run download <실행ID> -n test-failures`.
 
 러너가 해외 IP 라 일부 지자체 사이트는 막힐 수 있다. Actions 에서만 `[네트워크]`·`[차단 의심]` 으로 실패하면 로컬에서 `npm run <모듈>` 로 다시 확인한다.
