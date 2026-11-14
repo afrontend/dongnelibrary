@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [문경시립도서관][mungyeong-url] — 10개 도서관 (중앙, 모전, 문희, 작은도서관 7개)
 - [동작구통합도서관][dongjak-url] — 11개 도서관 (김영삼, 사당솔밭, 동작영어마루, 대방어린이, 약수, 동작샘터, 다울작은, 국사봉숲속작은, 까망돌, 신대방누리, 신대방햇살)
 - [송파구통합도서관][splib-url] — 21개 도서관 (송파글마루, 송파어린이, 송파위례, 거마, 돌마리, 풍납, 소나무언덕2호·3호·잠실본동, 송파어린이영어, 가락몰, 송이골작은, 스마트도서관 9개)
 - [울산중구도서관][ulsanjunggu-url] — 10개 도서관 (울산종갓집, 약숫골, 함월, 태화루, 옥골샘, 외솔한옥, 우정, 학성, 산전만화, 남외어린이)
@@ -323,6 +324,7 @@ fixture 는 사이트 응답을 세션 쿠키까지 그대로 담으므로 **커
     npm run jongno  # 종로구립도서관
     npm run namwon   # 남원시 도서관
     npm run mokpolib # 목포시 도서관
+    npm run mungyeong # 문경시 도서관
     npm run paju    # 파주시 도서관
     npm run osan    # 오산시 도서관
     npm run pen     # 부산광역시교육청 도서관
@@ -419,6 +421,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [michu-url]: https://hnrl.michu.incheon.kr
 [jongno-url]: https://lib.jongno.go.kr
 [mokpolib-url]: https://www.mokpolib.or.kr
+[mungyeong-url]: https://www.gbmg.go.kr/portal/contents.do?mId=0602050800
 [jeju-url]: https://www.jeju.go.kr/
 [jeonju-url]: https://lib.jeonju.go.kr
 [wanju-url]: https://lib.wanju.go.kr

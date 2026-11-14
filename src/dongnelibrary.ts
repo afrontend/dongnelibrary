@@ -44,6 +44,7 @@ import * as ulsanjunggu from "./localLibraryModule/ulsanjunggu";
 import * as mapo from "./localLibraryModule/mapo";
 import * as michu from "./localLibraryModule/michu";
 import * as mokpolib from "./localLibraryModule/mokpolib";
+import * as mungyeong from "./localLibraryModule/mungyeong";
 import * as namwon from "./localLibraryModule/namwon";
 import * as nowon from "./localLibraryModule/nowon";
 import * as nyj from "./localLibraryModule/nyj";
@@ -135,6 +136,7 @@ const LIBRARY_MODULES: LibraryModule[] = [
   mapo,
   michu,
   mokpolib,
+  mungyeong,
   namwon,
   nowon,
   nyj,
