@@ -53,6 +53,7 @@ Node.js 설치 없이 Docker로 바로 실행할 수 있습니다.
 
 현재 지원하는 통합도서관 시스템:
 
+- [동작구통합도서관][dongjak-url] — 11개 도서관 (김영삼, 사당솔밭, 동작영어마루, 대방어린이, 약수, 동작샘터, 다울작은, 국사봉숲속작은, 까망돌, 신대방누리, 신대방햇살)
 - [송파구통합도서관][splib-url] — 21개 도서관 (송파글마루, 송파어린이, 송파위례, 거마, 돌마리, 풍납, 소나무언덕2호·3호·잠실본동, 송파어린이영어, 가락몰, 송이골작은, 스마트도서관 9개)
 - [울산중구도서관][ulsanjunggu-url] — 10개 도서관 (울산종갓집, 약숫골, 함월, 태화루, 옥골샘, 외솔한옥, 우정, 학성, 산전만화, 남외어린이)
 - [미추홀구립도서관][michu-url] — 11개 도서관 (학나래, 용비, 이랑, 숭의누리어린이, 장사래어린이, 소금꽃어린이, 한우리어린이, 쑥골어린이, 석바위어린이, 관교어린이, 독정골어린이)
@@ -293,6 +294,7 @@ fixture 는 사이트 응답을 세션 쿠키까지 그대로 담으므로 **커
     npm run cheongju # 청주시립 도서관
     npm run daegu   # 대구광역시 도서관
     npm run djdonggu # 대전동구 도서관
+    npm run dongjak # 동작구 통합도서관
     npm run gangnam # 강남구 도서관
     npm run gangseo # 강서구 도서관
     npm run gbelib  # 경상북도교육청 도서관
@@ -375,6 +377,7 @@ Docker 이미지는 `master` 브랜치 푸시 또는 버전 태그(`v1.0.0`) 생
 [cheongju-url]: https://library.cheongju.go.kr
 [daegu-url]: https://library.daegu.go.kr
 [djdonggu-url]: https://www.donggu.go.kr/dg/lib
+[dongjak-url]: https://lib.dongjak.go.kr
 [gangnam-url]: https://library.gangnam.go.kr
 [gangseo-url]: https://lib.gangseo.seoul.kr
 [gbelib-url]: https://www.gbelib.kr
